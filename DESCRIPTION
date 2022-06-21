@@ -1,6 +1,6 @@
 Package: tidyterra
 Title: 'tidyverse' Methods and 'ggplot2' Utils for 'terra' Objects
-Version: 0.1.0
+Version: 0.2.0
 Authors@R: c(
     person("Diego", "Hernangómez", , "diego.hernangomezherrero@gmail.com", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0000-0001-8457-4658")),
@@ -25,13 +25,14 @@ VignetteBuilder: knitr
 Config/testthat/edition: 3
 Config/testthat/parallel: true
 Encoding: UTF-8
+LazyData: true
 RoxygenNote: 7.2.0
 NeedsCompilation: no
-Packaged: 2022-05-23 14:34:35 UTC; diego
+Packaged: 2022-06-21 06:53:44 UTC; diego
 Author: Diego Hernangómez [aut, cre, cph]
     (<https://orcid.org/0000-0001-8457-4658>),
   Dewey Dunnington [ctb] (<https://orcid.org/0000-0002-9415-4582>, for
     ggspatial code)
 Maintainer: Diego Hernangómez <diego.hernangomezherrero@gmail.com>
 Repository: CRAN
-Date/Publication: 2022-05-24 11:00:02 UTC
+Date/Publication: 2022-06-21 07:30:02 UTC

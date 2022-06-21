@@ -1,3 +1,23 @@
+# tidyterra 0.2.0
+
+-   Recreate `extdata/volcano2.tif` using official DEM information from New
+    Zealand. Source: [Auckland LiDAR 1m DEM
+    (2013)](https://data.linz.govt.nz/layer/53405-auckland-lidar-1m-dem-2013/).
+
+-   Add `volcano2` dataset.
+
+-   Fix errors on `slice_min()` and `slice_max()` for SpatRasters (#20). Also
+    add a new parameter `na.rm`.
+
+-   Add new gradient scales for use on hypsometry:
+
+    -   `scale_fill_hypso_c()`
+    -   `scale_fill_whitebox_c()`
+    -   `scale_fill_wiki_c()`
+    -   `scale_fill_cross_blended_c()`
+
+-   Add new asia.tif file on `extdata`.
+
 # tidyterra 0.1.0
 
 -   Add DOI.
