@@ -1,3 +1,9 @@
+# tidyterra 0.2.1
+
+-   Now `geom_spatraster_rgb()` works with `facet_wrap()` (#35)
+-   Improve facetting when the plot facets are created using non-Spat\* layers.
+-   Precompute vignettes.
+
 # tidyterra 0.2.0
 
 -   Recreate `extdata/volcano2.tif` using official DEM information from New

@@ -7,22 +7,14 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  warning = FALSE,
-  message = FALSE,
-  fig.align = "center"
-)
-```
+
 
 ## Welcome to {tidyterra}
 
 **tidyterra** is a package that add common methods from the
 [tidyverse](https://www.tidyverse.org/) for SpatRaster and SpatVectors objects
 created with the [{terra}](https://CRAN.R-project.org/package=terra) package. It
-also adds specific`geom_spat*()` for plotting these kind of objects with
+also adds specific `geom_spat*()` functions for plotting these kind of objects with
 [{ggplot2}](https://ggplot2.tidyverse.org/).
 
 ### Why {tidyterra}?
@@ -55,7 +47,8 @@ First thing you'll notice when loading {tidyterra} is that a set of packages
 would be also loaded. You can disable the message by setting
 `Sys.setenv(tidyterra.quiet = TRUE)`.
 
-```{r setup, message=TRUE}
+
+```r
 # Disable message with:
 # Sys.setenv(tidyterra.quiet = TRUE)
 library(tidyterra)
@@ -79,13 +72,23 @@ Currently, the following methods are available:
 
 Let's see some of them in action:
 
-```{r}
+
+```r
 library(terra)
 f <- system.file("extdata/cyl_temp.tif", package = "tidyterra")
 
 temp <- rast(f)
 
 temp
+#> class       : SpatRaster 
+#> dimensions  : 89, 116, 3  (nrow, ncol, nlyr)
+#> resolution  : 3856.617, 3856.617  (x, y)
+#> extent      : 2893583, 3340950, 2019451, 2362690  (xmin, xmax, ymin, ymax)
+#> coord. ref. : ETRS89-extended / LAEA Europe (EPSG:3035) 
+#> source      : cyl_temp.tif 
+#> names       :   tavg_04,   tavg_05,   tavg_06 
+#> min values  :  0.565614,  4.294102,  8.817221 
+#> max values  : 13.283829, 16.740898, 21.113781
 
 mod <- temp %>%
   select(-1) %>%
@@ -95,7 +98,17 @@ mod <- temp %>%
   rename(difference = newcol)
 
 mod
-plot(mod)
+#> class       : SpatRaster 
+#> dimensions  : 89, 116, 3  (nrow, ncol, nlyr)
+#> resolution  : 3856.617, 3856.617  (x, y)
+#> extent      : 2893583, 3340950, 2019451, 2362690  (xmin, xmax, ymin, ymax)
+#> coord. ref. : ETRS89-extended / LAEA Europe (EPSG:3035) 
+#> sources     : memory  
+#>               memory  
+#>               memory  
+#> names       : difference,   tavg_05,   tavg_06 
+#> min values  :   2.786910,  4.294102,  8.817221 
+#> max values  :   5.408157, 16.740898, 21.113781
 ```
 
 On the previous example, we had:
@@ -126,7 +139,8 @@ the CRS informed (i.e. `terra::crs(a_rast) != ""`), the geom uses
 `ggplot2::coord_sf()`, and may be also reprojected for adjusting the coordinates
 to other spatial layers:
 
-```{r terraplots}
+
+```r
 
 library(ggplot2)
 
@@ -139,6 +153,11 @@ ggplot() +
     palette = "muted",
     na.value = "white"
   )
+```
+
+<img src="./terraplots-1.png" alt="plot of chunk terraplots" width="100%" />
+
+```r
 
 
 # Contour lines for a specific layer
@@ -152,6 +171,11 @@ ggplot() +
   scale_fill_whitebox_c() +
   coord_sf(expand = FALSE) +
   labs(fill = "elevation")
+```
+
+<img src="./terraplots-2.png" alt="plot of chunk terraplots" width="100%" />
+
+```r
 
 
 # Contour filled
@@ -162,9 +186,12 @@ ggplot() +
   labs(fill = "elevation")
 ```
 
+<img src="./terraplots-3.png" alt="plot of chunk terraplots" width="100%" />
+
 With {tidyterra} you can also plot RGB SpatRasters to add imagery to your plots:
 
-```{r rgb}
+
+```r
 
 # Read a vector
 
@@ -181,20 +208,37 @@ rgb_plot <- ggplot() +
   geom_spatvector(data = v, fill = NA, size = 1)
 
 rgb_plot
+```
+
+<img src="./rgb-1.png" alt="plot of chunk rgb" width="100%" />
+
+```r
 # Change CRS automatically
 
 rgb_plot +
   coord_sf(crs = 3035)
 ```
 
+<img src="./rgb-2.png" alt="plot of chunk rgb" width="100%" />
+
 {tidyterra} provides selected scales that are suitable for creating hypsometric
 and bathymetric maps:
 
-```{r hypso}
+
+```r
 
 asia <- rast(system.file("extdata/asia.tif", package = "tidyterra"))
 
 asia
+#> class       : SpatRaster 
+#> dimensions  : 367, 683, 1  (nrow, ncol, nlyr)
+#> resolution  : 14263.38, 14231.61  (x, y)
+#> extent      : 7619120, 17361007, -1304745, 3918256  (xmin, xmax, ymin, ymax)
+#> coord. ref. : WGS 84 / Pseudo-Mercator (EPSG:3857) 
+#> source      : asia.tif 
+#> name        : file44bc291153f2 
+#> min value   :        -9991.472 
+#> max value   :         6156.079
 
 ggplot() +
   geom_spatraster(data = asia) +
@@ -216,12 +260,15 @@ ggplot() +
   theme(legend.position = "bottom")
 ```
 
+<img src="./hypso-1.png" alt="plot of chunk hypso" width="100%" />
+
 ### SpatVectors
 
 {tidyterra} allows you to plot SpatVectors with {ggplot2} using the
 `geom_spatvector()` functions:
 
-```{r}
+
+```r
 lux <- system.file("ex/lux.shp", package = "terra")
 
 spatvector <- terra::vect(lux)
@@ -235,6 +282,8 @@ ggplot() +
   scale_fill_binned(labels = scales::number_format()) +
   coord_sf(crs = 3857)
 ```
+
+<img src="./unnamed-chunk-8-1.png" alt="plot of chunk unnamed-chunk-8" width="100%" />
 
 The underlying implementation is to take advantage of the conversion
 `terra::vect()/sf::st_as_sf()` (see [**About SpatVectors**](#about)) and use
@@ -251,26 +300,71 @@ polygon, a spatial polygon (i.e. a country).
 the {sf} package, that represents the same information on a tabular way. You can
 convert easily between the two packages like this:
 
-```{r terra_sf}
+
+```r
 lux <- system.file("ex/lux.shp", package = "terra")
 
 spatvector <- terra::vect(lux)
 spatvector
+#>  class       : SpatVector 
+#>  geometry    : polygons 
+#>  dimensions  : 12, 6  (geometries, attributes)
+#>  extent      : 5.74414, 6.528252, 49.44781, 50.18162  (xmin, xmax, ymin, ymax)
+#>  source      : lux.shp
+#>  coord. ref. : lon/lat WGS 84 (EPSG:4326) 
+#>  names       :  ID_1   NAME_1  ID_2   NAME_2  AREA   POP
+#>  type        : <num>    <chr> <num>    <chr> <num> <int>
+#>  values      :     1 Diekirch     1 Clervaux   312 18081
+#>                    1 Diekirch     2 Diekirch   218 32543
+#>                    1 Diekirch     3  Redange   259 18664
 
 terra::plot(spatvector, main = "SpatVector", axes = TRUE)
+```
+
+<img src="./terra_sf-1.png" alt="plot of chunk terra_sf" width="100%" />
+
+```r
 
 
 # To sf
 sfobj <- sf::st_as_sf(spatvector)
 head(sfobj, 3)
+#> Simple feature collection with 3 features and 6 fields
+#> Geometry type: POLYGON
+#> Dimension:     XY
+#> Bounding box:  xmin: 5.746118 ymin: 49.69933 xmax: 6.315773 ymax: 50.18162
+#> Geodetic CRS:  WGS 84
+#>   ID_1   NAME_1 ID_2   NAME_2 AREA   POP
+#> 1    1 Diekirch    1 Clervaux  312 18081
+#> 2    1 Diekirch    2 Diekirch  218 32543
+#> 3    1 Diekirch    3  Redange  259 18664
+#>                         geometry
+#> 1 POLYGON ((6.026519 50.17767...
+#> 2 POLYGON ((6.178368 49.87682...
+#> 3 POLYGON ((5.881378 49.87015...
 
 plot(sfobj$geometry, main = "sf", axes = TRUE)
+```
+
+<img src="./terra_sf-2.png" alt="plot of chunk terra_sf" width="100%" />
+
+```r
 
 # Back to terra
 
 spatvector2 <- terra::vect(sfobj)
 
 spatvector2
+#>  class       : SpatVector 
+#>  geometry    : polygons 
+#>  dimensions  : 12, 6  (geometries, attributes)
+#>  extent      : 5.74414, 6.528252, 49.44781, 50.18162  (xmin, xmax, ymin, ymax)
+#>  coord. ref. : lon/lat WGS 84 (EPSG:4326) 
+#>  names       :  ID_1   NAME_1  ID_2   NAME_2  AREA   POP
+#>  type        : <num>    <chr> <num>    <chr> <num> <int>
+#>  values      :     1 Diekirch     1 Clervaux   312 18081
+#>                    1 Diekirch     2 Diekirch   218 32543
+#>                    1 Diekirch     3  Redange   259 18664
 ```
 
 On that sense, {sf} already has its own implementation of {tidyverse} methods.
@@ -278,7 +372,8 @@ Since converting SpatVector to {sf} it is straightforward with no loss of
 information, {tidyterra} is specially focused on SpatRasters. See an example of
 how to work with {terra} + {sf} + {dplyr}:
 
-```{r full_spatvector}
+
+```r
 library(dplyr)
 library(terra)
 library(sf)
@@ -293,6 +388,18 @@ spat_summ <- spatvector2 %>%
   vect()
 
 spat_summ
+#>  class       : SpatVector 
+#>  geometry    : polygons 
+#>  dimensions  : 3, 2  (geometries, attributes)
+#>  extent      : 5.74414, 6.528252, 49.44781, 50.18162  (xmin, xmax, ymin, ymax)
+#>  coord. ref. : lon/lat WGS 84 (EPSG:4326) 
+#>  names       :  ID_1 TOTPOP
+#>  type        : <num>  <int>
+#>  values      :     1  91186
+#>                    2  71093
+#>                    3 439726
 
 terra::plot(spat_summ, "TOTPOP")
 ```
+
+<img src="./full_spatvector-1.png" alt="plot of chunk full_spatvector" width="100%" />
