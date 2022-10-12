@@ -26,7 +26,6 @@ WhiteboxTools
 asia
 bathymetric
 bathymetry
-behaviour
 binwidth
 codecov
 colour
@@ -38,7 +37,6 @@ dieghernan
 doi
 downsampled
 dplyr
-facetting
 fullseq
 geoms
 ggplot
@@ -53,6 +51,7 @@ io
 linetype
 magrittr
 maptiles
+metR
 ortion
 proj
 purrr
@@ -60,6 +59,7 @@ rasters
 reprojected
 rescaled
 rlang
+spatraster
 standardised
 terra
 tibble

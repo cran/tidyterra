@@ -14,6 +14,16 @@
 #' @family ggplot2.utils
 #' @param data A SpatRaster object.
 #'
+#' @param mapping Set of aesthetic mappings created by [ggplot2::aes()] or
+#'   [ggplot2::aes_()]. See **Aesthetics** specially in the use of `fill`
+#'   aesthetic.
+#'
+#' @param na.rm If `TRUE`, the default, missing values are silently removed.
+#'   If `FALSE`, missing values are removed with a warning.
+#'
+#' @param inherit.aes If `FALSE`, overrides the default aesthetics, rather
+#'   than combining with them.
+#'
 #' @source Based on the `layer_spatial()` implementation on ggspatial package.
 #' Thanks to [Dewey Dunnington](https://github.com/paleolimbot) and
 #' [ggspatial contributors](https://github.com/paleolimbot/ggspatial/graphs/contributors).
@@ -55,6 +65,12 @@
 #' on the SpatRaster (i.e.
 #' `geom_spatraster(data = rast, aes(fill = <name_of_lyr>)`). Names of the
 #' layers can be retrieved using `names(rast)`.
+#'
+#' Using `geom_spatraster(..., mapping = aes(fill = NULL))` or
+#' `geom_spatraster(..., fill = <color value(s)>)` would create a layer with no
+#' mapped `fill` aesthetic.
+#'
+#' `fill` can use computed variables.
 #'
 #' For `alpha` use computed variable. See section **Computed variables**.
 #'
@@ -134,36 +150,19 @@ geom_spatraster <- function(mapping = aes(),
 
   # 1. Work with aes ----
 
-  mapping <- cleanup_aesthetics(mapping, "group")
+  dots <- list(...)
+  raster_names <- names(data)
 
-  mapping <- override_aesthetics(
-    mapping,
-    ggplot2::aes_string(
-      spatraster = "spatraster",
-      # For faceting
-      lyr = "lyr",
-      group = "lyr"
-    )
-  )
+  prepared <- prepare_aes_spatraster(mapping, raster_names, dots)
 
+  # Use prepared data
+  mapping <- prepared$map
 
-  # aes(fill=...) would select the layer to plot
-  # Extract value of aes(fill)
-
-  if ("fill" %in% names(mapping)) {
-    namelayer <- vapply(mapping, rlang::as_label, character(1))["fill"]
-
-    if (!namelayer %in% names(data)) {
-      cli::cli_abort(paste("Layer", namelayer, "not found in data"))
-    }
-
-    # Subset by layer
-    data <- terra::subset(data, namelayer)
-    # Remove fill from aes, would be provided later on the Stat
-    mapping <- cleanup_aesthetics(mapping, "fill")
+  # Check if need to subset the SpatRaster
+  if (is.character(prepared$namelayer)) {
+    # Subset the layer from the data
+    data <- terra::subset(data, prepared$namelayer)
   }
-
-
   # 2. Check if resample is needed----
 
   # Check mixed types
@@ -242,7 +241,7 @@ StatTerraSpatRaster <- ggplot2::ggproto(
   ggplot2::Stat,
   required_aes = "spatraster",
   default_aes = ggplot2::aes(
-    fill = stat(value), lyr = lyr, group = lyr,
+    lyr = lyr, group = lyr,
     spatraster = stat(spatraster)
   ),
   extra_params = c("maxcell", "na.rm", "coord_crs"),
@@ -421,4 +420,71 @@ check_mixed_cols <- function(r) {
   )
 
   return(newr)
+}
+
+
+prepare_aes_spatraster <- function(mapping = aes(),
+                                   raster_names = NA,
+                                   dots = list()) {
+  # Prepare aes for StatTerraSpatRaster
+  mapinit <- cleanup_aesthetics(mapping, "group")
+
+  mapinit <- override_aesthetics(
+    mapinit,
+    ggplot2::aes_string(
+      spatraster = "spatraster",
+      # For faceting
+      lyr = "lyr",
+      group = "lyr"
+    )
+  )
+
+  # Create first the default result object, would be overriden
+
+  result_obj <- list(
+    namelayer = FALSE,
+    map = mapinit
+  )
+
+
+  # Capture all info
+  fill_from_dots <- "fill" %in% names(dots)
+
+  # Do nothing if fill in dots
+  if (isTRUE(fill_from_dots)) {
+    return(result_obj)
+  }
+
+
+  # Extract from aes
+  fill_from_aes <- unname(vapply(mapinit, rlang::as_label, character(1))["fill"])
+  fill_not_provided <- is.na(fill_from_aes)
+  is_layer <- fill_from_aes %in% raster_names
+
+
+  # If not provided add after_stat
+  if (fill_not_provided) {
+    map_not_prov <- override_aesthetics(
+      mapinit, ggplot2::aes_string(fill = "ggplot2::after_stat(value)")
+    )
+
+    result_obj$map <- map_not_prov
+    return(result_obj)
+  }
+
+  # If it is a layer need to override the fill value and keep the namelayer
+  if (is_layer) {
+    map_layer <- override_aesthetics(
+      ggplot2::aes_string(fill = "ggplot2::after_stat(value)"),
+      mapinit
+    )
+
+
+    result_obj$map <- map_layer
+    result_obj$namelayer <- fill_from_aes
+    return(result_obj)
+  }
+
+  # Otherwise leave as it is
+  return(result_obj)
 }

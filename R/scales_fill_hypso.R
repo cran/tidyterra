@@ -34,9 +34,9 @@
 #'   available palettes, ignoring upper vs. lower case. See
 #'   [hypsometric_tints_db] for more info. Values available are:
 #'
-#' ```{r, echo=FALSE, results="asis"}
+#' ```{r, echo=FALSE, results="asis", message = FALSE, warning = FALSE}
 #'
-#' library(dplyr)
+#' suppressPackageStartupMessages(library(dplyr))
 #' hypsometric_tints_db %>%
 #'   pull(pal) %>%
 #'   unique() %>%

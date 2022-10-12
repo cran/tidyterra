@@ -1,3 +1,24 @@
+# tidyterra 0.3.0
+
+-   Package back to CRAN.
+
+-   Libraries **dplyr**, **tidyr**, **tibble** are not attached by default.
+    Needed functions are reexported instead.
+
+-   Improvements on `geom_spatraster()`:
+
+    -   Now in `geom_spatraster()` is possible to avoid the default `fill` of
+        the layer using `geom_spatraster(fill = NA)` or
+        `geom_spatraster(aes(fill = NULL))`.
+
+    -   `aes(fill = ggplot2::after_stat())` now works on `geom_spatraster()`.
+
+    -   Internal: Better handling of `aes()` and layers
+
+-   Add new function `stat_spatraster()`.
+
+-   Reduce the size of external files.
+
 # tidyterra 0.2.2
 
 -   Changes on how **dplyr**, **tibble** and **tidyr** are attached. Now these
@@ -8,7 +29,7 @@
 # tidyterra 0.2.1
 
 -   Now `geom_spatraster_rgb()` works with `facet_wrap()` (#35)
--   Improve facetting when the plot facets are created using non-Spat\* layers.
+-   Improve faceting when the plot facets are created using non-Spat\* layers.
 -   Precompute vignettes.
 
 # tidyterra 0.2.0
