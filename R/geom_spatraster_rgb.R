@@ -21,7 +21,7 @@
 #'
 #'
 #' @inheritParams geom_spatraster
-#' @inheritParams scale_fill_terrain
+#' @inheritParams scale_terrain
 #' @param mapping Ignored.
 #' @param r,g,b Integer representing the number of layer of `data` to be
 #'  considered as the red (`r`), green (`g`) and blue (`b`) channel.
@@ -119,8 +119,8 @@ geom_spatraster_rgb <- function(mapping = aes(),
   # 1. Work with aes ----
   mapping <- override_aesthetics(
     mapping,
-    ggplot2::aes_string(
-      spatraster = "spatraster"
+    ggplot2::aes(
+      spatraster = .data$spatraster
     )
   )
 
@@ -189,7 +189,6 @@ StatTerraSpatRasterRGB <- ggplot2::ggproto(
   required_aes = "spatraster",
   extra_params = c("maxcell", "max_col_value", "na.rm"),
   compute_layer = function(self, data, params, layout) {
-
     # add coord to the params, so it can be forwarded to compute_group()
     params$coord_crs <- pull_crs(layout$coord_params$crs)
 
@@ -278,7 +277,6 @@ GeomTerraSpatRasterRGB <- ggplot2::ggproto(
 # Create a table with the hex color of each row (hexcol)
 # On any NA then hexcol is returned as NA
 make_hexcol <- function(data, max_col_value = 255) {
-
   # Clamp values
   data[data > max_col_value] <- max_col_value
   data[data < 0] <- 0

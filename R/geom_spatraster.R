@@ -242,7 +242,7 @@ StatTerraSpatRaster <- ggplot2::ggproto(
   required_aes = "spatraster",
   default_aes = ggplot2::aes(
     lyr = lyr, group = lyr,
-    spatraster = stat(spatraster)
+    spatraster = after_stat(spatraster)
   ),
   extra_params = c("maxcell", "na.rm", "coord_crs"),
   compute_layer = function(self, data, params, layout) {
@@ -270,7 +270,6 @@ StatTerraSpatRaster <- ggplot2::ggproto(
   },
   compute_group = function(data, scales, coord, params,
                            coord_crs = NA) {
-
     # Extract raster from group
     rast <- data$spatraster[[1]]
 
@@ -303,7 +302,6 @@ remove_columns <- function(x, rem) {
 # Reproject a SpatRaster with params
 reproject_raster_on_stat <- function(raster,
                                      coords_crs = NA) {
-
   # Check if need to reproject
   crs_terra <- pull_crs(raster)
 
@@ -431,11 +429,11 @@ prepare_aes_spatraster <- function(mapping = aes(),
 
   mapinit <- override_aesthetics(
     mapinit,
-    ggplot2::aes_string(
-      spatraster = "spatraster",
+    ggplot2::aes(
+      spatraster = .data$spatraster,
       # For faceting
-      lyr = "lyr",
-      group = "lyr"
+      lyr = .data$lyr,
+      group = .data$lyr
     )
   )
 
@@ -461,11 +459,10 @@ prepare_aes_spatraster <- function(mapping = aes(),
   fill_not_provided <- is.na(fill_from_aes)
   is_layer <- fill_from_aes %in% raster_names
 
-
   # If not provided add after_stat
   if (fill_not_provided) {
     map_not_prov <- override_aesthetics(
-      mapinit, ggplot2::aes_string(fill = "ggplot2::after_stat(value)")
+      mapinit, ggplot2::aes(fill = after_stat(.data$value))
     )
 
     result_obj$map <- map_not_prov
@@ -475,7 +472,7 @@ prepare_aes_spatraster <- function(mapping = aes(),
   # If it is a layer need to override the fill value and keep the namelayer
   if (is_layer) {
     map_layer <- override_aesthetics(
-      ggplot2::aes_string(fill = "ggplot2::after_stat(value)"),
+      ggplot2::aes(fill = after_stat(.data$value)),
       mapinit
     )
 

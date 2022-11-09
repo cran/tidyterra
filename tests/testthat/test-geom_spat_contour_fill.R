@@ -12,17 +12,20 @@ test_that("Errors and messages", {
   # Errors
   expect_error(ggplot(r) +
     geom_spatraster_contour_filled())
-  expect_error(ggplot() +
-    geom_spatraster_contour_filled(data = v),
-  regexp = "only works with SpatRaster"
+  expect_error(
+    ggplot() +
+      geom_spatraster_contour_filled(data = v),
+    regexp = "only works with SpatRaster"
   )
-  expect_error(ggplot() +
-    geom_spatraster_contour_filled(data = 1:3),
-  regexp = "only works with SpatRaster"
+  expect_error(
+    ggplot() +
+      geom_spatraster_contour_filled(data = 1:3),
+    regexp = "only works with SpatRaster"
   )
-  expect_error(ggplot() +
-    geom_spatraster_contour_filled(data = r, aes(z = noexist)),
-  regexp = "Layer noexist not found"
+  expect_error(
+    ggplot() +
+      geom_spatraster_contour_filled(data = r, aes(z = noexist)),
+    regexp = "Layer noexist not found"
   )
   s <- ggplot() +
     geom_spatraster_contour_filled(data = r) +
@@ -104,7 +107,7 @@ test_that("Test plot", {
     ) +
     geom_spatraster_contour(
       data = single, binwidth = 2,
-      color = "blue", size = 0.25
+      color = "blue", linewidth = 0.25
     ) +
     scale_fill_terrain_d()
 
@@ -117,7 +120,7 @@ test_that("Test plot", {
     geom_spatraster_contour_filled(data = single, bins = 5, alpha = 0.7) +
     geom_spatraster_contour(
       data = single, bins = 5,
-      color = "blue", size = 0.25
+      color = "blue", linewidth = 0.25
     ) +
     scale_fill_terrain_d()
 
@@ -133,7 +136,7 @@ test_that("Test plot", {
     ) +
     geom_spatraster_contour(
       data = single, breaks = seq(0, 16, 2),
-      color = "blue", size = 0.25
+      color = "blue", linewidth = 0.25
     ) +
     scale_fill_terrain_d(direction = -1)
 

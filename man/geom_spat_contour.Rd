@@ -96,17 +96,19 @@ The underlying implementation is based on \code{\link[ggplot2:geom_contour]{ggpl
 
 \code{geom_spatraster_contour}() understands the following aesthetics:
 \itemize{
-\item z
 \item alpha
 \item colour
+\item group
 \item linetype
-\item size
+\item linewidth
+\item weight
 }
 
 Additionally, \code{geom_spatraster_contour_filled()} understands also the
 following aesthetics, as well as the ones listed above:
 \itemize{
 \item fill
+\item subgroup
 }
 
 Check \code{\link[ggplot2:geom_contour]{ggplot2::geom_contour()}} for more info.
@@ -168,7 +170,7 @@ ggplot() +
   geom_spatraster_contour(
     data = r, aes(color = after_stat(level)),
     binwidth = 1,
-    size = 0.4
+    linewidth = 0.4
   ) +
   scale_color_gradientn(
     colours = hcl.colors(20, "Inferno"),
@@ -190,7 +192,7 @@ ggplot() +
   geom_spatraster_contour(
     data = r, breaks = seq(80, 200, 2.5),
     color = "grey30",
-    size = 0.1
+    linewidth = 0.1
   ) +
   scale_fill_hypso_d()
 }
@@ -200,9 +202,11 @@ ggplot() +
 \code{\link[ggplot2:geom_contour]{ggplot2::geom_contour()}}
 
 Other ggplot2 utils:
-\code{\link{autoplot}()},
+\code{\link{autoplot.Spat}},
+\code{\link{fortify.Spat}},
 \code{\link{geom_spatraster_rgb}()},
 \code{\link{geom_spatraster}()},
-\code{\link{ggspatvector}}
+\code{\link{ggspatvector}},
+\code{\link{stat_spat_coordinates}()}
 }
 \concept{ggplot2.utils}

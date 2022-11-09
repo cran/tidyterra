@@ -40,15 +40,17 @@
 #' @section Aesthetics:
 #'
 #' `geom_spatraster_contour`() understands the following aesthetics:
-#'  - z
 #'  - alpha
 #'  - colour
+#'  - group
 #'  - linetype
-#'  - size
+#'  - linewidth
+#'  - weight
 #'
 #' Additionally, `geom_spatraster_contour_filled()` understands also the
 #' following aesthetics, as well as the ones listed above:
 #'  - fill
+#'  - subgroup
 #'
 #' Check [ggplot2::geom_contour()] for more info.
 #'
@@ -89,7 +91,7 @@
 #'   geom_spatraster_contour(
 #'     data = r, aes(color = after_stat(level)),
 #'     binwidth = 1,
-#'     size = 0.4
+#'     linewidth = 0.4
 #'   ) +
 #'   scale_color_gradientn(
 #'     colours = hcl.colors(20, "Inferno"),
@@ -111,7 +113,7 @@
 #'   geom_spatraster_contour(
 #'     data = r, breaks = seq(80, 200, 2.5),
 #'     color = "grey30",
-#'     size = 0.1
+#'     linewidth = 0.1
 #'   ) +
 #'   scale_fill_hypso_d()
 #' }
@@ -125,7 +127,6 @@ geom_spatraster_contour <- function(mapping = NULL, data,
                                     na.rm = TRUE,
                                     show.legend = NA,
                                     inherit.aes = TRUE) {
-
   # Is a suggestion so far
   # nocov start
   if (!requireNamespace("isoband", quietly = TRUE)) {
@@ -144,10 +145,10 @@ geom_spatraster_contour <- function(mapping = NULL, data,
   # 1. Work with aes ----
   mapping <- override_aesthetics(
     mapping,
-    ggplot2::aes_string(
-      spatraster = "spatraster",
+    ggplot2::aes(
+      spatraster = .data$spatraster,
       # For faceting
-      lyr = "lyr"
+      lyr = .data$lyr
     )
   )
 
@@ -239,30 +240,35 @@ geom_spatraster_contour <- function(mapping = NULL, data,
   layer_spatrast
 }
 
-
-# Geom----
-
+# Geom ----
 # Provide a Geom* that only changes the defaults of GeomPath
+# Aligned with changes in ggplot2 3.4.0 for geom_sf
 GeomSpatRasterContour <- ggplot2::ggproto(
   "GeomSpatRasterContour",
   ggplot2::GeomPath,
   default_aes = aes(
     weight = 1,
-    colour = "grey50",
-    size = .5,
+    colour = "grey35",
+    linewidth = .2,
     linetype = 1,
     alpha = NA
-  )
+  ),
+  # To allow using size in ggplot2 < 3.4.0
+  non_missing_aes = "size",
+  # Tell ggplot2 to perform automatic renaming
+  rename_size = TRUE
 )
-
 
 # Stat ----
 StatTerraSpatRasterContour <- ggplot2::ggproto(
   "StatTerraSpatRasterContour",
   ggplot2::Stat,
   required_aes = "spatraster",
-  default_aes = ggplot2::aes(lyr = lyr, order = ggplot2::after_stat(level)),
-  extra_params = c("maxcell", "bins", "binwidth", "breaks", "na.rm"),
+  default_aes = ggplot2::aes(lyr = lyr, order = after_stat(level)),
+  extra_params = c(
+    "maxcell", "bins", "binwidth", "breaks", "na.rm",
+    "coord_crs"
+  ),
   setup_params = function(data, params) {
     range_lys <- lapply(data$spatraster, terra::minmax)
     params$z.range <- range(unlist(range_lys), na.rm = TRUE, finite = TRUE)
@@ -277,7 +283,7 @@ StatTerraSpatRasterContour <- ggplot2::ggproto(
           "\nWarning message:\n",
           "Plotting ", nly, " layers: ",
           paste0("`", unique(data$lyr), "`", collapse = ", "),
-          ".(geom_spatraster).",
+          ".(geom_spat_contour()).",
           "\n- Use facet_wrap(~lyr) for faceting.",
           "\n- Use aes(fill=<name_of_layer>) ",
           "for displaying a single layer\n"
@@ -294,38 +300,44 @@ StatTerraSpatRasterContour <- ggplot2::ggproto(
   compute_group = function(data, scales, z.range, bins = NULL, binwidth = NULL,
                            breaks = NULL, na.rm = FALSE, coord,
                            coord_crs = NA) {
-
-
     # Extract raster from group
     rast <- data$spatraster[[1]]
 
     # Reproject if needed
     rast <- reproject_raster_on_stat(rast, coord_crs)
     # To data and prepare
-    data_end <- pivot_longer_spat(rast)
+    prepare_iso <- pivot_longer_spat(rast)
+    # Keep initial data
+    data_rest <- data
+    # Don't need spatraster any more and increase size
+    # Set to NA
+    data_rest$spatraster <- NA
 
     # Now adjust min and max value, since reprojection may affect vals
-    data_end$value <- pmin(max(z.range), data_end$value)
-    data_end$value <- pmax(min(z.range), data_end$value)
+    prepare_iso$value <- pmin(max(z.range), prepare_iso$value)
+    prepare_iso$value <- pmax(min(z.range), prepare_iso$value)
 
     # Now create data with values from raster
-    names(data_end) <- c("x", "y", "lyr", "z")
-
-    # Final dataset
-    data$spatraster <- NA
-    data <- dplyr::left_join(data, data_end, by = "lyr")
+    names(prepare_iso) <- c("x", "y", "lyr", "z")
 
 
     # Port functions from ggplot2
     breaks <- contour_breaks(z.range, bins, binwidth, breaks)
 
-    isolines <- xyz_to_isolines(data, breaks)
-    path_df <- iso_to_path(isolines, data$group[1])
+    isolines <- xyz_to_isolines(prepare_iso, breaks)
+    path_df <- iso_to_path(isolines, data_rest$group[[1]])
 
     path_df$level <- as.numeric(path_df$level)
     path_df$nlevel <- scales::rescale_max(path_df$level)
+    path_df$lyr <- data_rest$lyr[[1]]
 
-    path_df
+    # Re-create data
+    # Remove group, we get that from path_df
+    data_rest <- remove_columns(data_rest, "group")
+
+    data <- dplyr::left_join(path_df, data_rest, by = "lyr")
+
+    data
   }
 )
 
