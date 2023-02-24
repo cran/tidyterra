@@ -1,3 +1,11 @@
+# tidyterra 0.3.2
+
+-   Fix a bug on `pull_crs()` that returned `"NA"` on **sf** objects with any
+    field equal to `NA` (#74).
+-   Improve docs on `scales_*` (#73) .
+-   Remove dependency on **crayon** package (superseded) in favor of **cli**.
+-   Remove **tidyverse** from Suggests.
+
 # tidyterra 0.3.1
 
 -   New **ggplot2** methods added:

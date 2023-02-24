@@ -8,7 +8,7 @@
 [![CRAN
 status](https://www.r-pkg.org/badges/version/tidyterra)](https://CRAN.R-project.org/package=tidyterra)
 [![CRAN
-results](https://cranchecks.info/badges/worst/tidyterra)](https://cran.r-project.org/web/checks/check_results_tidyterra.html)
+results](https://badges.cranchecks.info/worst/tidyterra.svg)](https://cran.r-project.org/web/checks/check_results_tidyterra.html)
 [![Downloads](https://cranlogs.r-pkg.org/badges/tidyterra)](https://CRAN.R-project.org/package=tidyterra)
 [![R-CMD-check](https://github.com/dieghernan/tidyterra/actions/workflows/check-full.yaml/badge.svg)](https://github.com/dieghernan/tidyterra/actions/workflows/check-full.yaml)
 [![codecov](https://codecov.io/gh/dieghernan/tidyterra/branch/main/graph/badge.svg?token=blvDmRjcfb)](https://app.codecov.io/gh/dieghernan/tidyterra)
@@ -32,18 +32,18 @@ objects with [{ggplot2}](https://ggplot2.tidyverse.org/).
 {tidyverse} methods implemented on {tidyterra} works differently
 depending on the type of Spat\* object:
 
--   SpatVector: the methods are implemented taking advantage of the
-    tidyverse implementation on {sf}. The SpatVector object is converted
-    first to sf via `sf::st_as_sf()`, then the method (or function) is
-    applied and finally the object is converted back to SpatVector with
-    `terra::vect()`. Hence, rows correspond to geometries and columns
-    correspond to attributes of the geometry.
+- SpatVector: the methods are implemented taking advantage of the
+  tidyverse implementation on {sf}. The SpatVector object is converted
+  first to sf via `sf::st_as_sf()`, then the method (or function) is
+  applied and finally the object is converted back to SpatVector with
+  `terra::vect()`. Hence, rows correspond to geometries and columns
+  correspond to attributes of the geometry.
 
--   SpatRaster: The implementation on SpatRaster objects differs, since
-    the methods could be applied to layers or to cells. {tidyterra}
-    overall approach is to treat the layers as columns of a tibble and
-    the cells as rows (i.e. `select(SpatRaster, 1)` would select the
-    first layer of a SpatRaster).
+- SpatRaster: The implementation on SpatRaster objects differs, since
+  the methods could be applied to layers or to cells. {tidyterra}
+  overall approach is to treat the layers as columns of a tibble and the
+  cells as rows (i.e. `select(SpatRaster, 1)` would select the first
+  layer of a SpatRaster).
 
 The methods implemented return the same type of object used as input,
 unless the expected behavior of the method is to return another type of
@@ -51,22 +51,22 @@ object, (for example, `as_tibble()` would return a tibble).
 
 Current methods and functions provided by {tidyterra} are:
 
-| tidyverse method      | SpatVector                             | SpatRaster                                                                                                     |
-|-----------------------|----------------------------------------|----------------------------------------------------------------------------------------------------------------|
-| `tibble::as_tibble()` | :heavy_check_mark:                     | :heavy_check_mark:                                                                                             |
-| `dplyr::select()`     | :heavy_check_mark:                     | :heavy_check_mark: Select layers                                                                               |
-| `dplyr::mutate()`     | :heavy_check_mark:                     | :heavy_check_mark: Create /modify layers                                                                       |
-| `dplyr::transmute()`  | :heavy_check_mark:                     | :heavy_check_mark:                                                                                             |
-| `dplyr::filter()`     | :heavy_check_mark:                     | :heavy_check_mark: Modify cells values and (additionally) remove outer cells.                                  |
-| `dplyr::slice()`      | :heavy_check_mark:                     | :heavy_check_mark: Additional methods for slicing by row and column.                                           |
-| `dplyr::pull()`       | :heavy_check_mark:                     | :heavy_check_mark:                                                                                             |
-| `dplyr::rename()`     | :heavy_check_mark:                     | :heavy_check_mark:                                                                                             |
-| `dplyr::relocate()`   | :heavy_check_mark:                     | :heavy_check_mark:                                                                                             |
-| `tidyr::drop_na()`    | :heavy_check_mark:                     | :heavy_check_mark: Remove cell values with `NA` on any layer. Additionally, outer cells with `NA` are removed. |
-| `tidyr::replace_na()` | :heavy_check_mark:                     | :heavy_check_mark:                                                                                             |
-| `ggplot2::autoplot()` | ✔️                                     | ✔️                                                                                                             |
-| `ggplot2::fortify()`  | ✔️ to sf via `sf::st_as_sf()`          | To a tibble with coordinates.                                                                                  |
-| `ggplot2::geom_*()`   | :heavy_check_mark: `geom_spatvector()` | :heavy_check_mark: `geom_spatraster()` and `geom_spatraster_rgb()`.                                            |
+| tidyverse method      | SpatVector                    | SpatRaster                                                                                     |
+|-----------------------|-------------------------------|------------------------------------------------------------------------------------------------|
+| `tibble::as_tibble()` | ✔️                            | ✔️                                                                                             |
+| `dplyr::select()`     | ✔️                            | ✔️ Select layers                                                                               |
+| `dplyr::mutate()`     | ✔️                            | ✔️ Create /modify layers                                                                       |
+| `dplyr::transmute()`  | ✔️                            | ✔️                                                                                             |
+| `dplyr::filter()`     | ✔️                            | ✔️ Modify cells values and (additionally) remove outer cells.                                  |
+| `dplyr::slice()`      | ✔️                            | ✔️ Additional methods for slicing by row and column.                                           |
+| `dplyr::pull()`       | ✔️                            | ✔️                                                                                             |
+| `dplyr::rename()`     | ✔️                            | ✔️                                                                                             |
+| `dplyr::relocate()`   | ✔️                            | ✔️                                                                                             |
+| `tidyr::drop_na()`    | ✔️                            | ✔️ Remove cell values with `NA` on any layer. Additionally, outer cells with `NA` are removed. |
+| `tidyr::replace_na()` | ✔️                            | ✔️                                                                                             |
+| `ggplot2::autoplot()` | ✔️                            | ✔️                                                                                             |
+| `ggplot2::fortify()`  | ✔️ to sf via `sf::st_as_sf()` | To a tibble with coordinates.                                                                  |
+| `ggplot2::geom_*()`   | ✔️ `geom_spatvector()`        | ✔️ `geom_spatraster()` and `geom_spatraster_rgb()`.                                            |
 
 ## :exclamation: A note on performance
 
@@ -104,7 +104,7 @@ remotes::install_github("dieghernan/tidyterra")
 ```
 
 Alternatively, you can install {tidyterra} using the
-[r-universe](https://dieghernan.r-universe.dev/ui#builds):
+[r-universe](https://dieghernan.r-universe.dev/tidyterra):
 
 ``` r
 # Enable this universe
@@ -148,6 +148,7 @@ ggplot() +
 <img src="https://raw.githubusercontent.com/dieghernan/tidyterra/main/img/README-example-temp-1.png" width="100%" />
 
 ``` r
+
 
 # Create maximum differences
 
@@ -201,10 +202,11 @@ plot
 <img src="https://raw.githubusercontent.com/dieghernan/tidyterra/main/img/README-example-tile-1.png" width="100%" />
 
 ``` r
+
 # Recognizes coord_sf()
 plot +
   # Change crs and datum (for relabeling graticules)
-  coord_sf(crs = 3035, datum = 3035)
+  coord_sf(crs = 3857, datum = 3857)
 ```
 
 <img src="https://raw.githubusercontent.com/dieghernan/tidyterra/main/img/README-example-tile-2.png" width="100%" />
@@ -221,6 +223,7 @@ terra::plot(asia)
 <img src="https://raw.githubusercontent.com/dieghernan/tidyterra/main/img/README-hypso-1.png" width="100%" />
 
 ``` r
+
 ggplot() +
   geom_spatraster(data = asia) +
   scale_fill_hypso_tint_c(
@@ -258,7 +261,7 @@ open a new [issue](https://github.com/dieghernan/tidyterra/issues)!
 
 To cite ‘tidyterra’ in publications use:
 
-Hernangomez D (2022). tidyterra: tidyverse Methods and ggplot2 Helpers
+Hernangomez D (2023). tidyterra: tidyverse Methods and ggplot2 Helpers
 for terra Objects. <https://doi.org/10.5281/zenodo.6572471>,
 <https://dieghernan.github.io/tidyterra/>
 
@@ -268,13 +271,13 @@ A BibTeX entry for LaTeX users is
       title = {{tidyterra}: tidyverse Methods and ggplot2 Helpers for terra Objects},
       doi = {10.5281/zenodo.6572471},
       author = {Diego Hernangómez},
-      year = {2022},
-      version = {0.3.1},
+      year = {2023},
+      version = {0.3.2},
       url = {https://dieghernan.github.io/tidyterra/},
       abstract = {Extension of the tidyverse for SpatRaster and SpatVector objects of the terra package. It includes also new geom_ functions that provide a convenient way of visualizing terra objects with ggplot2.},
     }
 
-## Acknowledgements
+## Acknowledgement
 
 {tidyterra} ggplot2 geoms are based on
 [{ggspatial}](https://github.com/paleolimbot/ggspatial) implementation,
