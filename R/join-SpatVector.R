@@ -78,7 +78,7 @@
 #'
 #' autoplot(left, aes(fill = letter)) + ggtitle("Left Join")
 #'
-#'
+#' \donttest{
 #' # Right join
 #' right <- v %>% right_join(df)
 #' nrow(right)
@@ -99,7 +99,7 @@
 #' # Check with data from df
 #' ggplot(full, aes(x, y)) +
 #'   geom_point(aes(color = letter))
-#'
+#' }
 inner_join.SpatVector <- function(x, y, by = NULL, copy = FALSE,
                                   suffix = c(".x", ".y"), ..., keep = NULL) {
   error_spat_join(y)
@@ -324,12 +324,9 @@ dplyr::anti_join
 
 error_spat_join <- function(y) {
   if (inherits(y, c("SpatVector", "sf"))) {
-    cli::cli_abort(
-      paste0(
-        cli::col_blue("y"), " should not have class ",
-        cli::col_blue(class(y)[1]), ". For spatial_joins use ",
-        cli::col_blue("`terra::intersect(x, y)`")
-      )
-    )
+    cli::cli_abort(paste(
+      "{.arg y} should not be {.cls {class(y)}}. For spatial joins use",
+      "{.fun terra::intersect}"
+    ))
   }
 }

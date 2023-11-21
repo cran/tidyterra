@@ -12,8 +12,8 @@
 \arguments{
 \item{.data}{A SpatVector}
 
-\item{...}{<\code{\link[dplyr:dplyr_data_masking]{data-masking}}> Name-value pairs of summary
-functions. The name will be the name of the variable in the result.
+\item{...}{<\code{\link[rlang:args_data_masking]{data-masking}}> Name-value pairs of
+summary functions. The name will be the name of the variable in the result.
 
 The value can be:
 \itemize{
@@ -31,6 +31,9 @@ on \pkg{dplyr}.}
 
 \item{.dissolve}{logical. Should borders between aggregated geometries
 be dissolved?}
+}
+\value{
+A SpatVector.
 }
 \description{
 \code{summarise()} creates a new SpatVector. It returns one geometry for each

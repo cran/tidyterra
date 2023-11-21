@@ -39,7 +39,7 @@
 #' @examples
 #' library(terra)
 #'
-#' r <- rast(matrix(1:90, ncol = 3), crs = "epsg:3857")
+#' r <- rast(matrix(1:90, ncol = 3), crs = "EPSG:3857")
 #'
 #' r
 #'
@@ -49,7 +49,7 @@
 #' as_tbl
 #'
 #' # From tibble
-#' newrast <- as_spatraster(as_tbl, crs = "epsg:3857")
+#' newrast <- as_spatraster(as_tbl, crs = "EPSG:3857")
 #' newrast
 #'
 as_spatraster <- function(x, ..., xycols = 1:2, crs = "", digits = 6) {
@@ -60,15 +60,23 @@ as_spatraster <- function(x, ..., xycols = 1:2, crs = "", digits = 6) {
   # Create from dtplyr
   if (inherits(x, "dtplyr_step")) x <- tibble::as_tibble(x)
 
-
   if (!inherits(x, "data.frame")) {
     cli::cli_abort(
-      "x should be a data.frame/tibble"
+      "{.arg x} should be a {.cls data.frame/tbl}, not {.cls {class(x)}}"
     )
   }
 
-  if (length(xycols) != 2 || !is.numeric(xycols)) {
-    stop("xycols should be two integers: `c(int, int)`")
+  if (length(xycols) != 2) {
+    cli::cli_abort(paste(
+      "{.arg xycols} should have a length of {.val {as.integer(2)}},",
+      "not {.val {length(xycols)}}"
+    ))
+  }
+
+  if (!is.numeric(xycols)) {
+    cli::cli_abort(
+      "{.arg xycols} should be a {.cls integer}, not {.cls {class(xycols)}}"
+    )
   }
 
   xycols <- as.integer(xycols)
@@ -127,7 +135,7 @@ as_spatraster <- function(x, ..., xycols = 1:2, crs = "", digits = 6) {
   xyvalind$valindex <- seq_len(nrow(xyvalind))
 
 
-  values_w_ind <- x_arrange[, -c(1:2)]
+  values_w_ind <- x_arrange[, -c(1, 2)]
   values_w_ind$valindex <- xyvalind$valindex
 
 

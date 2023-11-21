@@ -57,6 +57,7 @@
 #' # column is created to link each row to its original data frame
 #' bind_spat_rows(v1, v2, .id = "id")
 #'
+#' \donttest{
 #' # Use with sf
 #' sfobj <- sf::st_as_sf(v2[1, ])
 #'
@@ -82,6 +83,7 @@
 #'   SpatVector = v1[1, ], sf = sfobj[1, ],
 #'   mtcars = mtcars[1, ]
 #' ), .id = "source")
+#' }
 bind_spat_rows <- function(..., .id = NULL) {
   dots <- rlang::list2(...)
   # Return empty on none
@@ -111,9 +113,7 @@ bind_spat_rows <- function(..., .id = NULL) {
   # Ensure first is SpatVector
   if (!inherits(dots[[1]], "SpatVector")) {
     cli::cli_abort(paste(
-      "Object #1 in",
-      cli::col_blue("..."), "is not a",
-      cli::col_blue("SpatVector")
+      "Object {.field 1} in {.arg ...} is not a {.cls SpatVector}"
     ))
   }
 
@@ -163,18 +163,14 @@ bind_spat_rows <- function(..., .id = NULL) {
     # If tibble convert (internally) to SpatVector
     # Rest as tibble
     if (!inherits(x, "data.frame")) {
-      cli::cli_abort(paste0(
-        cli::style_bold("In bind_spat_rows(): "),
-        "Object #", i, " in ", cli::col_blue("..."),
-        " is not a data.frame/tbl"
+      cli::cli_abort(paste(
+        "In {.fun tidyterra::bind_spat_rows}:",
+        "object {.field {i}} in {.arg ...} is not a {.cls data.frame}"
       ))
     }
 
-    cli::cli_alert_warning(paste0(
-      cli::style_bold(
-        "Object #", i, " in ", cli::col_blue("..."),
-        " is a data.frame/tbl."
-      ),
+    cli::cli_alert_warning(paste(
+      "Object {.field {i}} in {.arg ...} is {.cls {class(x)}}",
       cli::col_grey("\nThe result would present empty geoms")
     ))
 
@@ -208,12 +204,9 @@ bind_spat_rows <- function(..., .id = NULL) {
 crs_compare <- function(a, b, index) {
   if (!identical(pull_crs(a), pull_crs(b))) {
     cli::cli_alert_warning(
-      paste0(
-        cli::style_bold("Reprojecting object #", index),
-        cli::col_grey(
-          "\nObject #", index, " in ", cli::col_blue("..."),
-          " doesn't have the same CRS than object #1"
-        )
+      paste(
+        "Reprojecting object {.field {index}} in {.arg ...} since it",
+        " doesn't have the same CRS than object {.field 1}"
       )
     )
   }

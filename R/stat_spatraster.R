@@ -47,7 +47,7 @@
 #'     aes(color = after_stat(value)),
 #'     geom = "point", maxcell = 250
 #'   ) +
-#'   scale_colour_viridis_c(na.value = NA) +
+#'   scale_colour_viridis_c(na.value = "transparent") +
 #'   facet_wrap(~lyr)
 #'
 #' # Using points and labels
@@ -68,7 +68,7 @@
 #'     alpha = 0.85,
 #'     maxcell = 20
 #'   ) +
-#'   scale_colour_viridis_c(na.value = NA)
+#'   scale_colour_viridis_c(na.value = "transparent")
 #' }
 stat_spatraster <- function(mapping = aes(),
                             data,
@@ -79,10 +79,11 @@ stat_spatraster <- function(mapping = aes(),
                             maxcell = 500000,
                             ...) {
   if (!inherits(data, "SpatRaster")) {
-    stop(
-      "geom_spatraster() only works with SpatRaster objects. ",
-      "See ?terra::vect"
-    )
+    cli::cli_abort(paste(
+      "{.fun tidyterra::stat_spatraster} only works with",
+      "{.cls SpatRaster} objects, not {.cls {class(data)}}.",
+      "See {.help terra::vect}"
+    ))
   }
 
 

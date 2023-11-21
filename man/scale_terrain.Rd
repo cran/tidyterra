@@ -13,15 +13,27 @@
 \alias{scale_color_terrain_b}
 \title{Terrain colour scales from grDevices}
 \usage{
-scale_fill_terrain_d(..., alpha = 1, direction = 1)
+scale_fill_terrain_d(
+  ...,
+  alpha = 1,
+  direction = 1,
+  na.translate = FALSE,
+  drop = TRUE
+)
 
-scale_colour_terrain_d(..., alpha = 1, direction = 1)
+scale_colour_terrain_d(
+  ...,
+  alpha = 1,
+  direction = 1,
+  na.translate = FALSE,
+  drop = TRUE
+)
 
 scale_fill_terrain_c(
   ...,
   alpha = 1,
   direction = 1,
-  na.value = NA,
+  na.value = "transparent",
   guide = "colourbar"
 )
 
@@ -29,7 +41,7 @@ scale_colour_terrain_c(
   ...,
   alpha = 1,
   direction = 1,
-  na.value = NA,
+  na.value = "transparent",
   guide = "colourbar"
 )
 
@@ -37,7 +49,7 @@ scale_fill_terrain_b(
   ...,
   alpha = 1,
   direction = 1,
-  na.value = NA,
+  na.value = "transparent",
   guide = "coloursteps"
 )
 
@@ -45,7 +57,7 @@ scale_colour_terrain_b(
   ...,
   alpha = 1,
   direction = 1,
-  na.value = NA,
+  na.value = "transparent",
   guide = "coloursteps"
 )
 }
@@ -88,12 +100,6 @@ away from the axes. Use the convenience function \code{\link[ggplot2:expansion]{
 to generate the values for the \code{expand} argument. The defaults are to
 expand the scale by 5\% on each side for continuous variables, and by
 0.6 units on each side for discrete variables.}
-    \item{\code{na.translate}}{Unlike continuous scales, discrete scales can easily show
-missing values, and do so by default. If you want to remove missing values
-from a discrete scale, specify \code{na.translate = FALSE}.}
-    \item{\code{drop}}{Should unused factor levels be omitted from the scale?
-The default, \code{TRUE}, uses the levels that appear in the data;
-\code{FALSE} uses all the levels in the factor.}
     \item{\code{minor_breaks}}{One of:
 \itemize{
 \item \code{NULL} for no minor breaks
@@ -121,7 +127,16 @@ breaks are given explicitly.}
 colors are ordered from darkest to lightest. If -1, the order of colors is
 reversed.}
 
-\item{na.value}{Missing values will be replaced with this value.}
+\item{na.translate}{Should \code{NA} values be removed from the legend? Default
+is \code{TRUE}.}
+
+\item{drop}{Should unused factor levels be omitted from the scale? The
+default (\code{TRUE}) removes unused factors.}
+
+\item{na.value}{Missing values will be replaced with this value. By default,
+\CRANpkg{tidyterra} uses \code{na.value = "transparent"} so cells with \code{NA} are
+not filled. See also
+\href{https://github.com/dieghernan/tidyterra/issues/120}{#120}.}
 
 \item{guide}{A function used to create a guide or its name. See
 \code{\link[ggplot2:guides]{guides()}} for more information.}
@@ -192,9 +207,9 @@ additional \code{...} parameters:
 }
 
 Other gradient scales and palettes for hypsometry:
+\code{\link{scale_color_coltab}()},
 \code{\link{scale_cross_blended}},
 \code{\link{scale_hypso}},
-\code{\link{scale_whitebox}},
-\code{\link{scale_wiki}}
+\code{\link{scale_whitebox}}
 }
 \concept{gradients}

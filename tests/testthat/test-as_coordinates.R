@@ -1,8 +1,10 @@
+test_that("as_coordinates errors", {
+  v <- volcano
+  expect_snapshot(as_coordinates(v), error = TRUE)
+})
+
 test_that("as_coordinates return a skeleton", {
   v <- volcano
-  expect_error(as_coordinates(v),
-    regexp = "SpatRaster object"
-  )
 
   r <- terra::rast(t(v))
 
@@ -48,7 +50,7 @@ test_that("as_coordinates return a raster", {
   # With crs
   r_crs <- r
 
-  terra::crs(r_crs) <- pull_crs("epsg:3857")
+  terra::crs(r_crs) <- pull_crs("EPSG:3857")
 
   a_rast_crs <- as_coordinates(r_crs, as.raster = TRUE)
 

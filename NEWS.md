@@ -1,3 +1,32 @@
+# tidyterra 0.5.0
+
+**tidyterra** has been accepted on JOSS. Please use the result of
+`citation("tidyterra")` or the following string:
+
+> Hernangómez, D. (2023). "Using the tidyverse with terra objects: the tidyterra
+> package." *Journal of Open Source Software*, *8*(91), 5751. ISSN 2475-9066,
+> <https://doi.org/10.21105/joss.05751>
+
+Other changes on this version:
+
+-   Support for SpatRasters with a color table
+    -   `autoplot.SpatRaster()` can detect now SpatRasters with color tables.
+    -   `geom_spatraster()` can detect now SpatRasters with color tables.
+    -   New scales for plotting SpatRasters with color tables:
+        `scale_fill_coltab()` and rest of family scales (`colour`).
+    -   tidyverse verbs keeps the associated `coltab` of a SpatRaster.
+-   By default all the discrete scales of **tidyterra** now have the following
+    setup: `na.translate = FALSE`.
+-   By default, all the non-discrete (e.g. continuous or breaks) scales of
+    **tidyterra** have now `na.value = "transparent"` (#120).
+-   Enhanced `glimpse.Spat()` with meta-information on type of geometry, crs,
+    etc.
+-   New messaging interface thanks to [**cli**](https://cli.r-lib.org/) package.
+
+# tidyterra 0.4.1
+
+-   Release for JOSS paper. No relevant changes.
+
 # tidyterra 0.4.0
 
 -   This release focuses heavily on SpatVectors. The improvements have been:
@@ -43,7 +72,7 @@
     `"meyers"` and `"nordisk-familjebok"`.
 -   Added colour scales to all palettes: `scale_colour_*`.
 -   Remove use of `ggplot2::aes_string()`.
--   Adapt geom\_`spatraster_contour()` and `geom_spatraster_contour_filled()` to
+-   Adapt `geom_spatraster_contour()` and `geom_spatraster_contour_filled()` to
     the changes introduced in **ggplot2 (3.4.0)**, most notably the adoption of
     `linewidth = .2`, by default.
 

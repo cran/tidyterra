@@ -62,7 +62,7 @@ drop_na.SpatVector <- function(data, ...) {
   if (nrow(dropped) == 0) {
     cli::cli_alert_warning(paste0(
       cli::col_red("All geometries dropped."),
-      "\nReturning empty SpatVector"
+      "\nReturning empty {.cls SpatVector}"
     ))
     vend <- terra::vect("POINT EMPTY")
     terra::crs(vend) <- pull_crs(data)
@@ -137,7 +137,7 @@ drop_na.SpatVector <- function(data, ...) {
 #'
 #'
 #' r <- rast(
-#'   crs = "epsg:3857",
+#'   crs = "EPSG:3857",
 #'   extent = c(0, 10, 0, 10),
 #'   nlyr = 3,
 #'   resolution = c(2.5, 2.5)
