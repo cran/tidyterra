@@ -1,6 +1,6 @@
 Package: tidyterra
 Title: 'tidyverse' Methods and 'ggplot2' Helpers for 'terra' Objects
-Version: 0.5.0
+Version: 0.5.1
 Authors@R: c(
     person("Diego", "Hernangómez", , "diego.hernangomezherrero@gmail.com", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0000-0001-8457-4658")),
@@ -34,7 +34,7 @@ LazyData: true
 RoxygenNote: 7.2.3
 X-schema.org-keywords: r, terra, ggplot-extension, r-spatial, rspatial
 NeedsCompilation: no
-Packaged: 2023-11-21 23:12:44 UTC; diego
+Packaged: 2023-12-15 11:14:29 UTC; diego
 Author: Diego Hernangómez [aut, cre, cph]
     (<https://orcid.org/0000-0001-8457-4658>),
   Dewey Dunnington [ctb] (<https://orcid.org/0000-0002-9415-4582>, for
@@ -42,4 +42,4 @@ Author: Diego Hernangómez [aut, cre, cph]
   ggplot2 authors [cph] (for contour code)
 Maintainer: Diego Hernangómez <diego.hernangomezherrero@gmail.com>
 Repository: CRAN
-Date/Publication: 2023-11-21 23:50:02 UTC
+Date/Publication: 2023-12-15 12:00:02 UTC

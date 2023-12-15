@@ -1,7 +1,7 @@
-73fbc75e58af902310be585a55051f5c *DESCRIPTION
+7b820f26871ea7dac84f4fa7ce141747 *DESCRIPTION
 c5245bbfca58e542443fd08f6b6a6757 *LICENSE
 0124f0d54ae80af641a3338c05df5fe4 *NAMESPACE
-fdf429c454a34519d87ba78fa754e995 *NEWS.md
+bbf25ed9ca776796c552fcda031a57a4 *NEWS.md
 91804a59c7ceb78f3d25f9d058f292d6 *R/arrange-SpatVector.R
 4615ae6e7dc453c61c107ed375682e0e *R/as_coordinates.R
 f42870b038d857c11da4188c3d1385c6 *R/as_sf.R
@@ -60,7 +60,7 @@ e4090476f21198b4d0992edd7be0b3a8 *data/volcano2.rda
 d343cc886af679645f4e5ec7e80d1e3d *inst/CITATION
 9122e302b38ad8befdeac3522bed774c *inst/WORDLIST
 58b35f8fcf143d41239e7fb2730bf6a1 *inst/doc/tidyterra.Rmd
-52d08f560c3fdef323c7d08231a876cb *inst/doc/tidyterra.html
+7b29b7bcd1c941e93dbb4e91b920629b *inst/doc/tidyterra.html
 3d9d35de468eb5e8802e62bae95846b0 *inst/doc/welcome.Rmd
 d71c2c64ce2d28ff27eed97010552f4b *inst/doc/welcome.html
 b1c2a212f2cf6317a7cfb3b9b64bcf20 *inst/extdata/asia.tif
@@ -71,7 +71,7 @@ abbb7f945b5c3f5f669b9ea14bf2a693 *inst/extdata/cyl_era.tif
 53e7eba9b16adc22476f704c508b3484 *inst/extdata/cyl_temp.tif
 5b7f8e61015fa80097d85b79b37eb0b2 *inst/extdata/cyl_tile.tif
 5d1afa499c7a9ec3d77372e362a22a97 *inst/extdata/volcano2.tif
-5d99fad2b7d09211affe6a18c917f777 *inst/schemaorg.json
+227e48d56de2d32a15400ce42129f9c1 *inst/schemaorg.json
 b5d447471ce6eea254851b20d9cae636 *man/arrange.SpatVector.Rd
 cc345ae52ef41349ba6b5bd7356e5d97 *man/as_coordinates.Rd
 5e6db1a0d54b0e74c0e44bb2d7a60ac7 *man/as_sf.Rd
@@ -135,9 +135,9 @@ c5ae23aebadd444dfc7717abd5b3cd7f *man/scale_whitebox.Rd
 245dac07926a1978855d34b239e10a85 *tests/testthat.R
 7c83a057f9da4b06eed2d1b916c24c4a *tests/testthat/test-arrange-SpatVector.R
 045f38cf2031f560f56e77aa5c671192 *tests/testthat/test-as_coordinates.R
-2d213694dda4a5fa2bca6eb5435202c1 *tests/testthat/test-as_sf.R
+c64cb040333099e9ec50152e7e130c02 *tests/testthat/test-as_sf.R
 677c30d6162f3057ae943d31f8ff4a85 *tests/testthat/test-as_spatraster.R
-ad21fa5cf518efeac2e57c705a925141 *tests/testthat/test-as_spatvector.R
+e1241fdb16931fbf456aa0383ade8afd *tests/testthat/test-as_spatvector.R
 cecee5ba86d36a89949b95ec387156f2 *tests/testthat/test-as_tibble-Spat.R
 da6e64782141cacd0dd2ef0334bbb9a6 *tests/testthat/test-autoplot-Spat.R
 5fdafe37b95eaf74fed20af56b5954ff *tests/testthat/test-bind-cols-SpatVector.R
@@ -195,7 +195,7 @@ b40317844b4a18269321e9f65a99b646 *vignettes/contourfilled-1.png
 1e5da1b4bf2bfe2648fe6db425d56a03 *vignettes/faceted-1.png
 03d4e7b9df5d32e8edbaa638bdeb7e6c *vignettes/hypso-1.png
 9dd16ab393680f298231673dbb38349b *vignettes/lux_ggplot-1.png
-9b356209522de9f3d004a4c46661c408 *vignettes/paper.bib
+ca886466fbde89adafb6c6877a4d2440 *vignettes/paper.bib
 504c8faf8bb64727e5d8ea7681571fb4 *vignettes/rgb-1.png
 a6491d358e6efb0021642a1401dcabde *vignettes/rgb-2.png
 f999609a815091cbbe7ca9c4ab9b10a9 *vignettes/spatraster-example1-1.png
