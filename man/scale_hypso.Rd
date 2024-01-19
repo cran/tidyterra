@@ -360,15 +360,10 @@ ggplot() +
     palette = "etopo1",
     labels = scales::label_number(),
     breaks = c(-10000, 0, 5000, 8000),
-    guide = guide_colorbar(
-      direction = "horizontal",
-      title.position = "top",
-      barwidth = 25
-    )
+    guide = guide_colorbar(reverse = TRUE)
   ) +
   labs(fill = "elevation (m)") +
-  theme_minimal() +
-  theme(legend.position = "bottom")
+  theme_minimal()
 
 
 # Binned
