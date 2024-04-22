@@ -4,7 +4,7 @@
 \alias{autoplot.Spat}
 \alias{autoplot.SpatRaster}
 \alias{autoplot.SpatVector}
-\title{Create a complete ggplot for Spat* objects}
+\title{Create a complete ggplot for \verb{Spat*} objects}
 \usage{
 \method{autoplot}{SpatRaster}(
   object,
@@ -19,7 +19,7 @@
 \method{autoplot}{SpatVector}(object, ...)
 }
 \arguments{
-\item{object}{A SpatRaster created with \code{\link[terra:rast]{terra::rast()}} or a SpatVector
+\item{object}{A \code{SpatRaster} created with \code{\link[terra:rast]{terra::rast()}} or a \code{SpatVector}
 created with \code{\link[terra:vect]{terra::vect()}}.}
 
 \item{...}{other arguments passed to \code{\link[=geom_spatraster]{geom_spatraster()}},
@@ -38,28 +38,28 @@ try to guess. See also \code{\link[=scale_fill_coltab]{scale_fill_coltab()}}.}
 \item{nrow, ncol}{Number of rows and columns on the facet.}
 }
 \value{
-A ggplot2 layer
+A \CRANpkg{ggplot2} layer
 }
 \description{
-\code{autoplot()} uses ggplot2 to draw plots as the ones produced by
+\code{autoplot()} uses \CRANpkg{ggplot2} to draw plots as the ones produced by
 \code{\link[terra:plot]{terra::plot()}}/\code{\link[terra:plotRGB]{terra::plotRGB()}} in a single command.
 }
 \details{
-Implementation of \code{\link[ggplot2:autoplot]{ggplot2::autoplot()}}.
+Implementation of \code{\link[ggplot2:autoplot]{ggplot2::autoplot()}} method.
 }
 \section{Methods}{
 
 
 Implementation of the \strong{generic} \code{\link[ggplot2:autoplot]{ggplot2::autoplot()}} function.
-\subsection{SpatRaster}{
+\subsection{\code{SpatRaster}}{
 
 Uses \code{\link[=geom_spatraster]{geom_spatraster()}} or \code{\link[=geom_spatraster_rgb]{geom_spatraster_rgb()}}.
 }
 
-\subsection{SpatVector}{
+\subsection{\code{SpatVector}}{
 
 Uses \code{\link[=geom_spatvector]{geom_spatvector()}}. Labels can be placed with \code{\link[=geom_spatvector_text]{geom_spatvector_text()}}
-or \code{\link[=geom_spatvector_label]{geom_spatvector_label()}}
+or \code{\link[=geom_spatvector_label]{geom_spatvector_label()}}.
 }
 }
 
@@ -101,15 +101,15 @@ v \%>\% autoplot(aes(fill = cpro)) +
 \seealso{
 \code{\link[ggplot2:autoplot]{ggplot2::autoplot()}}
 
-Other ggplot2 utils:
+Other \CRANpkg{ggplot2} utils:
 \code{\link{fortify.Spat}},
 \code{\link{geom_spat_contour}},
-\code{\link{geom_spatraster_rgb}()},
 \code{\link{geom_spatraster}()},
+\code{\link{geom_spatraster_rgb}()},
 \code{\link{ggspatvector}},
 \code{\link{stat_spat_coordinates}()}
 
-Other ggplot2 methods:
+Other \CRANpkg{ggplot2} methods:
 \code{\link{fortify.Spat}}
 }
 \concept{ggplot2.methods}

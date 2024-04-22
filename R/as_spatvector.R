@@ -1,19 +1,20 @@
-#' Method for coercing objects to to SpatVector
+#' Method for coercing objects to `SpatVector`
 #'
 #' @description
 #'
-#' `as_spatvector()` turns an existing  object into a SpatVector. This is a
-#' wrapper of [terra::vect()] S4 method.
+#' `as_spatvector()` turns an existing  object into a `SpatVector`. This is a
+#' wrapper of [terra::vect()] S4 method for signature `data.frame`.
 #'
 #' @return
-#' A SpatVector.
+#' A `SpatVector`.
 #'
 #' @export
 #'
 #' @name as_spatvector
 #' @rdname as_spatvector
 #'
-#' @param x A tibble, data frame, sf or sfc object.
+#' @param x A [`tibble`][tibble::tibble], data frame or \CRANpkg{sf} object of
+#'  class [`sf`][sf::st_sf] or [`sfc`][sf::st_sfc].
 #'
 #' @param ... additional arguments passed on to [terra::vect()].
 #'
@@ -22,29 +23,33 @@
 #'   column with WKT geometries.
 #'
 #' @param crs A crs on several formats (PROJ.4, WKT, EPSG code, ..) or
-#'   and spatial object from sf or terra that includes the target coordinate
-#'   reference system. See [pull_crs()]. See **Details**.
+#'   and spatial object from \CRANpkg{sf} or \CRANpkg{terra} that includes the
+#'   target coordinate reference system. See [pull_crs()] and **Details**.
 #'
 #'
 #' @details
 #'
 #' This function differs from [terra::vect()] on the following:
 #'
-#' - geometries with `NA/""` values are removed prior to conversion
-#' - If `x` is a grouped data frame (see [dplyr::group_by()]) the grouping
-#'   vars are transferred and a "grouped" SpatVector is created (see
+#' * geometries with `NA` or `""` values are removed prior to conversion
+#' * If `x` is a grouped data frame (see [dplyr::group_by()]) the grouping
+#'   vars are transferred and a "grouped" `SpatVector` is created (see
 #'   [group_by.SpatVector()]).
-#' - If no `crs` is provided and the tibble has been created with the method
-#'   [as_tibble.SpatVector()], the `crs` is inferred from `attr(x, "crs")`.
-#' - Handles correctly the conversion of `EMPTY` geometries between \pkg{sf}
-#'   and \pkg{terra}.
+#' * If no `crs` is provided and the tibble has been created with the method
+#'   [as_tibble.SpatVector()], the `crs` is inferred from
+#'   [`attr(x, "crs")`][attr()].
+#' * Handles correctly the conversion of `EMPTY` geometries between
+#'   \CRANpkg{sf} and \CRANpkg{terra}.
 #'
 #'
 #' @family coerce
 #'
-#' @seealso [pull_crs()]
+#' @seealso
 #'
-#' @section terra equivalent:
+#' [pull_crs()] for retrieving crs, and the corresponding utils [sf::st_crs()]
+#' and [terra::crs()].
+#'
+#' @section \CRANpkg{terra} equivalent:
 #'
 #' [terra::vect()]
 #'
@@ -218,9 +223,9 @@ as_spatvector.SpatVector <- function(x, ...) {
 }
 
 
-#' Rebuild objects created with as_tbl_internal to Spatvector
+#' Rebuild objects created with as_tbl_internal to `SpatVector`
 #' Strict version, used attributes for creating a template
-#' SpatVector and then transfer the values
+#' `SpatVector` and then transfer the values
 #' @noRd
 as_spatvect_attr <- function(x) {
   if (inherits(x, "SpatVector")) {

@@ -4,71 +4,92 @@
 \alias{fortify.Spat}
 \alias{fortify.SpatRaster}
 \alias{fortify.SpatVector}
-\title{Fortify Spat* Objects}
+\title{Fortify \verb{Spat*} Objects}
 \usage{
 \method{fortify}{SpatRaster}(
   model,
   data,
   ...,
   .name_repair = "unique",
-  maxcell = terra::ncell(model) * 1.1
+  maxcell = terra::ncell(model) * 1.1,
+  pivot = FALSE
 )
 
 \method{fortify}{SpatVector}(model, data, ...)
 }
 \arguments{
-\item{model}{A SpatRaster created with \code{\link[terra:rast]{terra::rast()}} or a SpatVector
+\item{model}{A \code{SpatRaster} created with \code{\link[terra:rast]{terra::rast()}} or a \code{SpatVector}
 created with \code{\link[terra:vect]{terra::vect()}}.}
 
 \item{data}{Not used by this method.}
 
-\item{...}{other arguments passed to methods}
+\item{...}{Other arguments passed on to \code{\link[ggplot2:layer]{layer()}}. These are
+often aesthetics, used to set an aesthetic to a fixed value, like
+\code{colour = "red"} or \code{size = 3}. They may also be parameters
+to the paired geom/stat.}
 
 \item{.name_repair}{Treatment of problematic column names:
 \itemize{
-\item \code{"minimal"}: No name repair or checks, beyond basic existence,
-\item \code{"unique"}: Make sure names are unique and not empty,
+\item \code{"minimal"}: No name repair or checks, beyond basic existence.
+\item \code{"unique"}: Make sure names are unique and not empty.
 \item \code{"check_unique"}: (default value), no name repair, but check they are
-\code{unique},
-\item \code{"universal"}: Make the names \code{unique} and syntactic
+\code{unique}.
+\item \code{"universal"}: Make the names \code{unique} and syntactic.
 \item a function: apply custom name repair (e.g., \code{.name_repair = make.names}
-for names in the style of base R).
-\item A purrr-style anonymous function, see \code{\link[rlang:as_function]{rlang::as_function()}}
+for names in the style of base \strong{R}).
+\item A purrr-style anonymous function, see \code{\link[rlang:as_function]{rlang::as_function()}}.
 }}
 
-\item{maxcell}{positive integer. Maximum number of cells to use for the plot.}
+\item{maxcell}{positive integer. Maximum number of cells to use for
+the plot.}
+
+\item{pivot}{Logical. When \code{TRUE} the \code{SpatRaster} would be fortified on
+\link[tidyr:pivot_longer]{long format}. When \code{FALSE} (the default) it would
+be fortified as a data frame with a column for each layer. See \strong{Details}.}
 }
 \value{
-\code{\link[=fortify.SpatVector]{fortify.SpatVector()}} returns a \code{sf} object and
-\code{\link[=fortify.SpatRaster]{fortify.SpatRaster()}} returns a tibble. See \strong{Methods}.
+\code{\link[=fortify.SpatVector]{fortify.SpatVector()}} returns a \code{\link[sf:sf]{sf}} object and
+\code{\link[=fortify.SpatRaster]{fortify.SpatRaster()}} returns a \code{\link[tibble:tibble]{tibble}}. See \strong{Methods}.
 }
 \description{
-Fortify SpatRasters and SpatVectors to data frames for compatibility with
-\code{\link[ggplot2:ggplot]{ggplot2::ggplot()}}.
+Fortify \code{SpatRaster} and \code{SpatVector} objects to data frames. This provide
+native compatibility with \code{\link[ggplot2:ggplot]{ggplot2::ggplot()}}.
 }
 \section{Methods}{
 
 
-Implementation of the \strong{generic} \code{\link[ggplot2:fortify]{ggplot2::fortify()}} function.
-\subsection{SpatRaster}{
+Implementation of the \strong{generic} \code{\link[ggplot2:fortify]{ggplot2::fortify()}} method.
+\subsection{\code{SpatRaster}}{
 
 Return a tibble than can be used with \verb{ggplot2::geom_*} like
 \code{\link[ggplot2:geom_point]{ggplot2::geom_point()}}, \code{\link[ggplot2:geom_tile]{ggplot2::geom_raster()}}, etc.
 
-The resulting tibble includes the coordinates on the columns \verb{x,y}. The
+The resulting tibble includes the coordinates on the columns \verb{x, y}. The
 values of each layer are included as additional columns named as per the
-name of the layer on the SpatRaster.
+name of the layer on the \code{SpatRaster}.
 
-The CRS of the SpatRaster can be retrieved with
-\verb{attr(<fortifiedSpatRaster>, "crs")}.
+The CRS of the \code{SpatRaster} can be retrieved with
+\code{attr(fortifiedSpatRaster, "crs")}.
 
-It is possible to convert the fortified object onto a SpatRaster again with
+It is possible to convert the fortified object onto a \code{SpatRaster} again with
 \code{\link[=as_spatraster]{as_spatraster()}}.
+
+When \code{pivot = TRUE} the \code{SpatRaster} is fortified in a "long" format (see
+\code{\link[tidyr:pivot_longer]{tidyr::pivot_longer()}}). The fortified object would have the following
+columns:
+\itemize{
+\item \verb{x,y}: Coordinates (center) of the cell on the corresponding CRS.
+\item \code{lyr}: Indicating the name of the \code{SpatRaster} layer of \code{value}.
+\item \code{value}: The value of the \code{SpatRaster} in the corresponding \code{lyr}.
 }
 
-\subsection{SpatVector}{
+This option may be useful when using several \verb{geom_*} and for faceting, see
+\strong{Examples}.
+}
 
-Return a \code{sf} object than can be used with \code{\link[ggplot2:ggsf]{ggplot2::geom_sf()}}.
+\subsection{\code{SpatVector}}{
+
+Return a \code{\link[sf:sf]{sf}} object than can be used with \code{\link[ggplot2:ggsf]{ggplot2::geom_sf()}}.
 }
 }
 
@@ -77,7 +98,8 @@ Return a \code{sf} object than can be used with \code{\link[ggplot2:ggsf]{ggplot
 
 # Get a SpatRaster
 r <- system.file("extdata/volcano2.tif", package = "tidyterra") \%>\%
-  terra::rast()
+  terra::rast() \%>\%
+  terra::project("EPSG:4326")
 
 fortified <- ggplot2::fortify(r)
 
@@ -90,21 +112,38 @@ attr(fortified, "crs")
 # Back to a SpatRaster with
 as_spatraster(fortified)
 
-# You can now use a SpatRaster with raster, contours, etc.
+# You can now use a SpatRaster with any geom
 library(ggplot2)
 
-# Use here the raster with resample
-ggplot(r, maxcell = 10000) +
-  # Need the aes parameters
-  geom_raster(aes(x, y, fill = elevation)) +
-  # Adjust the coords
-  coord_equal()
-
-# Or any other geom
 ggplot(r) +
   geom_histogram(aes(x = elevation),
     bins = 20, fill = "lightblue",
     color = "black"
+  )
+
+# ... and other packages
+# Use metR with facets
+library(metR)
+temp <- terra::rast(system.file("extdata/cyl_temp.tif",
+  package = "tidyterra"
+))
+brks <- seq(0, 21, 3) # Fix breaks!
+
+# Pivot option for faceting
+ggplot(temp, aes(x, y), pivot = TRUE) +
+  # tidyterra, don't inherit aes
+  geom_spatraster_contour_filled(
+    data = temp, inherit.aes = FALSE,
+    breaks = brks
+  ) +
+  # metR
+  geom_contour_tanaka(aes(z = value), breaks = brks) +
+  facet_wrap(~lyr, nrow = 1) +
+  scale_fill_whitebox_d(palette = "muted") +
+  theme_minimal() +
+  labs(
+    title = "tidyterra + metR", subtitle = "Facets",
+    fill = "temp (°C)", x = "", y = ""
   )
 
 # Create a SpatVector
@@ -116,7 +155,7 @@ cyl
 # To sf
 ggplot2::fortify(cyl)
 
-# Now you can use geom_sf()
+# Now you can use geom_sf() straight away thanks to fortify::SpatVector()
 
 library(ggplot2)
 
@@ -126,18 +165,18 @@ ggplot(cyl) +
 
 }
 \seealso{
-\code{\link[sf:st_as_sf]{sf::st_as_sf()}}, \link{as_tibble.Spat}, \code{\link[=as_spatraster]{as_spatraster()}},
+\code{\link[sf:st_as_sf]{sf::st_as_sf()}}, \code{\link{as_tibble.Spat}}, \code{\link[=as_spatraster]{as_spatraster()}},
 \code{\link[ggplot2:fortify]{ggplot2::fortify()}}.
 
-Other ggplot2 utils:
+Other \CRANpkg{ggplot2} utils:
 \code{\link{autoplot.Spat}},
 \code{\link{geom_spat_contour}},
-\code{\link{geom_spatraster_rgb}()},
 \code{\link{geom_spatraster}()},
+\code{\link{geom_spatraster_rgb}()},
 \code{\link{ggspatvector}},
 \code{\link{stat_spat_coordinates}()}
 
-Other ggplot2 methods:
+Other \CRANpkg{ggplot2} methods:
 \code{\link{autoplot.Spat}}
 
 Coercing objects:

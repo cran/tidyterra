@@ -1,23 +1,25 @@
-#' Coerce a SpatVector to a sf object
+#' Coerce a `SpatVector` to a [`sf`][sf::st_sf] object
 #'
 #' @description
 #'
-#' `as_sf()` turns a SpatVector to sf. This is a wrapper of [sf::st_as_sf()]
-#' with the particularity that the groups created with [group_by()] are
-#' preserved.
+#' [as_sf()] turns a `SpatVector` to [`sf`][sf::st_sf] object. This is a wrapper
+#' of [sf::st_as_sf()] with the particularity that the groups created with
+#' [group_by.SpatVector()] are preserved.
 #'
 #' @return
-#' A sf object.
+#' A [`sf`][sf::st_sf] object object with an additional `tbl_df` class, for
+#' pretty printing method.
 #'
 #' @export
 #'
-#' @param x A SpatVector.
+#' @param x A `SpatVector`.
 #'
 #' @param ... additional arguments passed on to [sf::st_as_sf()].
 #'
 #' @family coerce
 #'
 #' @examples
+#'
 #' library(terra)
 #'
 #' f <- system.file("extdata/cyl.gpkg", package = "tidyterra")
@@ -57,6 +59,12 @@ as_sf <- function(x, ...) {
     cli::cli_abort("{.arg x} is a {.cls {class(x)}} not a {.cls SpatVector}")
   }
   sfobj <- sf::st_as_sf(x, ...)
+
+  # Make a sf/tibble object
+  # https://github.com/r-spatial/sf/issues/951
+  # But boosting performance
+  template <- sf::st_as_sf(tibble::tibble(x = 1, y = 1), coords = c("x", "y"))
+  class(sfobj) <- class(template)
 
   if (is_grouped_spatvector(x)) {
     vars <- group_vars(x)

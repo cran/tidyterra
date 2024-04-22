@@ -2,14 +2,14 @@
 % Please edit documentation in R/distinct-SpatVector.R
 \name{distinct.SpatVector}
 \alias{distinct.SpatVector}
-\title{Keep distinct/unique rows and geometries of SpatVector objects}
+\title{Keep distinct/unique rows and geometries of \code{SpatVector} objects}
 \usage{
 \method{distinct}{SpatVector}(.data, ..., .keep_all = FALSE)
 }
 \arguments{
-\item{.data}{A SpatVector created with \code{\link[terra:vect]{terra::vect()}}.}
+\item{.data}{A \code{SpatVector} created with \code{\link[terra:vect]{terra::vect()}}.}
 
-\item{...}{<\code{\link[dplyr:distinct]{data-masking}}> Optional variables to
+\item{...}{<\code{\link[rlang:args_data_masking]{data-masking}}> Optional variables to
 use when determining uniqueness. If there are multiple rows for a given
 combination of inputs, only the first row will be preserved. If omitted,
 will use all variables in the data frame. There is a reserved variable
@@ -20,12 +20,12 @@ If a combination of \code{...} is not distinct, this keeps the
 first row of values.}
 }
 \value{
-A SpatVector object.
+A \code{SpatVector} object.
 }
 \description{
-Keep only unique/distinct rows and geometries from a SpatVector.
+Keep only unique/distinct rows and geometries from a \code{SpatVector}.
 }
-\section{terra equivalent}{
+\section{\CRANpkg{terra} equivalent}{
 
 
 \code{\link[terra:unique]{terra::unique()}}
@@ -35,9 +35,9 @@ Keep only unique/distinct rows and geometries from a SpatVector.
 
 
 Implementation of the \strong{generic} \code{\link[dplyr:distinct]{dplyr::distinct()}} function.
-\subsection{SpatVector}{
+\subsection{\code{SpatVector}}{
 
-It is possible to remove duplicate geometries including the \code{geometry}
+It is possible to remove duplicate geometries including the geometry
 variable explicitly in the \code{...} call. See \strong{Examples}.
 }
 }
@@ -83,12 +83,12 @@ distinct(v, geometry, .keep_all = TRUE)
 \seealso{
 \code{\link[dplyr:distinct]{dplyr::distinct()}}, \code{\link[terra:unique]{terra::unique()}}
 
-Other dplyr verbs that operate on rows:
+Other \CRANpkg{dplyr} verbs that operate on rows:
 \code{\link{arrange.SpatVector}()},
 \code{\link{filter.Spat}},
 \code{\link{slice.Spat}}
 
-Other dplyr methods:
+Other \CRANpkg{dplyr} methods:
 \code{\link{arrange.SpatVector}()},
 \code{\link{bind_cols.SpatVector}},
 \code{\link{bind_rows.SpatVector}},

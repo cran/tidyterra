@@ -6,7 +6,7 @@
 \alias{geom_spatvector_label}
 \alias{geom_spatvector_text}
 \alias{stat_spatvector}
-\title{Visualise SpatVector objects}
+\title{Visualise \code{SpatVector} objects}
 \usage{
 geom_spatvector(
   mapping = aes(),
@@ -57,7 +57,7 @@ stat_spatvector(
 at the top level of the plot. You must supply \code{mapping} if there is no plot
 mapping.}
 
-\item{data}{A SpatVector object, see \code{\link[terra:vect]{terra::vect()}}.}
+\item{data}{A \code{SpatVector} object, see \code{\link[terra:vect]{terra::vect()}}.}
 
 \item{na.rm}{If \code{FALSE}, the default, missing values are removed with
 a warning. If \code{TRUE}, missing values are silently removed.}
@@ -100,21 +100,21 @@ position adjustment function. Use the latter if you need to change the
 settings of the adjustment.}
 }
 \value{
-A ggplot2 layer
+A \CRANpkg{ggplot2} layer
 }
 \description{
-Wrappers of \code{\link[ggplot2:ggsf]{ggplot2::geom_sf()}} family used to visualise SpatVector objects
-(see \code{\link[terra:vect]{terra::vect()}}).
+Wrappers of \code{\link[ggplot2:ggsf]{ggplot2::geom_sf()}} family used to visualise \code{SpatVector}
+objects (see \code{\link[terra:vect]{terra::vect()}}).
 }
 \details{
 These functions are wrappers of \code{\link[ggplot2:ggsf]{ggplot2::geom_sf()}} functions. Since a
-\code{\link[=fortify.SpatVector]{fortify.SpatVector()}} method is provided, \strong{ggplot2} treat a SpatVector
-in the same way that a \code{sf} object. A side effect is that you can use
-\code{\link[ggplot2:ggsf]{ggplot2::geom_sf()}} directly with SpatVectors.
+\code{\link[=fortify.SpatVector]{fortify.SpatVector()}} method is provided, \CRANpkg{ggplot2} treat a
+\code{SpatVector} in the same way that a \code{\link[sf:sf]{sf}} object. A side effect
+is that you can use \code{\link[ggplot2:ggsf]{ggplot2::geom_sf()}} directly with \code{SpatVector} objects.
 
 See \code{\link[ggplot2:ggsf]{ggplot2::geom_sf()}} for details on aesthetics, etc.
 }
-\section{terra equivalent}{
+\section{\CRANpkg{terra} equivalent}{
 
 
 \code{\link[terra:plot]{terra::plot()}}
@@ -166,12 +166,12 @@ ggplot(cyl) +
 \seealso{
 \code{\link[ggplot2:ggsf]{ggplot2::geom_sf()}}
 
-Other ggplot2 utils:
+Other \CRANpkg{ggplot2} utils:
 \code{\link{autoplot.Spat}},
 \code{\link{fortify.Spat}},
 \code{\link{geom_spat_contour}},
-\code{\link{geom_spatraster_rgb}()},
 \code{\link{geom_spatraster}()},
+\code{\link{geom_spatraster_rgb}()},
 \code{\link{stat_spat_coordinates}()}
 }
 \concept{ggplot2.utils}

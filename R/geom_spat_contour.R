@@ -1,36 +1,38 @@
-#' Plot SpatRaster contours
+#' Plot `SpatRaster` contours
 #'
 #' @description
 #'
-#' These geoms create contours of SpatRaster objects.  To specify a valid
+#' These geoms create contours of `SpatRaster` objects.  To specify a valid
 #' surface, you should specify the layer on `aes(z = layer_name)`, otherwise all
 #' the layers would be consider for creating contours. See also **Facets**
 #' section.
 #'
 #' The underlying implementation is based on [ggplot2::geom_contour()].
 #'
+#' `r lifecycle::badge("experimental")` `geom_spatraster_contour_text()` creates
+#' labeled contours and it is implemented on top of [isoband::isolines_grob()].
+#'
 #' @export
 #'
 #' @rdname geom_spat_contour
 #' @name geom_spat_contour
+#' @order 1
 #'
 #' @inheritParams geom_spatraster
-#' @param bins Number of contour bins. Overridden by `binwidth`.
-#' @param binwidth The width of the contour bins. Overridden by `breaks`.
-#' @param breaks One of:
-#'   - Numeric vector to set the contour breaks
-#'   - A function that takes the range of the data and binwidth as input
-#'   and returns breaks as output. A function can be created from a formula
-#'   (e.g. ~ fullseq(.x, .y)).
+#' @inheritParams ggplot2::geom_contour
+#' @inheritParams ggplot2::geom_text
 #'
-#'   Overrides `binwidth` and `bins`. By default, this is a vector of length
-#'   ten with [pretty()] breaks.
-#'
-#' @return A ggplot2 layer
+#' @return A \CRANpkg{ggplot2} layer
 #' @family ggplot2.utils
-#' @seealso  [ggplot2::geom_contour()]
+#' @seealso
+#' [ggplot2::geom_contour()].
 #'
-#' @section  terra equivalent:
+#' The \CRANpkg{metR} package also provides a set of alternative functions:
+#' - [metR::geom_contour2()].
+#' - [metR::geom_text_contour()] and [metR::geom_label_contour()].
+#' - [metR::geom_contour_tanaka()].
+#'
+#' @section \CRANpkg{terra} equivalent:
 #'
 #' [terra::contour()]
 #'
@@ -39,38 +41,47 @@
 #'
 #' @section Aesthetics:
 #'
-#' `geom_spatraster_contour`() understands the following aesthetics:
-#'  - alpha
-#'  - colour
-#'  - group
-#'  - linetype
-#'  - linewidth
-#'  - weight
+#' `geom_spatraster_contour()` / `geom_spatraster_contour_text()` understands
+#'  the following aesthetics:
+#'  - [`alpha`][ggplot2::aes_colour_fill_alpha]
+#'  - [`colour`][ggplot2::aes_colour_fill_alpha]
+#'  - [`group`][ggplot2::aes_group_order]
+#'  - [`linetype`][ggplot2::aes_linetype_size_shape]
+#'  - [`linewidth`][ggplot2::aes_linetype_size_shape]
+#' `geom_spatraster_contour_text()` understands also:
+#' - [`size`][ggplot2::aes_linetype_size_shape]
+#' - `label`
+#' - `family`
+#' - `fontface`
 #'
 #' Additionally, `geom_spatraster_contour_filled()` understands also the
 #' following aesthetics, as well as the ones listed above:
-#'  - fill
-#'  - subgroup
+#'  - [`fill`][ggplot2::aes_colour_fill_alpha]
+#'  - `subgroup`
 #'
-#' Check [ggplot2::geom_contour()] for more info.
+#' Check [ggplot2::geom_contour()] for more info on contours and
+#' `vignette("ggplot2-specs", package = "ggplot2")` for an overview of the
+#' aesthetics.
 #'
 #'
 #' @section Computed variables:
 #'
-#' This geom computes internally some variables that are available for use as
+#' These geom computes internally some variables that are available for use as
 #' aesthetics, using (for example) `aes(color = after_stat(<computed>))` (see
 #' [ggplot2::after_stat()]).
 #'
-#' \describe{
-#'  \item{`level`}{Height of contour. For contour lines, this is numeric vector
-#'    that represents bin boundaries. For contour bands, this is an ordered
-#'    factor that represents bin ranges.}
-#'  \item{`nlevel`}{Height of contour, scaled to maximum of 1.}
-#'  \item{`lyr`}{Name of the layer.}
-#'  \item{`level_low`, `level_high`, `level_mid`}{(contour bands only) Lower
-#'    and upper bin boundaries for each band, as well the mid point between
-#'    the boundaries.}
-#' }
+#'  - `after_stat(lyr)`: Name of the layer.
+#'  - `after_stat(level)`: Height of contour. For contour lines, this is numeric
+#'    vector that represents bin boundaries. For contour bands, this is an
+#'    ordered factor that represents bin ranges.
+#'  - `after_stat(nlevel)`: Height of contour, scaled to maximum of 1.
+#'  - `after_stat(level_low)`, `after_stat(level_high)`,
+#'    `after_stat(level_mid)`: (contour bands only) Lower and upper bin
+#'    boundaries for each band, as well the mid point between the boundaries.
+#'
+#' @section Dropped variables:
+#' - `z`: After contouring, the `z` values of individual data points are no
+#'   longer available.
 #'
 #' @examples
 #' \donttest{
@@ -85,6 +96,14 @@
 #'
 #' ggplot() +
 #'   geom_spatraster_contour(data = r)
+#'
+#'
+#' # Labelled
+#' ggplot() +
+#'   geom_spatraster_contour_text(
+#'     data = r, breaks = c(110, 130, 160, 190),
+#'     color = "grey10", family = "serif"
+#'   )
 #'
 #'
 #' ggplot() +
@@ -345,6 +364,9 @@ StatTerraSpatRasterContour <- ggplot2::ggproto(
     data_rest <- remove_columns(data_rest, "group")
 
     data <- dplyr::left_join(path_df, data_rest, by = "lyr")
+
+    # Final cleanup
+    data <- remove_columns(data, ".size")
 
     data
   }

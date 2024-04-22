@@ -1,15 +1,18 @@
-#' Fortify Spat* Objects
+#' Fortify `Spat*` Objects
 #'
-#' Fortify SpatRasters and SpatVectors to data frames for compatibility with
-#' [ggplot2::ggplot()].
+#' Fortify `SpatRaster` and `SpatVector` objects to data frames. This provide
+#' native compatibility with [ggplot2::ggplot()].
 #'
 #'
-#' @param model A SpatRaster created with [terra::rast()] or a SpatVector
+#' @param model A `SpatRaster` created with [terra::rast()] or a `SpatVector`
 #'   created with [terra::vect()].
 #' @param data Not used by this method.
-#' @param maxcell positive integer. Maximum number of cells to use for the plot.
+#' @inheritParams geom_spatraster
 #' @inheritParams ggplot2::fortify
 #' @inheritParams as_tibble.Spat
+#' @param pivot Logical. When `TRUE` the `SpatRaster` would be fortified on
+#'   [long format][tidyr::pivot_longer()]. When `FALSE` (the default) it would
+#'   be fortified as a data frame with a column for each layer. See **Details**.
 #' @importFrom ggplot2 fortify
 #' @export
 #'
@@ -17,44 +20,57 @@
 #' @family ggplot2.methods
 #' @family coerce
 #'
-#' @return [fortify.SpatVector()] returns a `sf` object and
-#'   [fortify.SpatRaster()] returns a tibble. See **Methods**.
+#' @return
+#'
+#' [fortify.SpatVector()] returns a [`sf`][sf::st_sf] object and
+#' [fortify.SpatRaster()] returns a [`tibble`][tibble::tibble]. See **Methods**.
 #'
 #' @rdname fortify.Spat
 #' @name fortify.Spat
 #'
-#' @seealso [sf::st_as_sf()], [as_tibble.Spat], [as_spatraster()],
+#' @seealso [sf::st_as_sf()], [`as_tibble.Spat`], [as_spatraster()],
 #'   [ggplot2::fortify()].
 #'
 #' @section Methods:
 #'
-#' Implementation of the **generic** [ggplot2::fortify()] function.
+#' Implementation of the **generic** [ggplot2::fortify()] method.
 #'
-#' ## SpatRaster
+#' ## `SpatRaster`
 #'
 #' Return a tibble than can be used with `ggplot2::geom_*` like
 #' [ggplot2::geom_point()], [ggplot2::geom_raster()], etc.
 #'
-#' The resulting tibble includes the coordinates on the columns `x,y`. The
+#' The resulting tibble includes the coordinates on the columns `x, y`. The
 #' values of each layer are included as additional columns named as per the
-#' name of the layer on the SpatRaster.
+#' name of the layer on the `SpatRaster`.
 #'
-#' The CRS of the SpatRaster can be retrieved with
-#' `attr(<fortifiedSpatRaster>, "crs")`.
+#' The CRS of the `SpatRaster` can be retrieved with
+#' `attr(fortifiedSpatRaster, "crs")`.
 #'
-#' It is possible to convert the fortified object onto a SpatRaster again with
+#' It is possible to convert the fortified object onto a `SpatRaster` again with
 #' [as_spatraster()].
 #'
-#' ## SpatVector
+#' When `pivot = TRUE` the `SpatRaster` is fortified in a "long" format (see
+#' [tidyr::pivot_longer()]). The fortified object would have the following
+#' columns:
+#' - `x,y`: Coordinates (center) of the cell on the corresponding CRS.
+#' - `lyr`: Indicating the name of the `SpatRaster` layer of `value`.
+#' - `value`: The value of the `SpatRaster` in the corresponding `lyr`.
 #'
-#' Return a `sf` object than can be used with [ggplot2::geom_sf()].
+#' This option may be useful when using several `geom_*` and for faceting, see
+#' **Examples**.
+#'
+#' ## `SpatVector`
+#'
+#' Return a [`sf`][sf::st_sf] object than can be used with [ggplot2::geom_sf()].
 #'
 #' @examples
 #' \donttest{
 #'
 #' # Get a SpatRaster
 #' r <- system.file("extdata/volcano2.tif", package = "tidyterra") %>%
-#'   terra::rast()
+#'   terra::rast() %>%
+#'   terra::project("EPSG:4326")
 #'
 #' fortified <- ggplot2::fortify(r)
 #'
@@ -67,21 +83,38 @@
 #' # Back to a SpatRaster with
 #' as_spatraster(fortified)
 #'
-#' # You can now use a SpatRaster with raster, contours, etc.
+#' # You can now use a SpatRaster with any geom
 #' library(ggplot2)
 #'
-#' # Use here the raster with resample
-#' ggplot(r, maxcell = 10000) +
-#'   # Need the aes parameters
-#'   geom_raster(aes(x, y, fill = elevation)) +
-#'   # Adjust the coords
-#'   coord_equal()
-#'
-#' # Or any other geom
 #' ggplot(r) +
 #'   geom_histogram(aes(x = elevation),
 #'     bins = 20, fill = "lightblue",
 #'     color = "black"
+#'   )
+#'
+#' # ... and other packages
+#' # Use metR with facets
+#' library(metR)
+#' temp <- terra::rast(system.file("extdata/cyl_temp.tif",
+#'   package = "tidyterra"
+#' ))
+#' brks <- seq(0, 21, 3) # Fix breaks!
+#'
+#' # Pivot option for faceting
+#' ggplot(temp, aes(x, y), pivot = TRUE) +
+#'   # tidyterra, don't inherit aes
+#'   geom_spatraster_contour_filled(
+#'     data = temp, inherit.aes = FALSE,
+#'     breaks = brks
+#'   ) +
+#'   # metR
+#'   geom_contour_tanaka(aes(z = value), breaks = brks) +
+#'   facet_wrap(~lyr, nrow = 1) +
+#'   scale_fill_whitebox_d(palette = "muted") +
+#'   theme_minimal() +
+#'   labs(
+#'     title = "tidyterra + metR", subtitle = "Facets",
+#'     fill = "temp (°C)", x = "", y = ""
 #'   )
 #'
 #' # Create a SpatVector
@@ -93,7 +126,7 @@
 #' # To sf
 #' ggplot2::fortify(cyl)
 #'
-#' # Now you can use geom_sf()
+#' # Now you can use geom_sf() straight away thanks to fortify::SpatVector()
 #'
 #' library(ggplot2)
 #'
@@ -102,14 +135,25 @@
 #' }
 #'
 fortify.SpatRaster <- function(model, data, ..., .name_repair = "unique",
-                               maxcell = terra::ncell(model) * 1.1) {
+                               maxcell = terra::ncell(model) * 1.1,
+                               pivot = FALSE) {
   model <- resample_spat(model, maxcell)
 
   crs <- pull_crs(model)
 
   if (is.na(crs)) crs <- ""
 
-  model <- as_tibble(model, xy = TRUE, .name_repair = .name_repair)
+  if (pivot == FALSE) {
+    model <- as_tibble(model, xy = TRUE, .name_repair = .name_repair)
+  } else {
+    model <- check_mixed_cols(model,
+      fn = "tidyterra::fortify.SpatRaster"
+    )
+    model <- pivot_longer_spat(model)
+    attr(model, "pvt_fort") <- TRUE
+  }
+
+
   attr(model, "crs") <- crs
 
   model

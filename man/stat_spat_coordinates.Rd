@@ -2,7 +2,7 @@
 % Please edit documentation in R/stat_spat_coordinates.R
 \name{stat_spat_coordinates}
 \alias{stat_spat_coordinates}
-\title{Extract coordinates from SpatVector objects}
+\title{Extract coordinates from \code{SpatVector} objects}
 \usage{
 stat_spat_coordinates(
   mapping = aes(),
@@ -21,7 +21,7 @@ stat_spat_coordinates(
 at the top level of the plot. You must supply \code{mapping} if there is no plot
 mapping.}
 
-\item{data}{A SpatVector object, see \code{\link[terra:vect]{terra::vect()}}.}
+\item{data}{A \code{SpatVector} object, see \code{\link[terra:vect]{terra::vect()}}.}
 
 \item{geom}{The geometric object to use to display the data, either as a
 \code{ggproto} \code{Geom} subclass or as a string naming the geom stripped of the
@@ -50,10 +50,10 @@ the default plot specification, e.g. \code{\link[ggplot2:borders]{borders()}}.}
 \item{...}{Other arguments passed on to \code{\link[ggplot2:stat_sf_coordinates]{ggplot2::stat_sf_coordinates()}}.}
 }
 \value{
-A ggplot2 layer
+A \CRANpkg{ggplot2} layer
 }
 \description{
-\code{stat_spat_coordinates()} extracts the coordinates from SpatVector objects
+\code{stat_spat_coordinates()} extracts the coordinates from \code{SpatVector} objects
 and summarises them to one pair of coordinates (x and y) per geometry.
 }
 \details{
@@ -85,12 +85,12 @@ ggplot(cyl) +
 
 }
 \seealso{
-Other ggplot2 utils:
+Other \CRANpkg{ggplot2} utils:
 \code{\link{autoplot.Spat}},
 \code{\link{fortify.Spat}},
 \code{\link{geom_spat_contour}},
-\code{\link{geom_spatraster_rgb}()},
 \code{\link{geom_spatraster}()},
+\code{\link{geom_spatraster_rgb}()},
 \code{\link{ggspatvector}}
 }
 \concept{ggplot2.utils}

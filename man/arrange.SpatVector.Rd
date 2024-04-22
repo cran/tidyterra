@@ -2,27 +2,28 @@
 % Please edit documentation in R/arrange-SpatVector.R
 \name{arrange.SpatVector}
 \alias{arrange.SpatVector}
-\title{Order SpatVectors using column values}
+\title{Order a \code{SpatVector} using column values}
 \usage{
 \method{arrange}{SpatVector}(.data, ..., .by_group = FALSE)
 }
 \arguments{
-\item{.data}{A SpatVector created with \code{\link[terra:vect]{terra::vect()}}.}
+\item{.data}{A \code{SpatVector} created with \code{\link[terra:vect]{terra::vect()}}.}
 
-\item{...}{<\code{\link[dplyr:arrange]{data-masking}}> Variables, or functions of
-variables. Use \code{\link[dplyr:desc]{dplyr::desc()}} to sort a variable in descending order.}
+\item{...}{<\code{\link[rlang:args_data_masking]{data-masking}}> Variables, or
+functions of variables. Use \code{\link[dplyr:desc]{desc()}} to sort a variable in
+descending order.}
 
 \item{.by_group}{If \code{TRUE}, will sort first by grouping variable. Applies to
-grouped SpatVectors only.}
+grouped \code{SpatVector} only (see \code{\link[=group_by.SpatVector]{group_by.SpatVector()}}).}
 }
 \value{
-A SpatVector object.
+A \code{SpatVector} object.
 }
 \description{
-\code{arrange()} orders the geometries of a SpatVector by the values of
-selected columns.
+\code{arrange.SpatVector()} orders the geometries of a \code{SpatVector} by the
+values of selected columns.
 }
-\section{terra equivalent}{
+\section{\CRANpkg{terra} equivalent}{
 
 
 \code{\link[terra:sort]{terra::sort()}}
@@ -32,7 +33,7 @@ selected columns.
 
 
 Implementation of the \strong{generic} \code{\link[dplyr:arrange]{dplyr::arrange()}} function for
-SpatVectors.
+\code{SpatVector} class.
 }
 
 \examples{
@@ -71,12 +72,12 @@ Other single table verbs:
 \code{\link{slice.Spat}},
 \code{\link{summarise.SpatVector}()}
 
-Other dplyr verbs that operate on rows:
+Other \CRANpkg{dplyr} verbs that operate on rows:
 \code{\link{distinct.SpatVector}()},
 \code{\link{filter.Spat}},
 \code{\link{slice.Spat}}
 
-Other dplyr methods:
+Other \CRANpkg{dplyr} methods:
 \code{\link{bind_cols.SpatVector}},
 \code{\link{bind_rows.SpatVector}},
 \code{\link{count.SpatVector}()},
