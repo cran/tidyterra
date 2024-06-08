@@ -1,6 +1,6 @@
 Package: tidyterra
 Title: 'tidyverse' Methods and 'ggplot2' Helpers for 'terra' Objects
-Version: 0.6.0
+Version: 0.6.1
 Authors@R: c(
     person("Diego", "Hernangómez", , "diego.hernangomezherrero@gmail.com", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0000-0001-8457-4658")),
@@ -25,8 +25,8 @@ Suggests: hexbin, isoband, knitr, lifecycle, maptiles, metR, rmarkdown,
         s2, testthat (>= 3.0.0), vctrs, vdiffr
 VignetteBuilder: knitr
 Config/Needs/coverage: covr
-Config/Needs/website: geodata, dieghernan/gitdevr, ragg, styler,
-        ggspatial, cpp11, remotes
+Config/Needs/website: rspatial/geodata, dieghernan/gitdevr, ragg,
+        styler, ggspatial, cpp11, remotes
 Config/testthat/edition: 3
 Config/testthat/parallel: true
 Encoding: UTF-8
@@ -34,7 +34,7 @@ LazyData: true
 RoxygenNote: 7.3.1
 X-schema.org-keywords: r, terra, ggplot-extension, r-spatial, rspatial
 NeedsCompilation: no
-Packaged: 2024-04-22 14:31:38 UTC; diego
+Packaged: 2024-06-08 07:59:44 UTC; diego
 Author: Diego Hernangómez [aut, cre, cph]
     (<https://orcid.org/0000-0001-8457-4658>),
   Dewey Dunnington [ctb] (<https://orcid.org/0000-0002-9415-4582>, for
@@ -42,4 +42,4 @@ Author: Diego Hernangómez [aut, cre, cph]
   ggplot2 authors [cph] (for contour code)
 Maintainer: Diego Hernangómez <diego.hernangomezherrero@gmail.com>
 Repository: CRAN
-Date/Publication: 2024-04-22 23:50:02 UTC
+Date/Publication: 2024-06-08 08:40:02 UTC

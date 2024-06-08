@@ -1,3 +1,13 @@
+# tidyterra 0.6.1
+
+-   Add new scales:
+    -   `grass_db` and `scale_fill_grass_c()` family. This is an implementation
+        of `terra::map.pal()`, that is the default palette for `terra::plot()`
+        (`> 1.7.78`).
+    -   `autoplot.SpatRaster()` now uses also `grass_db` as the default palette.
+    -   Add `scale_fill_princess_c()` scale family.
+-   Fix tests.
+
 # tidyterra 0.6.0
 
 -   Requires **ggplot2** (\>= 3.5.0).

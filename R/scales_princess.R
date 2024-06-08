@@ -1,15 +1,15 @@
-#' Gradient scales from **WhiteboxTools** color schemes
+#' Gradient scales from princess color schemes
 #'
 #' @description
 #'
-#' Implementation of the gradient palettes provided by
-#' [WhiteboxTools](https://github.com/jblindsay/whitebox-tools). Three
+#' Implementation of the gradient palettes presented in
+#' <https://leahsmyth.github.io/Princess-Colour-Schemes/index.html>. Three
 #' scales are provided:
-#' - `scale_*_whitebox_d()`: For discrete values.
-#' - `scale_*_whitebox_c()`: For continuous values.
-#' - `scale_*_whitebox_b()`: For binning continuous values.
+#' - `scale_*_princess_d()`: For discrete values.
+#' - `scale_*_princess_c()`: For continuous values.
+#' - `scale_*_princess_b()`: For binning continuous values.
 #'
-#' Additionally, a color palette `whitebox.colors()` is provided. See also
+#' Additionally, a color palette `princess.colors()` is provided. See also
 #' [grDevices::terrain.colors()] for details.
 #'
 #'
@@ -24,7 +24,7 @@
 #'
 #' @export
 #'
-#' @name scale_whitebox
+#' @name scale_princess
 #'
 #' @inheritDotParams ggplot2::discrete_scale breaks:drop
 #' @inheritDotParams ggplot2::continuous_scale breaks:labels
@@ -36,7 +36,7 @@
 #' ```{r, echo=FALSE, results="asis", message = FALSE, warning = FALSE}
 #'
 #' suppressPackageStartupMessages(library(dplyr))
-#' whitebox_coltab %>%
+#' princess_db %>%
 #'   pull(pal) %>%
 #'   unique() %>%
 #'   paste0('`"', ., '"`', collapse = ", ") %>%
@@ -56,8 +56,7 @@
 #'
 #' @family gradients
 #'
-#' @source <https://github.com/jblindsay/whitebox-tools>, under
-#' MIT License. Copyright (c) 2017-2021 John Lindsay.
+#' @source <https://github.com/LeahSmyth/Princess-Colour-Schemes>.
 #'
 #' @examples
 #' \donttest{
@@ -67,17 +66,17 @@
 #' volcano2_rast <- rast(filepath)
 #'
 #' # Palette
-#' plot(volcano2_rast, col = whitebox.colors(100))
+#' plot(volcano2_rast, col = princess.colors(100))
 #'
 #' library(ggplot2)
 #' ggplot() +
 #'   geom_spatraster(data = volcano2_rast) +
-#'   scale_fill_whitebox_c()
+#'   scale_fill_princess_c()
 #'
 #' # Binned
 #' ggplot() +
 #'   geom_spatraster(data = volcano2_rast) +
-#'   scale_fill_whitebox_b(breaks = seq(70, 200, 10), palette = "atlas")
+#'   scale_fill_princess_b(breaks = seq(70, 200, 10), palette = "denmark")
 #'
 #' # With discrete values
 #' factor <- volcano2_rast %>% mutate(cats = cut(elevation,
@@ -91,9 +90,9 @@
 #'
 #' ggplot() +
 #'   geom_spatraster(data = factor, aes(fill = cats)) +
-#'   scale_fill_whitebox_d(na.value = "gray10", palette = "soft")
+#'   scale_fill_princess_d(na.value = "gray10", palette = "maori")
 #' }
-scale_fill_whitebox_d <- function(palette = "high_relief", ...,
+scale_fill_princess_d <- function(palette = "snow", ...,
                                   alpha = 1, direction = 1,
                                   na.translate = FALSE,
                                   drop = TRUE) {
@@ -107,7 +106,7 @@ scale_fill_whitebox_d <- function(palette = "high_relief", ...,
 
   ggplot2::discrete_scale(
     aesthetics = "fill",
-    palette = whitebox_pal(
+    palette = princess_pal(
       alpha = alpha,
       direction = direction,
       palette = palette
@@ -118,8 +117,8 @@ scale_fill_whitebox_d <- function(palette = "high_relief", ...,
   )
 }
 #' @export
-#' @rdname scale_whitebox
-scale_colour_whitebox_d <- function(palette = "high_relief", ...,
+#' @rdname scale_princess
+scale_colour_princess_d <- function(palette = "snow", ...,
                                     alpha = 1, direction = 1,
                                     na.translate = FALSE,
                                     drop = TRUE) {
@@ -133,7 +132,7 @@ scale_colour_whitebox_d <- function(palette = "high_relief", ...,
 
   ggplot2::discrete_scale(
     aesthetics = "colour",
-    palette = whitebox_pal(
+    palette = princess_pal(
       alpha = alpha,
       direction = direction,
       palette = palette
@@ -145,8 +144,8 @@ scale_colour_whitebox_d <- function(palette = "high_relief", ...,
 }
 
 #' @export
-#' @rdname scale_whitebox
-scale_fill_whitebox_c <- function(palette = "high_relief", ...,
+#' @rdname scale_princess
+scale_fill_princess_c <- function(palette = "snow", ...,
                                   alpha = 1, direction = 1,
                                   na.value = "transparent",
                                   guide = "colourbar") {
@@ -158,11 +157,11 @@ scale_fill_whitebox_c <- function(palette = "high_relief", ...,
     cli::cli_abort("{.arg direction} must be {.field 1} or {.field -1}")
   }
 
-  length_pal <- nrow(extract_pal(whitebox_coltab, palette = palette))
+  length_pal <- nrow(extract_pal(tidyterra::princess_db, palette = palette))
 
   ggplot2::continuous_scale(
     aesthetics = "fill",
-    palette = scales::gradient_n_pal(whitebox_pal(
+    palette = scales::gradient_n_pal(princess_pal(
       alpha = alpha,
       direction = direction,
       palette = palette
@@ -174,8 +173,8 @@ scale_fill_whitebox_c <- function(palette = "high_relief", ...,
 }
 
 #' @export
-#' @rdname scale_whitebox
-scale_colour_whitebox_c <- function(palette = "high_relief", ...,
+#' @rdname scale_princess
+scale_colour_princess_c <- function(palette = "snow", ...,
                                     alpha = 1, direction = 1,
                                     na.value = "transparent",
                                     guide = "colourbar") {
@@ -187,11 +186,11 @@ scale_colour_whitebox_c <- function(palette = "high_relief", ...,
     cli::cli_abort("{.arg direction} must be {.field 1} or {.field -1}")
   }
 
-  length_pal <- nrow(extract_pal(whitebox_coltab, palette = palette))
+  length_pal <- nrow(extract_pal(tidyterra::princess_db, palette = palette))
 
   ggplot2::continuous_scale(
     aesthetics = "colour",
-    palette = scales::gradient_n_pal(whitebox_pal(
+    palette = scales::gradient_n_pal(princess_pal(
       alpha = alpha,
       direction = direction,
       palette = palette
@@ -204,8 +203,8 @@ scale_colour_whitebox_c <- function(palette = "high_relief", ...,
 
 
 #' @export
-#' @rdname scale_whitebox
-scale_fill_whitebox_b <- function(palette = "high_relief", ...,
+#' @rdname scale_princess
+scale_fill_princess_b <- function(palette = "snow", ...,
                                   alpha = 1, direction = 1,
                                   na.value = "transparent",
                                   guide = "coloursteps") {
@@ -217,12 +216,12 @@ scale_fill_whitebox_b <- function(palette = "high_relief", ...,
     cli::cli_abort("{.arg direction} must be {.field 1} or {.field -1}")
   }
 
-  length_pal <- nrow(extract_pal(whitebox_coltab, palette = palette))
+  length_pal <- nrow(extract_pal(tidyterra::princess_db, palette = palette))
 
 
   ggplot2::binned_scale(
     aesthetics = "fill",
-    palette = scales::gradient_n_pal(whitebox_pal(
+    palette = scales::gradient_n_pal(princess_pal(
       alpha = alpha,
       direction = direction,
       palette = palette
@@ -234,8 +233,8 @@ scale_fill_whitebox_b <- function(palette = "high_relief", ...,
 }
 
 #' @export
-#' @rdname scale_whitebox
-scale_colour_whitebox_b <- function(palette = "high_relief", ...,
+#' @rdname scale_princess
+scale_colour_princess_b <- function(palette = "snow", ...,
                                     alpha = 1, direction = 1,
                                     na.value = "transparent",
                                     guide = "coloursteps") {
@@ -247,12 +246,12 @@ scale_colour_whitebox_b <- function(palette = "high_relief", ...,
     cli::cli_abort("{.arg direction} must be {.field 1} or {.field -1}")
   }
 
-  length_pal <- nrow(extract_pal(whitebox_coltab, palette = palette))
+  length_pal <- nrow(extract_pal(tidyterra::princess_db, palette = palette))
 
 
   ggplot2::binned_scale(
     aesthetics = "colour",
-    palette = scales::gradient_n_pal(whitebox_pal(
+    palette = scales::gradient_n_pal(princess_pal(
       alpha = alpha,
       direction = direction,
       palette = palette
@@ -265,17 +264,14 @@ scale_colour_whitebox_b <- function(palette = "high_relief", ...,
 
 
 #' @export
-#' @rdname scale_whitebox
+#' @rdname scale_princess
 #'
 #' @inheritParams wiki.colors
 #' @examples
 #'
-#' # Display all the whitebox palettes
+#' # Display all the princess palettes
 #'
-#' pals <- c(
-#'   "atlas", "high_relief", "arid", "soft", "muted", "purple",
-#'   "viridi", "gn_yl", "pi_y_g", "bl_yl_rd", "deep"
-#' )
+#' pals <- unique(princess_db$pal)
 #'
 #' # Helper fun for plotting
 #'
@@ -288,15 +284,15 @@ scale_colour_whitebox_b <- function(palette = "high_relief", ...,
 #' for (i in pals) {
 #'   image(
 #'     x = seq(1, ncols), y = 1, z = as.matrix(seq(1, ncols)),
-#'     col = whitebox.colors(ncols, i), main = i,
+#'     col = princess.colors(ncols, i), main = i,
 #'     ylab = "", xaxt = "n", yaxt = "n", bty = "n"
 #'   )
 #' }
 #' par(opar)
-whitebox.colors <- function(n, palette = "high_relief",
+princess.colors <- function(n, palette = "snow",
                             alpha = 1, rev = FALSE) {
   if ((n <- as.integer(n[1L])) > 0) {
-    paltab <- extract_pal(whitebox_coltab, palette = palette)
+    paltab <- extract_pal(tidyterra::princess_db, palette = palette)
     colors <- as.character(paltab$hex)
     endcols <- tidyterra_ramp(colors, n, alpha, rev)
     return(endcols)
@@ -306,10 +302,10 @@ whitebox.colors <- function(n, palette = "high_relief",
 }
 
 
-whitebox_pal <- function(alpha = 1, direction = 1, palette) {
+princess_pal <- function(alpha = 1, direction = 1, palette) {
   # nocov start
   function(n) {
-    pal <- whitebox.colors(n,
+    pal <- princess.colors(n,
       rev = direction != 1, alpha = alpha,
       palette = palette
     )
@@ -319,31 +315,20 @@ whitebox_pal <- function(alpha = 1, direction = 1, palette) {
   # nocov end
 }
 
-extract_pal <- function(df, palette) {
-  palette <- tolower(palette)
 
-  if (!palette %in% df$pal) {
-    cli::cli_abort("{.arg palette} does not match any given palette")
-  }
-
-  df <- df[df$pal == palette, ]
-  df
-}
+#' @export
+#' @rdname scale_princess
+#' @usage NULL
+scale_color_princess_d <- scale_colour_princess_d
 
 
 #' @export
-#' @rdname scale_whitebox
+#' @rdname scale_princess
 #' @usage NULL
-scale_color_whitebox_d <- scale_colour_whitebox_d
+scale_color_princess_c <- scale_colour_princess_c
 
 
 #' @export
-#' @rdname scale_whitebox
+#' @rdname scale_princess
 #' @usage NULL
-scale_color_whitebox_c <- scale_colour_whitebox_c
-
-
-#' @export
-#' @rdname scale_whitebox
-#' @usage NULL
-scale_color_whitebox_b <- scale_colour_whitebox_b
+scale_color_princess_b <- scale_colour_princess_b
