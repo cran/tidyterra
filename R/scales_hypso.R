@@ -92,20 +92,6 @@
 #'   geom_spatraster(data = volcano2_rast) +
 #'   scale_fill_hypso_c(palette = "colombia_hypso")
 #'
-#' # Use hypsometric  tint version...
-#' ggplot() +
-#'   geom_spatraster(data = volcano2_rast) +
-#'   scale_fill_hypso_tint_c(palette = "colombia_hypso")
-#'
-#' # ...but not suitable for the range of the raster: adjust
-#' my_lims <- minmax(volcano2_rast) %>% as.integer() + c(-2, 2)
-#'
-#' ggplot() +
-#'   geom_spatraster(data = volcano2_rast) +
-#'   scale_fill_hypso_tint_c(
-#'     palette = "colombia_hypso",
-#'     limits = my_lims
-#'   )
 #'
 #' # Full map with true tints
 #'
@@ -134,13 +120,12 @@
 #'   geom_spatraster(data = volcano2_rast) +
 #'   scale_fill_hypso_b(breaks = seq(70, 200, 25), palette = "wiki-2.0_hypso")
 #'
-#' # With limits and breaks
+#' # With breaks
 #' ggplot() +
 #'   geom_spatraster(data = volcano2_rast) +
-#'   scale_fill_hypso_tint_b(
+#'   scale_fill_hypso_b(
 #'     breaks = seq(75, 200, 25),
-#'     palette = "wiki-2.0_hypso",
-#'     limits = my_lims
+#'     palette = "wiki-2.0_hypso"
 #'   )
 #'
 #' # With discrete values
@@ -392,6 +377,12 @@ hypso.colors <- function(n, palette = "etopo1_hypso",
 #' almost as an uniform color. This could be adjusted using the
 #' `limits`/`values` parameters.
 #'
+#' When passing `limits` parameter to `scale_*_hypso_tint_*` the colors would
+#' be restricted of those specified by this parameter, keeping the distribution
+#' of the tint. You can combine this with `oob` (i.e.
+#' `oob = scales::oob_squish`) to avoid blank pixels in the plot.
+#'
+#'
 #' `hypso.colors2()` provides a gradient color palette where the distance
 #' between colors is different depending of the type of color. In contrast,
 #' `hypso.colors()` provides an uniform gradient across colors. See
@@ -480,8 +471,8 @@ scale_fill_hypso_tint_c <- function(palette = "etopo1_hypso", ...,
 
   if (is.null(values)) values <- hypsocol$limit
   # Reescale
-  res <- scales::rescale(values)
   if (is.null(limits)) limits <- range(values)
+  res <- scales::rescale(values, from = limits)
 
   ggplot2::scale_fill_gradientn(...,
     colors = hexcol,
@@ -524,8 +515,8 @@ scale_colour_hypso_tint_c <- function(palette = "etopo1_hypso", ...,
 
   if (is.null(values)) values <- hypsocol$limit
   # Reescale
-  res <- scales::rescale(values)
   if (is.null(limits)) limits <- range(values)
+  res <- scales::rescale(values, from = limits)
 
   ggplot2::scale_colour_gradientn(...,
     colors = hexcol,
@@ -569,8 +560,8 @@ scale_fill_hypso_tint_b <- function(palette = "etopo1_hypso", ...,
 
   if (is.null(values)) values <- hypsocol$limit
   # Reescale
-  res <- scales::rescale(values)
   if (is.null(limits)) limits <- range(values)
+  res <- scales::rescale(values, from = limits)
 
   ggplot2::scale_fill_stepsn(
     ...,
@@ -614,8 +605,8 @@ scale_colour_hypso_tint_b <- function(palette = "etopo1_hypso", ...,
 
   if (is.null(values)) values <- hypsocol$limit
   # Reescale
-  res <- scales::rescale(values)
   if (is.null(limits)) limits <- range(values)
+  res <- scales::rescale(values, from = limits)
 
   ggplot2::scale_colour_stepsn(
     ...,

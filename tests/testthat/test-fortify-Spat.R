@@ -104,6 +104,20 @@ test_that("Fortify SpatRasters pivot", {
   expect_snapshot(aa <- fortify(fort2, pivot = TRUE))
 
   expect_identical(unique(aa$lyr), names(back))
+
+  # No complain in double and integer (treated all as numeric)
+  # https://stackoverflow.com/questions/79292989
+
+  m <- matrix(c(1:24, NA), nrow = 5, ncol = 5)
+  n <- matrix(rep(5, time = 25), nrow = 5, ncol = 5)
+
+  db_int <- terra::rast(c(A = terra::rast(m), B = terra::rast(n)))
+  expect_identical(terra::is.int(db_int), c(TRUE, FALSE))
+  expect_silent(db_int_f <- fortify(db_int, pivot = TRUE))
+
+  expect_equal(nrow(db_int_f), terra::ncell(db_int) * terra::nlyr(db_int))
+  expect_identical(unique(db_int_f$lyr), names(db_int))
+
   # What about with no CRS?
 
   r_no <- r
@@ -127,6 +141,86 @@ test_that("Fortify SpatRasters pivot", {
     ggplot2::facet_wrap(~lyr)
 
   build_terra <- ggplot2::ggplot_build(v_t)
+})
+
+test_that("Fortify SpatRasters pivot factor", {
+  # https://stackoverflow.com/questions/79340152/
+  r1 <- terra::rast(
+    nrows = 10, ncols = 10, xmin = 0, xmax = 10,
+    ymin = 0, ymax = 10
+  )
+  r1[] <- runif(terra::ncell(r1), min = 1, max = 5)
+
+  r2 <- terra::rast(
+    nrows = 10, ncols = 10, xmin = 0, xmax = 10,
+    ymin = 0, ymax = 10
+  )
+  r2[] <- runif(terra::ncell(r2), min = 1, max = 5)
+
+  # Combine rasters into a stack
+  s <- c(r1 / r1, r1 / r2, r2 / r1, r2 / r2)
+  names(s) <- c("r1/r1", "r1/r2", "r2/r1", "r2/r2")
+
+  # Reclassify the raster stack
+  # Define reclassification matrix
+  m_rc <- matrix(
+    c(
+      0, 0.5, 1,
+      0.5, 0.9, 2,
+      0.9, 1.1, 3,
+      1.1, 2, 4,
+      2, max(terra::global(s, max, na.rm = TRUE)$max), 5
+    ),
+    ncol = 3, byrow = TRUE
+  )
+
+  # Apply reclassification
+  s_r <- terra::classify(s, m_rc)
+  s_r_f <- terra::as.factor(s_r)
+
+  # Levls are not the same on origin
+  levs_ko <- terra::levels(s_r_f)
+
+  # lapply values
+  levs_ko <- lapply(levs_ko, function(x) {
+    as.character(x[, 2])
+  })
+  expect_false(identical(levs_ko[[1]], as.character(seq(1, 5))))
+  expect_false(identical(levs_ko[[1]], levs_ko[[2]]))
+  expect_false(identical(levs_ko[[1]], levs_ko[[3]]))
+  expect_true(identical(levs_ko[[1]], levs_ko[[4]]))
+  expect_true(identical(levs_ko[[2]], levs_ko[[3]]))
+  expect_false(identical(levs_ko[[2]], levs_ko[[4]]))
+  expect_false(identical(levs_ko[[3]], levs_ko[[4]]))
+
+  # All levels now should be the same on all layers
+  s_r_ok <- check_mixed_cols(s_r_f)
+
+  levs_ok <- terra::levels(s_r_ok)
+
+  levs_ok <- lapply(levs_ok, function(x) {
+    as.character(x[, 2])
+  })
+
+  # Keep order
+  expect_identical(levs_ok[[1]], as.character(seq(1, 5)))
+
+  expect_identical(levs_ok[[1]], levs_ok[[2]])
+  expect_identical(levs_ok[[1]], levs_ok[[3]])
+  expect_identical(levs_ok[[1]], levs_ok[[4]])
+  expect_identical(levs_ok[[2]], levs_ok[[3]])
+  expect_identical(levs_ok[[2]], levs_ok[[4]])
+  expect_identical(levs_ok[[3]], levs_ok[[4]])
+
+  # In fortify is ok as well
+  lev_ok <- fortify(s_r_f, pivot = TRUE)
+  expect_identical(levels(lev_ok$value), as.character(seq(1, 5)))
+
+  # And we still remove things
+  rchar <- select(terra::rast(s_r_f), 1)
+  rchar[] <- rep(c(1, 2, 3, 4), 25)
+  s_r_f_mix <- c(s_r_f, rchar)
+  expect_snapshot(end <- check_mixed_cols(s_r_f_mix))
 })
 
 test_that("Fortify SpatGraticule", {

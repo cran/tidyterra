@@ -1,3 +1,21 @@
+# tidyterra 0.7.0
+
+-   Minimal version of **terra** required is `1.8-10`.
+-   Remove **metR** from Suggests.
+-   Improve handling of factors when several layers have different levels. This
+    is done using `terra::combineLevels()` (**terra** \>= `1.8-10`). See
+    <https://stackoverflow.com/questions/79340152>.
+-   Now `scales` that uses limits truncate the legend when `limits` parameter is
+    provided (#165 \@Fan-iX). Scales impacted:
+    -   `scale_*_cross_blended_tint_c` and `scale_*_cross_blended_tint_b`.
+    -   `scale_*_hypso_tint_c` and `scale_*_hypso_tint_b`.
+    -   `scale_*_grass_c` and `scale_*_grass_b`.
+-   Now `geom_spatraster()` (and overall pivoting of `SpatRaster` is less strict
+    with different layer classes: if several layers can be defined as numeric
+    (i.e. `double`, `integer` and `numeric`) the pivoting (and therefore the
+    plot) can be performed. This is consistent with `tidyr::pivot_longer()`
+    behavior (<https://stackoverflow.com/questions/79292989>).
+
 # tidyterra 0.6.2
 
 -   Add (limited) support for `SpatGraticule` (see `terra::graticule()`) #155.
