@@ -20,7 +20,8 @@ geom_spatraster_rgb(
   max_col_value = 255,
   ...,
   stretch = NULL,
-  zlim = NULL
+  zlim = NULL,
+  mask_projection = FALSE
 )
 }
 \arguments{
@@ -75,6 +76,11 @@ lists which parameters it can accept.
 \item{stretch}{character. Option to stretch the values to increase contrast: "lin" (linear) or "hist" (histogram). The linear stretch uses \code{\link[terra]{stretch}} with arguments \code{minq=0.02} and \code{maxq=0.98}}
 
 \item{zlim}{numeric vector of length 2. Range of values to plot (optional). If this is set, and \code{stretch="lin"} is used, then the values are stretched within the range of \code{zlim}. This allows creating consistent coloring between SpatRasters with different cell-value ranges, even when stretching the colors for improved contrast}
+
+\item{mask_projection}{logical, defaults to \code{FALSE}. If \code{TRUE}, mask out
+areas outside the input extent. For example, to avoid data wrapping
+around the date-line in Equal Area projections. This parameter is passed
+to \code{\link[terra:project]{terra::project()}} when reprojecting the \code{SpatRaster}.}
 }
 \value{
 A \CRANpkg{ggplot2} layer

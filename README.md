@@ -147,7 +147,8 @@ install.packages("tidyterra")
 You can install the development version of **tidyterra** like so:
 
 ``` r
-remotes::install_github("dieghernan/tidyterra")
+# install.packages("pak")
+pak::pak("dieghernan/tidyterra")
 ```
 
 Alternatively, you can install **tidyterra** using the
@@ -232,16 +233,16 @@ ggplot(prov) +
   theme_minimal() +
   coord_sf(crs = 25830) +
   labs(
-    fill = "variation",
-    title = "Variation of temperature in Castille and Leon (Spain)",
-    subtitle = "Average temperatures in June vs. May"
+    fill = "Variation",
+    title = "Variation of Temperature in Castile and León (Spain)",
+    subtitle = "Average Temperatures: June vs. May"
   )
 ```
 
 <img src="https://raw.githubusercontent.com/dieghernan/tidyterra/main/img/README-example-temp-2.png" width="100%" />
 
-**tidyterra** also provide a geom for plotting RGB `SpatRaster` tiles
-with **ggplot2**
+**tidyterra** also provides a geom for plotting RGB `SpatRaster` tiles
+with **ggplot2**:
 
 ``` r
 rgb_tile <- rast(system.file("extdata/cyl_tile.tif", package = "tidyterra"))
@@ -258,9 +259,9 @@ plot
 
 ``` r
 
-# Recognizes coord_sf()
+# Automatically recognizes and applies coord_sf() for spatial data.
 plot +
-  # Change crs and datum (for relabeling graticules)
+  # Change the CRS and datum (useful for relabeling graticules).
   coord_sf(crs = 3857, datum = 3857)
 ```
 

@@ -1,13 +1,14 @@
 Package: tidyterra
 Title: 'tidyverse' Methods and 'ggplot2' Helpers for 'terra' Objects
-Version: 0.7.0
+Version: 0.7.1
 Authors@R: c(
     person("Diego", "Hernangómez", , "diego.hernangomezherrero@gmail.com", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0000-0001-8457-4658")),
     person("Dewey", "Dunnington", role = "ctb",
            comment = c(ORCID = "0000-0002-9415-4582", "for ggspatial code")),
     person("ggplot2 authors", role = "cph",
-           comment = "for contour code")
+           comment = "for contour code"),
+    person("Andrea", "Manica", role = "ctb")
   )
 Description: Extension of the 'tidyverse' for 'SpatRaster' and
     'SpatVector' objects of the 'terra' package. It includes also new
@@ -35,12 +36,13 @@ RoxygenNote: 7.3.2
 X-schema.org-keywords: r, terra, ggplot-extension, r-spatial, rspatial,
         cran, cran-r, r-package, rstats, rstats-package
 NeedsCompilation: no
-Packaged: 2025-02-03 20:05:29 UTC; diego
+Packaged: 2025-04-07 17:01:28 UTC; diego
 Author: Diego Hernangómez [aut, cre, cph]
     (<https://orcid.org/0000-0001-8457-4658>),
   Dewey Dunnington [ctb] (<https://orcid.org/0000-0002-9415-4582>, for
     ggspatial code),
-  ggplot2 authors [cph] (for contour code)
+  ggplot2 authors [cph] (for contour code),
+  Andrea Manica [ctb]
 Maintainer: Diego Hernangómez <diego.hernangomezherrero@gmail.com>
 Repository: CRAN
-Date/Publication: 2025-02-03 20:50:02 UTC
+Date/Publication: 2025-04-07 17:40:02 UTC

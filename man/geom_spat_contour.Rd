@@ -18,7 +18,8 @@ geom_spatraster_contour(
   breaks = NULL,
   na.rm = TRUE,
   show.legend = NA,
-  inherit.aes = TRUE
+  inherit.aes = TRUE,
+  mask_projection = FALSE
 )
 
 geom_spatraster_contour_text(
@@ -34,7 +35,8 @@ geom_spatraster_contour_text(
   label_placer = isoband::label_placer_minmax(),
   na.rm = TRUE,
   show.legend = NA,
-  inherit.aes = TRUE
+  inherit.aes = TRUE,
+  mask_projection = FALSE
 )
 
 geom_spatraster_contour_filled(
@@ -47,7 +49,8 @@ geom_spatraster_contour_filled(
   breaks = NULL,
   na.rm = TRUE,
   show.legend = NA,
-  inherit.aes = TRUE
+  inherit.aes = TRUE,
+  mask_projection = FALSE
 )
 }
 \arguments{
@@ -113,6 +116,11 @@ display.}
 
 \item{inherit.aes}{If \code{FALSE}, overrides the default aesthetics, rather
 than combining with them.}
+
+\item{mask_projection}{logical, defaults to \code{FALSE}. If \code{TRUE}, mask out
+areas outside the input extent. For example, to avoid data wrapping
+around the date-line in Equal Area projections. This parameter is passed
+to \code{\link[terra:project]{terra::project()}} when reprojecting the \code{SpatRaster}.}
 
 \item{size.unit}{How the \code{size} aesthetic is interpreted: as millimetres
 (\code{"mm"}, default), points (\code{"pt"}), centimetres (\code{"cm"}), inches (\code{"in"}),
