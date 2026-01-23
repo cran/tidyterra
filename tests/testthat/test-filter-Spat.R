@@ -7,7 +7,7 @@ test_that("Filter with SpatRaster keeping extent", {
   names(r) <- "lyr"
 
   # Keep ext
-  r_keep <- r %>% filter(lyr < 0, .keep_extent = TRUE)
+  r_keep <- r |> filter(lyr < 0, .keep_extent = TRUE)
   expect_s4_class(r_keep, "SpatRaster")
 
   # Should return the same number of cells
@@ -15,7 +15,6 @@ test_that("Filter with SpatRaster keeping extent", {
   r_df <- as_tibble(r, xy = TRUE, na.rm = FALSE)
 
   expect_equal(r_df[, 1:2], r_keep_df[, 1:2])
-
 
   # With NAs
   expect_equal(min(r_df$lyr, na.rm = TRUE), min(r_keep_df$lyr, na.rm = TRUE))
@@ -36,7 +35,7 @@ test_that("Filter with SpatRaster non keeping extent", {
   names(r) <- "lyr"
 
   # Non Keep ext
-  r_keep <- r %>% filter(lyr < 0, .keep_extent = FALSE)
+  r_keep <- r |> filter(lyr < 0, .keep_extent = FALSE)
 
   expect_s4_class(r_keep, "SpatRaster")
 
@@ -45,7 +44,6 @@ test_that("Filter with SpatRaster non keeping extent", {
   r_df <- as_tibble(r, xy = TRUE, na.rm = FALSE)
 
   expect_lt(nrow(r_keep_df), nrow(r_df))
-
 
   # With NAs
   expect_equal(min(r_df$lyr, na.rm = TRUE), min(r_keep_df$lyr, na.rm = TRUE))
@@ -58,7 +56,7 @@ test_that("Filter with SpatVector", {
   f <- system.file("extdata/cyl.gpkg", package = "tidyterra")
   v <- terra::vect(f)
 
-  v2 <- v %>% filter(cpro < 10)
+  v2 <- v |> filter(cpro < 10)
 
   expect_lt(nrow(v2), nrow(v))
   expect_s4_class(v, "SpatVector")
@@ -76,8 +74,8 @@ test_that("filter works with rowwise data", {
   df$lon <- 1
 
   df <- as_spatvector(df)
-  res <- df %>%
-    rowwise() %>%
+  res <- df |>
+    rowwise() |>
     filter(grepl(First, Second, fixed = TRUE))
   expect_equal(nrow(res), 1L)
   expect_equal(as_tibble(df[1, ]), as_tibble(ungroup(res)))
@@ -87,13 +85,14 @@ test_that("grouped filter handles indices", {
   skip_on_cran()
 
   ir <- iris
-  ir <- terra::vect(ir,
+  ir <- terra::vect(
+    ir,
     geom = c("Sepal.Length", "Sepal.Width"),
     keepgeom = TRUE
   )
 
-  res <- ir %>%
-    group_by(Species) %>%
+  res <- ir |>
+    group_by(Species) |>
     filter(Sepal.Length > 5)
   res2 <- mutate(res, Petal = Petal.Width * Petal.Length)
   expect_equal(nrow(res), nrow(res2))
@@ -108,19 +107,19 @@ test_that("filter() preserve order across groups", {
   df <- data.frame(g = c(1, 2, 1, 2, 1), time = 5:1, x = 5:1)
   df <- terra::vect(df, geom = c("x", "g"), keepgeom = TRUE)
 
-  res1 <- df %>%
-    group_by(g) %>%
-    filter(x <= 4) %>%
+  res1 <- df |>
+    group_by(g) |>
+    filter(x <= 4) |>
     arrange(time)
 
-  res2 <- df %>%
-    group_by(g) %>%
-    arrange(time) %>%
+  res2 <- df |>
+    group_by(g) |>
+    arrange(time) |>
     filter(x <= 4)
 
-  res3 <- df %>%
-    filter(x <= 4) %>%
-    arrange(time) %>%
+  res3 <- df |>
+    filter(x <= 4) |>
+    arrange(time) |>
     group_by(g)
 
   expect_equal(as_tibble(res1), as_tibble(res2))

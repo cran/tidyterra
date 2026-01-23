@@ -24,8 +24,11 @@ The value can be:
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} Returning values with size 0 or >1 was
 deprecated as of 1.1.0. Please use \code{\link[dplyr:reframe]{reframe()}} for this instead.}
 
-\item{.by}{Ignored on this method (\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
-on \CRANpkg{dplyr}).}
+\item{.by}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+
+<\code{\link[dplyr:dplyr_tidy_select]{tidy-select}}> Optionally, a selection of columns to
+group by for just this operation, functioning as an alternative to \code{\link[dplyr:group_by]{group_by()}}. For
+details and examples, see \link[dplyr:dplyr_by]{?dplyr_by}.}
 
 \item{.groups}{See \code{\link[dplyr:summarise]{dplyr::summarise()}}}
 
@@ -70,13 +73,13 @@ library(ggplot2)
 v <- vect(system.file("extdata/cyl.gpkg", package = "tidyterra"))
 
 # Grouped
-gr_v <- v \%>\%
-  mutate(start_with_s = substr(name, 1, 1) == "S") \%>\%
+gr_v <- v |>
+  mutate(start_with_s = substr(name, 1, 1) == "S") |>
   group_by(start_with_s)
 
 
 # Dissolving
-diss <- gr_v \%>\%
+diss <- gr_v |>
   summarise(n = dplyr::n(), mean = mean(as.double(cpro)))
 
 diss
@@ -84,7 +87,7 @@ diss
 autoplot(diss, aes(fill = start_with_s)) + ggplot2::ggtitle("Dissolved")
 
 # Not dissolving
-no_diss <- gr_v \%>\%
+no_diss <- gr_v |>
   summarise(n = dplyr::n(), mean = mean(as.double(cpro)), .dissolve = FALSE)
 
 # Same statistic

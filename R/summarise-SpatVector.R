@@ -26,8 +26,6 @@
 #' @param .data A `SpatVector`.
 #'
 #' @inheritParams dplyr::summarise
-#' @param .by Ignored on this method (`r lifecycle::badge('experimental')`
-#'   on \CRANpkg{dplyr}).
 #' @param .groups See [dplyr::summarise()]
 #' @param .dissolve logical. Should borders between aggregated geometries
 #'   be dissolved?
@@ -55,13 +53,13 @@
 #' v <- vect(system.file("extdata/cyl.gpkg", package = "tidyterra"))
 #'
 #' # Grouped
-#' gr_v <- v %>%
-#'   mutate(start_with_s = substr(name, 1, 1) == "S") %>%
+#' gr_v <- v |>
+#'   mutate(start_with_s = substr(name, 1, 1) == "S") |>
 #'   group_by(start_with_s)
 #'
 #'
 #' # Dissolving
-#' diss <- gr_v %>%
+#' diss <- gr_v |>
 #'   summarise(n = dplyr::n(), mean = mean(as.double(cpro)))
 #'
 #' diss
@@ -69,7 +67,7 @@
 #' autoplot(diss, aes(fill = start_with_s)) + ggplot2::ggtitle("Dissolved")
 #'
 #' # Not dissolving
-#' no_diss <- gr_v %>%
+#' no_diss <- gr_v |>
 #'   summarise(n = dplyr::n(), mean = mean(as.double(cpro)), .dissolve = FALSE)
 #'
 #' # Same statistic
@@ -77,23 +75,39 @@
 #'
 #' autoplot(no_diss, aes(fill = start_with_s)) +
 #'   ggplot2::ggtitle("Not Dissolved")
-summarise.SpatVector <- function(.data, ..., .by = NULL, .groups = NULL,
-                                 .dissolve = TRUE) {
+summarise.SpatVector <- function(
+  .data,
+  ...,
+  .by = NULL,
+  .groups = NULL,
+  .dissolve = TRUE
+) {
+  # Try find .by vectors
+  by_groups <- dplyr::group_by(as_tibble(.data), {{ .by }})
+
   # Get dfs
   df <- as_tibble(.data)
-  df_summ <- dplyr::summarise(df, ..., .groups = .groups)
+  df_summ <- dplyr::summarise(df, ..., .groups = .groups, .by = {{ .by }})
 
   spatv <- .data
 
   if (is_grouped_spatvector(spatv)) {
     spatv$tterra_index <- group_indices(df)
-    newgeom <- terra::aggregate(spatv,
+    newgeom <- terra::aggregate(
+      spatv,
       by = "tterra_index",
       dissolve = .dissolve
     )
   } else if (is_rowwise_spatvector(spatv)) {
     # Do nothing, rowwise respect rows
     newgeom <- spatv
+  } else if (dplyr::is_grouped_df(by_groups)) {
+    spatv$tterra_index <- group_indices(by_groups)
+    newgeom <- terra::aggregate(
+      spatv,
+      by = "tterra_index",
+      dissolve = .dissolve
+    )
   } else {
     newgeom <- terra::aggregate(spatv, dissolve = .dissolve)
   }
@@ -103,7 +117,7 @@ summarise.SpatVector <- function(.data, ..., .by = NULL, .groups = NULL,
   # Ensure groups
   v_summ <- group_prepare_spat(v_summ, df_summ)
 
-  return(v_summ)
+  v_summ
 }
 
 #' @export

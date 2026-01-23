@@ -15,9 +15,9 @@ vignette: >
 ## Welcome to {tidyterra}
 
 **tidyterra** is a package that adds common methods from the
-[**tidyverse**](https://www.tidyverse.org/) for `SpatRaster` and `SpatVectors`
+[**tidyverse**](https://tidyverse.org/) for `SpatRaster` and `SpatVector`
 objects created with the [**terra**](https://CRAN.R-project.org/package=terra)
-package. It also adds specific `geom_spat*()` functions for plotting these kind
+package. It also adds specific `geom_spat*()` functions for plotting these kinds
 of objects with [**ggplot2**](https://ggplot2.tidyverse.org/).
 
 ### Why **tidyterra**?
@@ -32,16 +32,16 @@ By implementing **tidyverse** methods for these objects, and more specifically
 `Spat*` objects, just like (s)he would do with tabular data.
 
 **Note that** in terms of performance, **terra** is much more optimized for
-working for this kind of objects, so it is **recommended** also to learn a bit
+working with this kind of objects, so it is **recommended** also to learn a bit
 of **terra** syntax. Each function of **tidyterra** refers (when possible) to
 the corresponding equivalent on **terra**.
 
 ## A note for advanced **terra** users
 
 As previously mentioned, **tidyterra** is not optimized in terms of performance.
-Specially when working with `filter()` and `mutate()` methods, it can be slow.
+Especially when working with `filter()` and `mutate()` methods, it can be slow.
 
-As a rule of thumb, **tidyterra** can handle objects with less than 10.000.000
+As a rule of thumb, **tidyterra** can handle objects with less than 10,000,000
 slots of information (i.e.,
 `terra::ncell(a_rast) * terra::nlyr(a_rast) < 10e6`).
 
@@ -58,34 +58,37 @@ library(tidyr)
 
 Currently, the following methods are available:
 
-| tidyverse method                            | `SpatVector`                                  | `SpatRaster`                                                                                   |
-|---------------------|-----------------------|------------------------------------|
-| `tibble::as_tibble()`                       | ✔️                                            | ✔️                                                                                             |
-| `dplyr::select()`                           | ✔️                                            | ✔️ Select layers                                                                               |
-| `dplyr::mutate()`                           | ✔️                                            | ✔️ Create /modify layers                                                                       |
-| `dplyr::transmute()`                        | ✔️                                            | ✔️                                                                                             |
-| `dplyr::filter()`                           | ✔️                                            | ✔️ Modify cells values and (additionally) remove outer cells.                                  |
-| `dplyr::slice()`                            | ✔️                                            | ✔️ Additional methods for slicing by row and column.                                           |
-| `dplyr::pull()`                             | ✔️                                            | ✔️                                                                                             |
-| `dplyr::rename()`                           | ✔️                                            | ✔️                                                                                             |
-| `dplyr::relocate()`                         | ✔️                                            | ✔️                                                                                             |
-| `dplyr::distinct()`                         | ✔️                                            |                                                                                                |
-| `dplyr::arrange()`                          | ✔️                                            |                                                                                                |
-| `dplyr::glimpse()`                          | ✔️                                            | ✔️                                                                                             |
-| `dplyr::inner_join()` family                | ✔️                                            |                                                                                                |
-| `dplyr::summarise()`                        | ✔️                                            |                                                                                                |
-| `dplyr::group_by()` family                  | ✔️                                            |                                                                                                |
-| `dplyr::rowwise()`                          | ✔️                                            |                                                                                                |
-| `dplyr::count()`, `tally()`                 | ✔️                                            |                                                                                                |
-| `dplyr::bind_cols()` / `dplyr::bind_rows()` | ✔️ as `bind_spat_cols()` / `bind_spat_rows()` |                                                                                                |
-| `tidyr::drop_na()`                          | ✔️                                            | ✔️ Remove cell values with `NA` on any layer. Additionally, outer cells with `NA` are removed. |
-| `tidyr::replace_na()`                       | ✔️                                            | ✔️                                                                                             |
-| `tidyr::fill()`                             | ✔️                                            |                                                                                                |
-| `tidyr::pivot_longer()`                     | ✔️                                            |                                                                                                |
-| `tidyr::pivot_wider()`                      | ✔️                                            |                                                                                                |
-| `ggplot2::autoplot()`                       | ✔️                                            | ✔️                                                                                             |
-| `ggplot2::fortify()`                        | ✔️ to **sf** via `sf::st_as_sf()`             | To a **tibble** with coordinates.                                                              |
-| `ggplot2::geom_*()`                         | ✔️ `geom_spatvector()`                        | ✔️ `geom_spatraster()` and `geom_spatraster_rgb()`.                                            |
+| tidyverse method | `SpatVector` | `SpatRaster` |
+|----|----|----|
+| `tibble::as_tibble()` | ✔️ | ✔️ |
+| `dplyr::select()` | ✔️ | ✔️ Select layers |
+| `dplyr::mutate()` | ✔️ | ✔️ Create /modify layers |
+| `dplyr::transmute()` | ✔️ | ✔️ |
+| `dplyr::filter()` | ✔️ | ✔️ Modify cells values and (additionally) remove outer cells. |
+| `dplyr::slice()` | ✔️ | ✔️ Additional methods for slicing by row and column. |
+| `dplyr::pull()` | ✔️ | ✔️ |
+| `dplyr::rename()` | ✔️ | ✔️ |
+| `dplyr::relocate()` | ✔️ | ✔️ |
+| `dplyr::distinct()` | ✔️ |  |
+| `dplyr::arrange()` | ✔️ |  |
+| `dplyr::glimpse()` | ✔️ | ✔️ |
+| `dplyr::inner_join()` family | ✔️ |  |
+| `dplyr::summarise()` | ✔️ |  |
+| `dplyr::group_by()` family | ✔️ |  |
+| `dplyr::rowwise()` | ✔️ |  |
+| `dplyr::count()`, `tally()` | ✔️ |  |
+| `dplyr::bind_cols()` / `dplyr::bind_rows()` | ✔️ as `bind_spat_cols()` / `bind_spat_rows()` |  |
+| `tidyr::drop_na()` | ✔️ | ✔️ Remove cell values with `NA` on any layer. Additionally, outer cells with `NA` are removed. |
+| `tidyr::replace_na()` | ✔️ | ✔️ |
+| `tidyr::fill()` | ✔️ |  |
+| `tidyr::pivot_longer()` | ✔️ |  |
+| `tidyr::pivot_wider()` | ✔️ |  |
+| `ggplot2::autoplot()` | ✔️ | ✔️ |
+| `ggplot2::fortify()` | ✔️ to **sf** via `sf::st_as_sf()` | To a **tibble** with coordinates. |
+| `ggplot2::geom_*()` | ✔️ `geom_spatvector()` | ✔️ `geom_spatraster()` and `geom_spatraster_rgb()`. |
+| `generics::tidy()` | ✔️ | ✔️ |
+| `generics::glance()` | ✔️ | ✔️ |
+| `generics::required_pkgs()` | ✔️ | ✔️ |
 
 Let's see some of them in action:
 
@@ -102,7 +105,7 @@ temp <- rast(f)
 
 temp
 #> class       : SpatRaster 
-#> dimensions  : 87, 118, 3  (nrow, ncol, nlyr)
+#> size        : 87, 118, 3  (nrow, ncol, nlyr)
 #> resolution  : 3881.255, 3881.255  (x, y)
 #> extent      : -612335.4, -154347.3, 4283018, 4620687  (xmin, xmax, ymin, ymax)
 #> coord. ref. : World_Robinson 
@@ -111,16 +114,16 @@ temp
 #> min values  :  1.885463,  5.817587, 10.46338 
 #> max values  : 13.283829, 16.740898, 21.11378
 
-mod <- temp %>%
-  select(-1) %>%
-  mutate(newcol = tavg_06 - tavg_05) %>%
-  relocate(newcol, .before = 1) %>%
-  replace_na(list(newcol = 3)) %>%
+mod <- temp |>
+  select(-1) |>
+  mutate(newcol = tavg_06 - tavg_05) |>
+  relocate(newcol, .before = 1) |>
+  replace_na(list(newcol = 3)) |>
   rename(difference = newcol)
 
 mod
 #> class       : SpatRaster 
-#> dimensions  : 87, 118, 3  (nrow, ncol, nlyr)
+#> size        : 87, 118, 3  (nrow, ncol, nlyr)
 #> resolution  : 3881.255, 3881.255  (x, y)
 #> extent      : -612335.4, -154347.3, 4283018, 4620687  (xmin, xmax, ymin, ymax)
 #> coord. ref. : World_Robinson 
@@ -133,27 +136,23 @@ mod
 On the previous example, we had:
 
 -   Eliminated the first layer of the raster `tavg_04`.
-
 -   Created a new layer `newcol` as the difference of the layers `tavg_05` and
     `tavg_06`.
-
 -   Relocated `newcol` as the first layer of the `SpatRaster`.
-
 -   Replaced the `NA` cells on `newcol` with `3`.
-
 -   Renamed `newcol` to difference.
 
-In all the process, the essential properties of the `SpatRaster` (number of
+Throughout the process, the essential properties of the `SpatRaster` (number of
 cells, columns and rows, extent, resolution and coordinate reference system)
-have not been modified. Other methods as `filter()`, `slice()` or `drop_na()`
-can modify these properties, as they would do when applied to a data frame
-(number of rows would be modified on that case).
+have not been modified. Other methods such as `filter()`, `slice()` or
+`drop_na()` can modify these properties, as they would do when applied to a data
+frame (number of rows would be modified on that case).
 
 ### `SpatVectors`
 
-`tidyterra >= 0.4.0` provides support to `SpatVectors` for most of the **dplyr**
-and **tidyr** methods, so it is possible to arrange, group and summarise
-information of `SpatVectors`.
+`tidyterra >= 0.4.0` provides support for `SpatVectors` for most of the
+**dplyr** and **tidyr** methods, so it is possible to arrange, group and
+summarise information of `SpatVectors`.
 
 
 ``` r
@@ -161,16 +160,16 @@ lux <- system.file("ex/lux.shp", package = "terra")
 
 v_lux <- vect(lux)
 
-v_lux %>%
+v_lux |>
   # Create categories
-  mutate(gr = cut(POP / 1000, 5)) %>%
-  group_by(gr) %>%
+  mutate(gr = cut(POP / 1000, 5)) |>
+  group_by(gr) |>
   # Summary
   summarise(
     n = n(),
     tot_pop = sum(POP),
     mean_area = mean(AREA)
-  ) %>%
+  ) |>
   # Arrange
   arrange(desc(gr))
 #>  class       : SpatVector 
@@ -185,16 +184,16 @@ v_lux %>%
 #>                (4.99,40.7]     9 1.944e+05     209.8
 ```
 
-As in the case of `SpatRaster`, basic properties as the geometry and the CRS are
-preserved.
+As in the case of `SpatRaster`, basic properties such as the geometry and the
+CRS are preserved.
 
 ## Plotting with **ggplot2**
 
 ### `SpatRasters`
 
 **tidyterra** provides several `geom_*` for `SpatRasters`. When the `SpatRaster`
-has the CRS informed (i.e. `terra::crs(a_rast) != ""`), the geom uses
-`ggplot2::coord_sf()`, and may be also reprojected for adjusting the coordinates
+has the CRS defined (i.e. `terra::crs(a_rast) != ""`), the geom uses
+`ggplot2::coord_sf()`, and may also be reprojected for adjusting the coordinates
 to other spatial layers:
 
 
@@ -275,8 +274,8 @@ rgb_plot
 ```
 
 <div class="figure">
-<img src="./rgb-1.png" alt="Plotting a RGB SpatRaster" width="100%" />
-<p class="caption">Plotting a RGB SpatRaster</p>
+<img src="./rgb-1.png" alt="Plotting an RGB SpatRaster" width="100%" />
+<p class="caption">Plotting an RGB SpatRaster</p>
 </div>
 
 **tidyterra** provides selected scales that are suitable for creating
@@ -288,7 +287,7 @@ asia <- rast(system.file("extdata/asia.tif", package = "tidyterra"))
 
 asia
 #> class       : SpatRaster 
-#> dimensions  : 164, 306, 1  (nrow, ncol, nlyr)
+#> size        : 164, 306, 1  (nrow, ncol, nlyr)
 #> resolution  : 31836.23, 31847.57  (x, y)
 #> extent      : 7619120, 17361007, -1304745, 3918256  (xmin, xmax, ymin, ymax)
 #> coord. ref. : WGS 84 / Pseudo-Mercator (EPSG:3857) 
@@ -356,16 +355,16 @@ With **tidyterra** we can also aggregate `SpatVectors` at our convenience:
 
 ``` r
 # Dissolving
-v_lux %>%
+v_lux |>
   # Create categories
-  mutate(gr = cut(POP / 1000, 5)) %>%
-  group_by(gr) %>%
+  mutate(gr = cut(POP / 1000, 5)) |>
+  group_by(gr) |>
   # Summary
   summarise(
     n = n(),
     tot_pop = sum(POP),
     mean_area = mean(AREA)
-  ) %>%
+  ) |>
   ggplot() +
   geom_spatvector(aes(fill = tot_pop), color = "black") +
   geom_spatvector_label(aes(label = gr)) +
@@ -373,25 +372,25 @@ v_lux %>%
 ```
 
 <div class="figure">
-<img src="./aggregate-1.png" alt="Union of SpatVectors" width="100%" />
-<p class="caption">Union of SpatVectors</p>
+<img src="./aggregate-1.png" alt="Dissolving SpatVectors by group" width="100%" />
+<p class="caption">Dissolving SpatVectors by group</p>
 </div>
 
 ``` r
 
 
 # Same but keeping internal boundaries
-v_lux %>%
+v_lux |>
   # Create categories
-  mutate(gr = cut(POP / 1000, 5)) %>%
-  group_by(gr) %>%
+  mutate(gr = cut(POP / 1000, 5)) |>
+  group_by(gr) |>
   # Summary without dissolving
   summarise(
     n = n(),
     tot_pop = sum(POP),
     mean_area = mean(AREA),
     .dissolve = FALSE
-  ) %>%
+  ) |>
   ggplot() +
   geom_spatvector(aes(fill = tot_pop), color = "black") +
   geom_spatvector_label(aes(label = gr)) +
@@ -399,6 +398,6 @@ v_lux %>%
 ```
 
 <div class="figure">
-<img src="./aggregate-2.png" alt="Union of SpatVector keeping the inner borders" width="100%" />
-<p class="caption">Union of SpatVector keeping the inner borders</p>
+<img src="./aggregate-2.png" alt="Dissolving SpatVectors by group (keeping internal boundaries)" width="100%" />
+<p class="caption">Dissolving SpatVectors by group (keeping internal boundaries)</p>
 </div>

@@ -71,8 +71,8 @@
 #' f <- system.file("extdata/cyl_temp.tif", package = "tidyterra")
 #' spatrast <- rast(f)
 #'
-#' mod <- spatrast %>%
-#'   mutate(exp_lyr1 = exp(tavg_04 / 10)) %>%
+#' mod <- spatrast |>
+#'   mutate(exp_lyr1 = exp(tavg_04 / 10)) |>
 #'   select(tavg_04, exp_lyr1)
 #'
 #' mod
@@ -82,8 +82,8 @@
 #' f <- system.file("extdata/cyl.gpkg", package = "tidyterra")
 #' v <- vect(f)
 #'
-#' v %>%
-#'   mutate(cpro2 = paste0(cpro, "-CyL")) %>%
+#' v |>
+#'   mutate(cpro2 = paste0(cpro, "-CyL")) |>
 #'   select(cpro, cpro2)
 mutate.SpatRaster <- function(.data, ...) {
   df <- as_tbl_internal(.data)
@@ -111,7 +111,6 @@ mutate.SpatRaster <- function(.data, ...) {
 
   attributes(final_df) <- c(final_att, spat_attrs)
 
-
   # Rearrange number of layers
   dims <- attributes(df)$dims
   dims[3] <- ncol(values_mutate)
@@ -133,12 +132,12 @@ mutate.SpatRaster <- function(.data, ...) {
 
       terra::coltab(rr) <- ctab
 
-      return(rr)
+      rr
     })
     final_rast <- do.call("c", l2)
   }
 
-  return(final_rast)
+  final_rast
 }
 #' @export
 #' @rdname mutate.Spat
@@ -153,7 +152,7 @@ mutate.SpatVector <- function(.data, ...) {
   # Prepare groups
   vend <- group_prepare_spat(vend, mutated)
 
-  return(vend)
+  vend
 }
 #' @export
 #' @rdname mutate.Spat
@@ -170,7 +169,6 @@ transmute.SpatRaster <- function(.data, ...) {
   # dtplyr
   xy <- data.table::as.data.table(xy)
   values_transm <- data.table::as.data.table(values_transm)
-
 
   final_df <- dplyr::bind_cols(xy, values_transm)
 
@@ -192,7 +190,6 @@ transmute.SpatRaster <- function(.data, ...) {
 
   final_rast <- as_spat_internal(final_df)
 
-
   # Check coltab
   if (
     any(terra::has.colors(.data)) && any(names(final_rast) %in% names(.data))
@@ -202,7 +199,6 @@ transmute.SpatRaster <- function(.data, ...) {
     namesend <- names(final_rast)
 
     ctab_list <- ctab_list_init[namesend %in% names(.data)]
-
 
     # Assign coltab by layer
     l2 <- lapply(seq_len(terra::nlyr(final_rast)), function(x) {
@@ -214,13 +210,12 @@ transmute.SpatRaster <- function(.data, ...) {
       }
 
       terra::coltab(rr) <- ctab
-      return(rr)
+      rr
     })
     final_rast <- do.call("c", l2)
   }
 
-
-  return(final_rast)
+  final_rast
 }
 #' @export
 #' @rdname mutate.Spat
@@ -239,7 +234,7 @@ transmute.SpatVector <- function(.data, ...) {
   # Prepare groups
   vend <- group_prepare_spat(vend, transm)
 
-  return(vend)
+  vend
 }
 
 #' @export

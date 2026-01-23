@@ -5,7 +5,6 @@ test_that("With SpatRaster", {
   r <- terra::rast(f)
   df <- as_tibble(r)
 
-
   expect_identical(
     dplyr::pull(df, 1),
     pull(r, 1)
@@ -17,7 +16,7 @@ test_that("With SpatRaster", {
   )
 
   # Cut
-  r2 <- r %>% mutate(is_fact = cut(tavg_04, seq(0, 20, 5)))
+  r2 <- r |> mutate(is_fact = cut(tavg_04, seq(0, 20, 5)))
 
   # With na.rm FALSE should have more lenght
   expect_lt(
@@ -28,7 +27,6 @@ test_that("With SpatRaster", {
   expect_false(anyNA(pull(r2, na.rm = TRUE)))
   expect_true(anyNA(pull(r2, na.rm = FALSE)))
 
-
   df2 <- as_tibble(r2)
 
   expect_true(is.factor(pull(r2, "is_fact")))
@@ -38,13 +36,11 @@ test_that("With SpatRaster", {
     pull(r2, is_fact)
   )
 
-
   # This should change
 
   expect_false(
     any(
-      pull(r2, 1, xy = TRUE) ==
-        pull(r2, 1, xy = FALSE),
+      pull(r2, 1, xy = TRUE) == pull(r2, 1, xy = FALSE),
       na.rm = TRUE
     )
   )

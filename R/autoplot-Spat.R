@@ -10,7 +10,8 @@
 #' @family ggplot2.methods
 #'
 #' @param object A `SpatRaster` created with [terra::rast()] or a `SpatVector`
-#'   created with [terra::vect()].
+#'   created with [terra::vect()]. Also support `SpatGraticule` (see
+#'   [terra::graticule()]) and `SpatExtent` (see [terra::ext()]).
 #'
 #' @rdname autoplot.Spat
 #' @name autoplot.Spat
@@ -36,7 +37,7 @@
 #'
 #' Uses [geom_spatraster()] or [geom_spatraster_rgb()].
 #'
-#' ## `SpatVector`
+#' ## `SpatVector`, `SpatGraticule` and `SpatExtent`
 #'
 #' Uses [geom_spatvector()]. Labels can be placed with [geom_spatvector_text()]
 #' or [geom_spatvector_label()].
@@ -60,14 +61,14 @@
 #'
 #' # With a tile
 #'
-#' tile <- system.file("extdata/cyl_tile.tif", package = "tidyterra") %>%
+#' tile <- system.file("extdata/cyl_tile.tif", package = "tidyterra") |>
 #'   rast()
 #'
 #' autoplot(tile)
 #'
 #' # With coltabs
 #'
-#' ctab <- system.file("extdata/cyl_era.tif", package = "tidyterra") %>%
+#' ctab <- system.file("extdata/cyl_era.tif", package = "tidyterra") |>
 #'   rast()
 #'
 #' autoplot(ctab)
@@ -76,19 +77,24 @@
 #' v <- vect(system.file("extdata/cyl.gpkg", package = "tidyterra"))
 #' autoplot(v)
 #'
-#' v %>% autoplot(aes(fill = cpro)) +
+#' v |> autoplot(aes(fill = cpro)) +
 #'   geom_spatvector_text(aes(label = iso2)) +
 #'   coord_sf(crs = 25829)
 #' }
-autoplot.SpatRaster <- function(object,
-                                ...,
-                                rgb = NULL,
-                                use_coltab = NULL,
-                                facets = NULL,
-                                nrow = NULL, ncol = 2) {
+autoplot.SpatRaster <- function(
+  object,
+  ...,
+  rgb = NULL,
+  use_coltab = NULL,
+  facets = NULL,
+  nrow = NULL,
+  ncol = 2
+) {
   gg <- ggplot2::ggplot()
 
-  if (is.null(rgb)) rgb <- terra::has.RGB(object)
+  if (is.null(rgb)) {
+    rgb <- terra::has.RGB(object)
+  }
 
   if (rgb) {
     gg <- gg +
@@ -101,15 +107,15 @@ autoplot.SpatRaster <- function(object,
   }
 
   # Guess scale
-  if (is.null(use_coltab)) use_coltab <- any(terra::has.colors(object))
+  if (is.null(use_coltab)) {
+    use_coltab <- any(terra::has.colors(object))
+  }
   gg <- gg +
     geom_spatraster(
       data = object,
       use_coltab = use_coltab,
       ...
     )
-
-
 
   if (!use_coltab) {
     todf <- terra::as.data.frame(object[1, ], na.rm = TRUE, xy = FALSE)
@@ -123,12 +129,16 @@ autoplot.SpatRaster <- function(object,
   }
 
   # Guess facets
-  if (is.null(facets)) facets <- terra::nlyr(object) > 1
+  if (is.null(facets)) {
+    facets <- terra::nlyr(object) > 1
+  }
 
-  if (all(
-    facets,
-    isFALSE(rgb)
-  )) {
+  if (
+    all(
+      facets,
+      isFALSE(rgb)
+    )
+  ) {
     gg <- gg + ggplot2::facet_wrap(~lyr, nrow = nrow, ncol = ncol)
   }
 
@@ -142,6 +152,19 @@ autoplot.SpatVector <- function(object, ...) {
     geom_spatvector(...)
 }
 
+#' @export
+#' @name autoplot.Spat
+autoplot.SpatGraticule <- function(object, ...) {
+  ggplot2::ggplot(data = object) +
+    geom_spatvector(...)
+}
+
+#' @export
+#' @name autoplot.Spat
+autoplot.SpatExtent <- function(object, ...) {
+  ggplot2::ggplot(data = object) +
+    geom_spatvector(...)
+}
 
 #' @export
 ggplot2::autoplot

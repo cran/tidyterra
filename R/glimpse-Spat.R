@@ -49,28 +49,33 @@
 #' # SpatVector
 #' v <- vect(system.file("extdata/cyl.gpkg", package = "tidyterra"))
 #'
-#' v %>% glimpse(n = 2)
+#' v |> glimpse(n = 2)
 #'
 #' # Use on a pipeline
-#' v %>%
-#'   glimpse() %>%
-#'   mutate(a = 30) %>%
+#' v |>
+#'   glimpse() |>
+#'   mutate(a = 30) |>
 #'   # with options
 #'   glimpse(geom = "WKT")
 #'
 #' # SpatRaster
 #' r <- rast(system.file("extdata/cyl_elev.tif", package = "tidyterra"))
 #'
-#' r %>% glimpse()
+#' r |> glimpse()
 #'
 #' # Use on a pipeline
-#' r %>%
-#'   glimpse() %>%
-#'   mutate(b = elevation_m / 100) %>%
+#' r |>
+#'   glimpse() |>
+#'   mutate(b = elevation_m / 100) |>
 #'   # With options
 #'   glimpse(xy = TRUE)
-glimpse.SpatRaster <- function(x, width = NULL, ..., n = 10,
-                               max_extra_cols = 20) {
+glimpse.SpatRaster <- function(
+  x,
+  width = NULL,
+  ...,
+  n = 10,
+  max_extra_cols = 20
+) {
   # Class
   nr <- format(terra::nrow(x), big.mark = ",", decimal.mark = ".")
   nc <- format(terra::ncol(x), big.mark = ",", decimal.mark = ".")
@@ -79,8 +84,16 @@ glimpse.SpatRaster <- function(x, width = NULL, ..., n = 10,
   ncll <- format(terra::ncell(x), big.mark = ",", decimal.mark = ".")
 
   tterra_header(
-    "A SpatRaster ", nr, " x ", nc, " x ", nl, lay, " (",
-    ncll, " cells)"
+    "A SpatRaster ",
+    nr,
+    " x ",
+    nc,
+    " x ",
+    nl,
+    lay,
+    " (",
+    ncll,
+    " cells)"
   )
 
   # Resolution
@@ -94,8 +107,6 @@ glimpse.SpatRaster <- function(x, width = NULL, ..., n = 10,
   # Coltab
   tterra_header_string_ctab(x)
 
-
-
   # Body
   cli::cat_line() # Empty line
 
@@ -105,14 +116,18 @@ glimpse.SpatRaster <- function(x, width = NULL, ..., n = 10,
     tterra_body(x, ..., width = width, n = n, max_extra_cols = max_extra_cols)
   }
 
-
-  return(invisible(x))
+  invisible(x)
 }
 
 #' @rdname glimpse.Spat
 #' @export
-glimpse.SpatVector <- function(x, width = NULL, ..., n = 10,
-                               max_extra_cols = 20) {
+glimpse.SpatVector <- function(
+  x,
+  width = NULL,
+  ...,
+  n = 10,
+  max_extra_cols = 20
+) {
   # Class
   nr <- format(terra::nrow(x), big.mark = ",", decimal.mark = ".")
   nc <- format(terra::ncol(x), big.mark = ",", decimal.mark = ".")
@@ -134,7 +149,7 @@ glimpse.SpatVector <- function(x, width = NULL, ..., n = 10,
     # Manipulate tibble format (with options if provided)
     tterra_body(x, ..., width = width, n = n, max_extra_cols = max_extra_cols)
   }
-  return(invisible(x))
+  invisible(x)
 }
 
 
@@ -153,9 +168,11 @@ get_named_crs <- function(x) {
 
   d <- try(terra::crs(pulled, describe = TRUE), silent = TRUE)
 
+  # nocov start
   if (inherits(d, "try-error")) {
     return(NA)
   }
+  # nocov end
 
   r <- terra::crs(pulled, proj = TRUE)
 
@@ -166,7 +183,7 @@ get_named_crs <- function(x) {
   # nocov end
 
   if (!(d$name %in% c(NA, "unknown", "unnamed"))) {
-    if (substr(r, 1, 13) == "+proj=longlat") {
+    if (startsWith(r, "+proj=longlat")) {
       r <- paste("lon/lat", d$name)
     } else {
       r <- d$name
@@ -184,7 +201,9 @@ get_named_crs <- function(x) {
   }
 
   # nocov start
-  if (is.na(r) || r == "" || is.null(r)) r <- NA
+  if (is.na(r) || r == "" || is.null(r)) {
+    r <- NA
+  }
   # nocov end
   r
 }
@@ -227,7 +246,7 @@ decimal_to_degrees <- function(x, type = c("lon", "lat", "null")) {
     label <- paste0(label, collapse = " ")
   }
 
-  return(label)
+  label
 }
 
 
@@ -278,8 +297,10 @@ tterra_header_string_ext <- function(x) {
 
     ext_fmt <- unlist(c(lons, lats))
   } else {
-    ext_fmt <- format(ext,
-      big.mark = ",", decimal.mark = ".",
+    ext_fmt <- format(
+      ext,
+      big.mark = ",",
+      decimal.mark = ".",
       justify = "right"
     )
   }
@@ -297,7 +318,8 @@ tterra_header_string_res <- function(x) {
     rs <- lapply(terra::res(x), decimal_to_degrees, type = "null")
     rs <- paste0(unlist(rs), collapse = " , ")
   } else {
-    rs <- paste(format(terra::res(x), big.mark = ",", decimal.mark = "."),
+    rs <- paste(
+      format(terra::res(x), big.mark = ",", decimal.mark = "."),
       collapse = " / "
     )
   }
@@ -313,12 +335,16 @@ tterra_header_string_rgb <- function(x) {
 
   # Make msg
   ch_name <- names(x)[rgb_info]
-  nm <- c("Red", "Green", "Blue", "Alpha")[seq_len(length(rgb_info))]
+  nm <- c("Red", "Green", "Blue", "Alpha")[seq_along(rgb_info)]
   ch_end <- paste0(ch_name, " (", nm, ")", collapse = ", ")
   pl <- ifelse(length(rgb_info) == 1, "channel", "channels")
 
   tterra_header(
-    "SpatRaster with ", length(rgb_info), " RGB ", pl, ": ",
+    "SpatRaster with ",
+    length(rgb_info),
+    " RGB ",
+    pl,
+    ": ",
     ch_end
   )
 }
@@ -330,27 +356,36 @@ tterra_header_string_ctab <- function(x) {
     return(invisible(NULL))
   }
 
-  lcol <- length(coltab_info[coltab_info == TRUE])
+  lcol <- length(coltab_info[coltab_info])
   pl <- ifelse(lcol == 1, "table", "tables")
 
-  ch_name <- names(x)[coltab_info == TRUE]
+  ch_name <- names(x)[coltab_info]
   ch_end <- paste0(ch_name, collapse = ", ")
 
   tterra_header("SpatRaster with ", lcol, " color ", pl, " in: ", ch_end)
 }
 
 # Body from tbl
-tterra_body <- function(x, width = cli::console_width(), n = 10, ...,
-                        max_extra_cols = 20) {
+tterra_body <- function(
+  x,
+  width = cli::console_width(),
+  n = 10,
+  ...,
+  max_extra_cols = 20
+) {
   init_type <- class(x)
   # Need just a small subset for printing, improve speed
   max_rows <- min(terra::nrow(x), 30)
 
   x <- as_tibble(x[seq_len(max_rows), ], ...)
-  if (!is.numeric(n)) n <- 10
+  if (!is.numeric(n)) {
+    n <- 10
+  }
   n <- max(1, n)
 
-  if (!is.numeric(max_extra_cols)) n <- 20
+  if (!is.numeric(max_extra_cols)) {
+    n <- 20
+  }
   max_extra_cols <- max(1, max_extra_cols)
 
   extra_cols <- NULL
@@ -368,17 +403,21 @@ tterra_body <- function(x, width = cli::console_width(), n = 10, ...,
 
   # Make footer
   if (!is.null(extra_cols)) {
-    extra_text <- vapply(extra_cols, function(x) {
-      if (requireNamespace("vctrs", quietly = TRUE)) {
-        aa <- paste0(vctrs::vec_ptype_abbr(x), collapse = "/")
-      } else {
-        # nocov start
-        aa <- paste0(class(x), collapse = "/")
-        # nocov end
-      }
+    extra_text <- vapply(
+      extra_cols,
+      function(x) {
+        if (requireNamespace("vctrs", quietly = TRUE)) {
+          aa <- paste0(vctrs::vec_ptype_abbr(x), collapse = "/")
+        } else {
+          # nocov start
+          aa <- paste0(class(x), collapse = "/")
+          # nocov end
+        }
 
-      paste0("<", aa, ">")
-    }, character(1))
+        paste0("<", aa, ">")
+      },
+      character(1)
+    )
 
     # Check if we hit extra cols
 
@@ -392,22 +431,29 @@ tterra_body <- function(x, width = cli::console_width(), n = 10, ...,
     extra_text <- paste0(extra_text, dots_extra)
     # Full message
     nms <- ifelse(ncol(extra_cols) == 1, "variable", "variables")
-    if (init_type == "SpatRaster") nms <- gsub("variable", "layer", nms)
+    if (init_type == "SpatRaster") {
+      nms <- gsub("variable", "layer", nms, fixed = TRUE)
+    }
     full <- paste(
-      "#", cli::symbol$info,
+      "#",
+      cli::symbol$info,
       format(ncol(extra_cols), big.mark = ".", decimal.mark = ","),
-      "more", nms, ":", extra_text
+      "more",
+      nms,
+      ":",
+      extra_text
     )
 
     full <- cli::ansi_strwrap(full, exdent = 3)
     cli::cat_line(tterra_head_style(full))
 
-
     nm2 <- ifelse(init_type == "SpatVector", "columns", "layers")
 
     hint <- paste0(
-      "# ", cli::symbol$info,
-      " Use `tidyterra::glimpse(n = ...)` to see more ", nm2
+      "# ",
+      cli::symbol$info,
+      " Use `tidyterra::glimpse(n = ...)` to see more ",
+      nm2
     )
 
     hint <- cli::ansi_strwrap(hint, exdent = 3)

@@ -4,6 +4,8 @@
 \alias{autoplot.Spat}
 \alias{autoplot.SpatRaster}
 \alias{autoplot.SpatVector}
+\alias{autoplot.SpatGraticule}
+\alias{autoplot.SpatExtent}
 \title{Create a complete ggplot for \verb{Spat*} objects}
 \usage{
 \method{autoplot}{SpatRaster}(
@@ -17,10 +19,15 @@
 )
 
 \method{autoplot}{SpatVector}(object, ...)
+
+\method{autoplot}{SpatGraticule}(object, ...)
+
+\method{autoplot}{SpatExtent}(object, ...)
 }
 \arguments{
 \item{object}{A \code{SpatRaster} created with \code{\link[terra:rast]{terra::rast()}} or a \code{SpatVector}
-created with \code{\link[terra:vect]{terra::vect()}}.}
+created with \code{\link[terra:vect]{terra::vect()}}. Also support \code{SpatGraticule} (see
+\code{\link[terra:graticule]{terra::graticule()}}) and \code{SpatExtent} (see \code{\link[terra:ext]{terra::ext()}}).}
 
 \item{...}{other arguments passed to \code{\link[=geom_spatraster]{geom_spatraster()}},
 \code{\link[=geom_spatraster_rgb]{geom_spatraster_rgb()}} or \code{\link[=geom_spatvector]{geom_spatvector()}}.}
@@ -56,7 +63,7 @@ Implementation of the \strong{generic} \code{\link[ggplot2:autoplot]{ggplot2::au
 Uses \code{\link[=geom_spatraster]{geom_spatraster()}} or \code{\link[=geom_spatraster_rgb]{geom_spatraster_rgb()}}.
 }
 
-\subsection{\code{SpatVector}}{
+\subsection{\code{SpatVector}, \code{SpatGraticule} and \code{SpatExtent}}{
 
 Uses \code{\link[=geom_spatvector]{geom_spatvector()}}. Labels can be placed with \code{\link[=geom_spatvector_text]{geom_spatvector_text()}}
 or \code{\link[=geom_spatvector_label]{geom_spatvector_label()}}.
@@ -77,14 +84,14 @@ autoplot(temp)
 
 # With a tile
 
-tile <- system.file("extdata/cyl_tile.tif", package = "tidyterra") \%>\%
+tile <- system.file("extdata/cyl_tile.tif", package = "tidyterra") |>
   rast()
 
 autoplot(tile)
 
 # With coltabs
 
-ctab <- system.file("extdata/cyl_era.tif", package = "tidyterra") \%>\%
+ctab <- system.file("extdata/cyl_era.tif", package = "tidyterra") |>
   rast()
 
 autoplot(ctab)
@@ -93,7 +100,7 @@ autoplot(ctab)
 v <- vect(system.file("extdata/cyl.gpkg", package = "tidyterra"))
 autoplot(v)
 
-v \%>\% autoplot(aes(fill = cpro)) +
+v |> autoplot(aes(fill = cpro)) +
   geom_spatvector_text(aes(label = iso2)) +
   coord_sf(crs = 25829)
 }

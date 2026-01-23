@@ -41,7 +41,7 @@ test_that("Stress SpatVector", {
   expect_s4_class(inv, "SpatVector")
 
   # Geoms only
-  vnull <- v %>% select(1)
+  vnull <- v |> select(1)
   vnull$iso2 <- NULL
   expect_snapshot(inv <- glimpse(vnull))
   expect_s4_class(inv, "SpatVector")
@@ -51,7 +51,6 @@ test_that("Geometries SpatVector", {
   skip_on_cran()
   # SpatVector
   v <- terra::vect(system.file("extdata/cyl.gpkg", package = "tidyterra"))
-
 
   expect_snapshot(glimpse(v))
   l <- terra::as.lines(v)
@@ -107,7 +106,10 @@ test_that("Stress SpatRaster", {
 
   # Empty
   empt <- terra::rast(
-    xmin = -25, xmax = 15, ymin = -80, ymax = 10,
+    xmin = -25,
+    xmax = 15,
+    ymin = -80,
+    ymax = 10,
     resolution = 10
   )
   empt <- terra::project(empt, "ESRI:54030")
@@ -172,10 +174,10 @@ test_that("Coltab SpatRaster", {
 
 
 test_that("Test formats", {
-  expect_true(grepl("W", decimal_to_degrees(-79.890, "lon")))
-  expect_true(grepl("E", decimal_to_degrees(79.890, "lon")))
-  expect_true(grepl("S", decimal_to_degrees(-79.890, "lat")))
-  expect_true(grepl("N", decimal_to_degrees(79.890, "lat")))
+  expect_true(grepl("W", decimal_to_degrees(-79.890, "lon"), fixed = TRUE))
+  expect_true(grepl("E", decimal_to_degrees(79.890, "lon"), fixed = TRUE))
+  expect_true(grepl("S", decimal_to_degrees(-79.890, "lat"), fixed = TRUE))
+  expect_true(grepl("N", decimal_to_degrees(79.890, "lat"), fixed = TRUE))
 
   skip_on_cran()
   expect_snapshot(decimal_to_degrees(-79.890, "lon"))

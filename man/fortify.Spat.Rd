@@ -5,6 +5,7 @@
 \alias{fortify.SpatRaster}
 \alias{fortify.SpatVector}
 \alias{fortify.SpatGraticule}
+\alias{fortify.SpatExtent}
 \title{Fortify \verb{Spat*} Objects}
 \usage{
 \method{fortify}{SpatRaster}(
@@ -19,40 +20,17 @@
 \method{fortify}{SpatVector}(model, data, ...)
 
 \method{fortify}{SpatGraticule}(model, data, ...)
+
+\method{fortify}{SpatExtent}(model, data, ..., crs = "")
 }
 \arguments{
 \item{model}{A \code{SpatRaster} created with \code{\link[terra:rast]{terra::rast()}} or a \code{SpatVector}
-created with \code{\link[terra:vect]{terra::vect()}}.}
+created with \code{\link[terra:vect]{terra::vect()}}. Also support \code{SpatGraticule} (see
+\code{\link[terra:graticule]{terra::graticule()}}) and \code{SpatExtent} (see \code{\link[terra:ext]{terra::ext()}}).}
 
 \item{data}{Not used by this method.}
 
-\item{...}{Other arguments passed on to \code{\link[ggplot2:layer]{layer()}}'s \code{params} argument. These
-arguments broadly fall into one of 4 categories below. Notably, further
-arguments to the \code{position} argument, or aesthetics that are required
-can \emph{not} be passed through \code{...}. Unknown arguments that are not part
-of the 4 categories below are ignored.
-\itemize{
-\item Static aesthetics that are not mapped to a scale, but are at a fixed
-value and apply to the layer as a whole. For example, \code{colour = "red"}
-or \code{linewidth = 3}. The geom's documentation has an \strong{Aesthetics}
-section that lists the available options. The 'required' aesthetics
-cannot be passed on to the \code{params}. Please note that while passing
-unmapped aesthetics as vectors is technically possible, the order and
-required length is not guaranteed to be parallel to the input data.
-\item When constructing a layer using
-a \verb{stat_*()} function, the \code{...} argument can be used to pass on
-parameters to the \code{geom} part of the layer. An example of this is
-\code{stat_density(geom = "area", outline.type = "both")}. The geom's
-documentation lists which parameters it can accept.
-\item Inversely, when constructing a layer using a
-\verb{geom_*()} function, the \code{...} argument can be used to pass on parameters
-to the \code{stat} part of the layer. An example of this is
-\code{geom_area(stat = "density", adjust = 0.5)}. The stat's documentation
-lists which parameters it can accept.
-\item The \code{key_glyph} argument of \code{\link[ggplot2:layer]{layer()}} may also be passed on through
-\code{...}. This can be one of the functions described as
-\link[ggplot2:draw_key]{key glyphs}, to change the display of the layer in the legend.
-}}
+\item{...}{Ignored by these methods.}
 
 \item{.name_repair}{Treatment of problematic column names:
 \itemize{
@@ -69,17 +47,27 @@ for names in the style of base \strong{R}).
 \item{maxcell}{positive integer. Maximum number of cells to use for
 the plot.}
 
-\item{pivot}{Logical. When \code{TRUE} the \code{SpatRaster} would be fortified on
+\item{pivot}{Logical. When \code{TRUE} the \code{SpatRaster} would be provided on
 \link[tidyr:pivot_longer]{long format}. When \code{FALSE} (the default) it would
-be fortified as a data frame with a column for each layer. See \strong{Details}.}
+be provided as a data frame with a column for each layer. See \strong{Details}.}
+
+\item{crs}{Input potentially including or representing a CRS. It could be
+a \code{sf/sfc} object, a \code{SpatRaster/SpatVector} object, a \code{crs} object from
+\code{\link[sf:st_crs]{sf::st_crs()}}, a character (for example a \href{https://proj.org/en/9.3/operations/projections/index.html}{proj4 string}) or a
+integer (representing an \href{https://epsg.io/}{EPSG} code).}
 }
 \value{
-\code{\link[=fortify.SpatVector]{fortify.SpatVector()}} returns a \code{\link[sf:sf]{sf}} object and
-\code{\link[=fortify.SpatRaster]{fortify.SpatRaster()}} returns a \code{\link[tibble:tibble]{tibble}}. See \strong{Methods}.
+\code{\link[=fortify.SpatVector]{fortify.SpatVector()}}, \code{\link[=fortify.SpatGraticule]{fortify.SpatGraticule()}} and \code{\link[=fortify.SpatExtent]{fortify.SpatExtent()}}
+return a \code{\link[sf:sf]{sf}} object.
+
+\code{\link[=fortify.SpatRaster]{fortify.SpatRaster()}} returns a \link[tibble:tbl_df-class]{tibble}. See \strong{Methods}.
 }
 \description{
 Fortify \code{SpatRaster} and \code{SpatVector} objects to data frames. This provide
 native compatibility with \code{\link[ggplot2:ggplot]{ggplot2::ggplot()}}.
+
+\strong{Note that} these methods are now implemented as a wrapper of \code{\link{tidy.Spat}}
+methods.
 }
 \section{Methods}{
 
@@ -113,7 +101,7 @@ This option may be useful when using several \verb{geom_*} and for faceting, see
 \strong{Examples}.
 }
 
-\subsection{\code{SpatVector} and \code{SpatGraticule}}{
+\subsection{\code{SpatVector}, \code{SpatGraticule} and \code{SpatExtent}}{
 
 Return a \code{\link[sf:sf]{sf}} object than can be used with \code{\link[ggplot2:ggsf]{ggplot2::geom_sf()}}.
 }
@@ -122,53 +110,56 @@ Return a \code{\link[sf:sf]{sf}} object than can be used with \code{\link[ggplot
 \examples{
 \donttest{
 
-# Get a SpatRaster
-r <- system.file("extdata/volcano2.tif", package = "tidyterra") \%>\%
-  terra::rast() \%>\%
-  terra::project("EPSG:4326")
-
-fortified <- ggplot2::fortify(r)
-
-fortified
-
-# The crs is an attribute of the fortified SpatRaster
-
-attr(fortified, "crs")
-
-# Back to a SpatRaster with
-as_spatraster(fortified)
-
-# You can now use a SpatRaster with any geom
+# Demonstrate the use with ggplot2
 library(ggplot2)
 
-ggplot(r) +
+
+# Get a SpatRaster
+r <- system.file("extdata/volcano2.tif", package = "tidyterra") |>
+  terra::rast() |>
+  terra::project("EPSG:4326")
+
+
+# You can now use a SpatRaster with any geom
+ggplot(r, maxcell = 50) +
   geom_histogram(aes(x = elevation),
     bins = 20, fill = "lightblue",
     color = "black"
   )
 
+# For SpatVector, SpatGraticule and SpatExtent you can use now geom_sf()
 
 # Create a SpatVector
 extfile <- system.file("extdata/cyl.gpkg", package = "tidyterra")
 cyl <- terra::vect(extfile)
 
-cyl
-
-# To sf
-ggplot2::fortify(cyl)
-
-# Now you can use geom_sf() straight away thanks to fortify::SpatVector()
-
-library(ggplot2)
+class(cyl)
 
 ggplot(cyl) +
   geom_sf()
+
+# SpatGraticule
+g <- terra::graticule(60, 30, crs = "+proj=robin")
+
+class(g)
+
+ggplot(g) +
+  geom_sf()
+
+# SpatExtent
+ex <- terra::ext(cyl)
+
+class(ex)
+
+ggplot(ex, crs = cyl) +
+  geom_sf(fill = "red", alpha = 0.3) +
+  geom_sf(data = cyl, fill = NA)
 }
 
 }
 \seealso{
-\code{\link[sf:st_as_sf]{sf::st_as_sf()}}, \code{\link{as_tibble.Spat}}, \code{\link[=as_spatraster]{as_spatraster()}},
-\code{\link[ggplot2:fortify]{ggplot2::fortify()}}.
+\code{\link{tidy.Spat}}, \code{\link[sf:st_as_sf]{sf::st_as_sf()}}, \code{\link{as_tibble.Spat}},
+\code{\link[=as_spatraster]{as_spatraster()}}, \code{\link[ggplot2:fortify]{ggplot2::fortify()}}.
 
 Other \CRANpkg{ggplot2} utils:
 \code{\link{autoplot.Spat}},
@@ -186,7 +177,8 @@ Coercing objects:
 \code{\link{as_sf}()},
 \code{\link{as_spatraster}()},
 \code{\link{as_spatvector}()},
-\code{\link{as_tibble.Spat}}
+\code{\link{as_tibble.Spat}},
+\code{\link{tidy.Spat}}
 }
 \concept{coerce}
 \concept{ggplot2.methods}

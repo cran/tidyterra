@@ -24,7 +24,7 @@ created with \code{\link[terra:vect]{terra::vect()}}.}
 The default returns the last layer/attribute (on the assumption that's the
 column you've created most recently).}
 
-\item{name}{An optional parameter that specifies the column to be used as
+\item{name}{An optional argument that specifies the column to be used as
 names for a named vector. Specified in a similar manner as \code{var}.}
 
 \item{...}{Arguments passed on to \code{\link[=as_tibble.Spat]{as_tibble.Spat()}}}
@@ -85,21 +85,21 @@ f <- system.file("extdata/cyl_tile.tif", package = "tidyterra")
 r <- rast(f)
 
 # Extract second layer
-r \%>\%
-  pull(2) \%>\%
+r |>
+  pull(2) |>
   head()
 
 # With xy the first two cols are `x` (longitude) and `y` (latitude)
 
-r \%>\%
-  pull(2, xy = TRUE) \%>\%
+r |>
+  pull(2, xy = TRUE) |>
   head()
 
 # With renaming
 
-r \%>\%
-  mutate(cat = cut(cyl_tile_3, c(0, 100, 300))) \%>\%
-  pull(cyl_tile_3, name = cat) \%>\%
+r |>
+  mutate(cat = cut(cyl_tile_3, c(0, 100, 300))) |>
+  pull(cyl_tile_3, name = cat) |>
   head()
 
 }

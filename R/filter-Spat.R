@@ -66,20 +66,20 @@
 #' library(terra)
 #' f <- system.file("extdata/cyl_temp.tif", package = "tidyterra")
 #'
-#' r <- rast(f) %>% select(tavg_04)
+#' r <- rast(f) |> select(tavg_04)
 #'
 #' plot(r)
 #'
 #'
 #' # Filter temps
-#' r_f <- r %>% filter(tavg_04 > 11.5)
+#' r_f <- r |> filter(tavg_04 > 11.5)
 #'
 #' # Extent is kept
 #' plot(r_f)
 #'
 #'
 #' # Filter temps and extent
-#' r_f2 <- r %>% filter(tavg_04 > 11.5, .keep_extent = FALSE)
+#' r_f2 <- r |> filter(tavg_04 > 11.5, .keep_extent = FALSE)
 #'
 #' # Extent has changed
 #' plot(r_f2)
@@ -88,17 +88,21 @@
 #' # Filter by geographic coordinates
 #' r2 <- project(r, "epsg:4326")
 #'
-#' r2 %>% plot()
+#' r2 |> plot()
 #'
-#' r2 %>%
+#' r2 |>
 #'   filter(
 #'     x > -4,
 #'     x < -2,
 #'     y > 42
-#'   ) %>%
+#'   ) |>
 #'   plot()
-filter.SpatRaster <- function(.data, ..., .preserve = FALSE,
-                              .keep_extent = TRUE) {
+filter.SpatRaster <- function(
+  .data,
+  ...,
+  .preserve = FALSE,
+  .keep_extent = TRUE
+) {
   df <- as_tbl_internal(.data)
   xy <- dplyr::select(df, 1:2)
   values <- df
@@ -106,11 +110,8 @@ filter.SpatRaster <- function(.data, ..., .preserve = FALSE,
   # Filter
   filtered <- dplyr::filter(values, ...)
 
-
   # Rebuild raster
-  rebuild_df <- dplyr::left_join(xy, filtered,
-    by = c("x", "y")
-  )
+  rebuild_df <- dplyr::left_join(xy, filtered, by = c("x", "y"))
 
   # For dtplyr
   rebuild_df <- data.table::as.data.table(rebuild_df)
@@ -118,12 +119,14 @@ filter.SpatRaster <- function(.data, ..., .preserve = FALSE,
 
   newrast <- as_spat_internal(rebuild_df)
 
-  if (!isTRUE(.keep_extent)) newrast <- terra::trim(newrast)
+  if (!isTRUE(.keep_extent)) {
+    newrast <- terra::trim(newrast)
+  }
 
   if (any(terra::has.colors(.data))) {
     terra::coltab(newrast) <- terra::coltab(.data)
   }
-  return(newrast)
+  newrast
 }
 
 #' @export
@@ -141,7 +144,7 @@ filter.SpatVector <- function(.data, ..., .preserve = FALSE) {
 
   vend <- group_prepare_spat(vend, filtered)
 
-  return(vend)
+  vend
 }
 
 #' @export

@@ -65,7 +65,7 @@ NULL
 #' Hypsometric palettes database
 #'
 #' @description
-#' A [`tibble`][tibble::tibble()] including the color map of
+#' A [tibble][tibble::tbl_df] including the color map of
 #' `r length(unique(hypsometric_tints_db$pal))` gradient palettes. All the
 #' palettes includes also a definition of colors limits in terms of elevation
 #' (meters), that can be used with [ggplot2::scale_fill_gradientn()].
@@ -76,7 +76,7 @@ NULL
 #'
 #' @name hypsometric_tints_db
 #' @format
-#' A [`tibble`][tibble::tibble()] of `r nrow(hypsometric_tints_db)` rows and
+#' A [tibble][tibble::tbl_df] of `r nrow(hypsometric_tints_db)` rows and
 #' `r ncol(hypsometric_tints_db)` columns. with the following fields:
 #'
 #' \describe{
@@ -100,7 +100,7 @@ NULL
 #' hypsometric_tints_db
 #'
 #' # Select a palette
-#' wikicols <- hypsometric_tints_db %>%
+#' wikicols <- hypsometric_tints_db |>
 #'   filter(pal == "wiki-2.0")
 #'
 #' f <- system.file("extdata/asia.tif", package = "tidyterra")
@@ -128,7 +128,7 @@ NULL
 #' Cross-blended hypsometric tints
 #'
 #' @description
-#' A [`tibble`][tibble::tibble()] including the color map of
+#' A [tibble][tibble::tbl_df] including the color map of
 #' `r length(unique(cross_blended_hypsometric_tints_db$pal))` gradient palettes.
 #' All the palettes includes also a definition of colors limits in terms of
 #' elevation (meters), that can be used with [ggplot2::scale_fill_gradientn()].
@@ -180,7 +180,7 @@ NULL
 #' cross_blended_hypsometric_tints_db
 #'
 #' # Select a palette
-#' warm <- cross_blended_hypsometric_tints_db %>%
+#' warm <- cross_blended_hypsometric_tints_db |>
 #'   filter(pal == "warm_humid")
 #'
 #' f <- system.file("extdata/asia.tif", package = "tidyterra")
@@ -209,7 +209,7 @@ NULL
 #' GRASS color tables
 #'
 #' @description
-#' A [`tibble`][tibble::tibble()] including the color map of
+#' A [tibble][tibble::tbl_df] including the color map of
 #' `r length(unique(grass_db$pal))` gradient palettes. Some palettes includes
 #' also a definition of colors limits that can be used with
 #' [ggplot2::scale_fill_gradientn()].
@@ -262,7 +262,7 @@ NULL
 #' grass_db
 #' # Select a palette
 #'
-#' srtm_plus <- grass_db %>%
+#' srtm_plus <- grass_db |>
 #'   filter(pal == "srtm_plus")
 #'
 #' f <- system.file("extdata/asia.tif", package = "tidyterra")
@@ -291,7 +291,7 @@ NULL
 #' Princess palettes database
 #'
 #' @description
-#' A [`tibble`][tibble::tibble()] including the color map of
+#' A [tibble][tibble::tbl_df] including the color map of
 #' `r length(unique(princess_db$pal))` gradient palettes.
 #'
 #' @docType data
@@ -300,7 +300,7 @@ NULL
 #'
 #' @name princess_db
 #' @format
-#' A [`tibble`][tibble::tibble()] of `r nrow(princess_db)` rows and
+#' A [tibble][tibble::tbl_df] of `r nrow(princess_db)` rows and
 #' `r ncol(princess_db)` columns. with the following fields:
 #'
 #' \describe{
@@ -323,7 +323,7 @@ NULL
 #' princess_db
 #'
 #' # Select a palette
-#' maori <- princess_db %>%
+#' maori <- princess_db |>
 #'   filter(pal == "maori")
 #'
 #' f <- system.file("extdata/volcano2.tif", package = "tidyterra")

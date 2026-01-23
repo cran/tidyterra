@@ -50,8 +50,9 @@ overflow: visible;
 }
 </style>
 <style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -62,7 +63,7 @@ div.sourceCode { overflow: auto; }
 }
 @media print {
 pre > code.sourceCode { white-space: pre-wrap; }
-pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
 { counter-reset: source-line 0; }
@@ -369,7 +370,7 @@ tidyterra package</h1>
 
 
 
-<!-- tidyterra.Rmd is generated from welcome.Rmd.orig. Please edit that file -->
+<!-- tidyterra.Rmd is generated from tidyterra.Rmd.orig. Please edit that file -->
 <p><a href="https://doi.org/10.21105/joss.05751"><img role="img" aria-label="DOI" src="data:image/svg+xml; charset=utf-8;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScxNjgnIGhlaWdodD0nMjAnPjxsaW5lYXJHcmFkaWVudCBpZD0nYicgeDI9JzAnIHkyPScxMDAlJz48c3RvcCBvZmZzZXQ9JzAnIHN0b3AtY29sb3I9JyNiYmInIHN0b3Atb3BhY2l0eT0nLjEnLz48c3RvcCBvZmZzZXQ9JzEnIHN0b3Atb3BhY2l0eT0nLjEnLz48L2xpbmVhckdyYWRpZW50PjxtYXNrIGlkPSdhJz48cmVjdCB3aWR0aD0nMTY4JyBoZWlnaHQ9JzIwJyByeD0nMycgZmlsbD0nI2ZmZicvPjwvbWFzaz48ZyBtYXNrPSd1cmwoI2EpJz48cGF0aCBmaWxsPScjNTU1JyBkPSdNMCAwaDM5djIwSDB6Jy8+PHBhdGggZmlsbD0nIzRjMScgZD0nTTM5IDBoMTI5djIwSDM5eicvPjxwYXRoIGZpbGw9J3VybCgjYiknIGQ9J00wIDBoMTY4djIwSDB6Jy8+PC9nPjxnIGZpbGw9JyNmZmYnIHRleHQtYW5jaG9yPSdtaWRkbGUnIGZvbnQtZmFtaWx5PSdEZWphVnUgU2FucyxWZXJkYW5hLEdlbmV2YSxzYW5zLXNlcmlmJyBmb250LXNpemU9JzExJz48dGV4dCB4PScxOS41JyB5PScxNScgZmlsbD0nIzAxMDEwMScgZmlsbC1vcGFjaXR5PScuMyc+Sk9TUzwvdGV4dD48dGV4dCB4PScxOS41JyB5PScxNCc+Sk9TUzwvdGV4dD48dGV4dCB4PScxMDIuNScgeT0nMTUnIGZpbGw9JyMwMTAxMDEnIGZpbGwtb3BhY2l0eT0nLjMnPjEwLjIxMTA1L2pvc3MuMDU3NTE8L3RleHQ+PHRleHQgeD0nMTAyLjUnIHk9JzE0Jz4xMC4yMTEwNS9qb3NzLjA1NzUxPC90ZXh0PjwvZz48L3N2Zz4=" alt="DOI" /></a></p>
 <div id="summary" class="section level2">
 <h2>Summary</h2>
@@ -411,8 +412,8 @@ al. (<a href="#ref-bahlburg2023">2023</a>)</span>, <span class="citation">Moraga
 </div>
 <div id="statement-of-need" class="section level2">
 <h2>Statement of need</h2>
-<p>The <a href="https://www.tidyverse.org/"><strong>tidyverse</strong></a> is a
-compilation of <strong>R</strong> packages that share an underlying
+<p>The <a href="https://tidyverse.org/"><strong>tidyverse</strong></a>
+is a compilation of <strong>R</strong> packages that share an underlying
 design philosophy, grammar, and data structures. The packages within the
 tidyverse are widely used by <strong>R</strong> users for tidying,
 transforming, and visualizing data.</p>
@@ -475,7 +476,7 @@ In the case of plotting, the default behavior of the geoms provided is
 to resample <code>SpatRaster</code> that presents more than 500.000
 cells to speed up the process (as the <code>terra::plot()</code> does),
 however this upper limit can be modified using the <code>maxcell</code>
-parameter of the geom function.</p>
+argument of the geom function.</p>
 <p>Note also that when possible, the help page of each function of
 <strong>tidyterra</strong> references its equivalent in
 <strong>terra</strong>.</p>
@@ -504,7 +505,7 @@ Additionally, it illustrates how to seamlessly plot a
 <span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>))</span>
 <span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a></span>
 <span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a><span class="co"># Rename with the tidyverse</span></span>
-<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a>rastertemp <span class="ot">&lt;-</span> rastertemp <span class="sc">%&gt;%</span></span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a>rastertemp <span class="ot">&lt;-</span> rastertemp <span class="sc">|&gt;</span></span>
 <span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">April =</span> tavg_04, <span class="at">May =</span> tavg_05, <span class="at">June =</span> tavg_06)</span>
 <span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a></span>
 <span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a></span>
@@ -536,8 +537,8 @@ result. In this case the plot is a contour plot of the original
 <code>geom_spatraster_contour_filled()</code>and it also includes an
 overlay of a <code>SpatVector</code> for reference:</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="co"># Compute the variation between April and June and apply a different palette</span></span>
-<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>incr_temp <span class="ot">&lt;-</span> rastertemp <span class="sc">%&gt;%</span></span>
-<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">var =</span> June <span class="sc">-</span> April) <span class="sc">%&gt;%</span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>incr_temp <span class="ot">&lt;-</span> rastertemp <span class="sc">|&gt;</span></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">var =</span> June <span class="sc">-</span> April) <span class="sc">|&gt;</span></span>
 <span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>  <span class="fu">select</span>(<span class="at">Variation =</span> var)</span>
 <span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a></span>
 <span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a><span class="co"># Overlay an SpatVector</span></span>
@@ -648,7 +649,7 @@ of Crawling Predators.”</span> <em>Marine Ecology Progress Series</em>
 Moraga, Paula. 2024. <em>Spatial <span>Statistics</span> for
 <span>Data</span> <span>Science</span>: <span>Theory</span> and
 <span>Practice</span> with <span>R</span></em>. First edition. Boca
-Raton, FL: <span>Chapman and Hall/CRC</span>. <a href="https://www.paulamoraga.com/book-spatial/">https://www.paulamoraga.com/book-spatial/</a>.
+Raton, FL: CRC Press. <a href="https://www.paulamoraga.com/book-spatial/">https://www.paulamoraga.com/book-spatial/</a>.
 </div>
 <div id="ref-R-tibble" class="csl-entry">
 Müller, Kirill, and Hadley Wickham. 2023. <span>“<span class="nocase">tibble</span>: Simple Data Frames.”</span> <a href="https://tibble.tidyverse.org/">https://tibble.tidyverse.org/</a>.

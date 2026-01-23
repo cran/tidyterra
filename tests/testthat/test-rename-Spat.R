@@ -12,10 +12,7 @@ test_that("Rename SpatRasters", {
   expect_true(compare_spatrasters(raster, s2))
 
   # Several renames
-  s3 <- rename(raster,
-    this_first = cyl_tile_1,
-    this_second = cyl_tile_2
-  )
+  s3 <- rename(raster, this_first = cyl_tile_1, this_second = cyl_tile_2)
 
   expect_true(compare_spatrasters(raster, s3))
 
@@ -30,10 +27,7 @@ test_that("Rename SpatRasters with", {
   file <- system.file("extdata/cyl_tile.tif", package = "tidyterra")
   raster <- terra::rast(file)
 
-  s2 <- rename_with(raster,
-    toupper,
-    .cols = dplyr::starts_with("c")
-  )
+  s2 <- rename_with(raster, toupper, .cols = dplyr::starts_with("c"))
 
   expect_true(compare_spatrasters(raster, s2))
 
@@ -42,13 +36,11 @@ test_that("Rename SpatRasters with", {
     toupper(names(raster))
   )
 
-
   # End with
 
   s3 <- rename_with(s2, tolower, .cols = dplyr::ends_with("3"))
 
   expect_true(compare_spatrasters(raster, s3))
-
 
   expect_identical(
     names(s3),
@@ -75,10 +67,7 @@ test_that("Rename SpatVectors", {
   )
 
   # Several renames
-  s3 <- rename(vector,
-    this_first = iso2,
-    this_second = cpro
-  )
+  s3 <- rename(vector, this_first = iso2, this_second = cpro)
 
   expect_s4_class(s3, "SpatVector")
 
@@ -129,17 +118,17 @@ test_that("arguments to rename() don't match vars_rename() arguments", {
   skip_on_cran()
   df <- data.frame(a = 1, lat = 1, lon = 1)
   df <- as_spatvector(df)
-  expect_identical(rename(df, var = a) %>% as_tibble(), tibble::tibble(var = 1))
+  expect_identical(rename(df, var = a) |> as_tibble(), tibble::tibble(var = 1))
   expect_identical(
-    rename(group_by(df, a), var = a) %>% as_tibble(),
+    rename(group_by(df, a), var = a) |> as_tibble(),
     group_by(data.frame(var = 1), var)
   )
   expect_identical(
-    rename(df, strict = a) %>% as_tibble(),
+    rename(df, strict = a) |> as_tibble(),
     tibble::tibble(strict = 1)
   )
   expect_identical(
-    rename(group_by(df, a), strict = a) %>% as_tibble(),
+    rename(group_by(df, a), strict = a) |> as_tibble(),
     group_by(tibble::tibble(strict = 1), strict)
   )
 })

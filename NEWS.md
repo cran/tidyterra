@@ -1,10 +1,34 @@
+# tidyterra 1.0.0
+
+-   Minimal **R** version required updated to **\>= 4.1.0**.
+-   Minimal **ggplot2** version required **\>= 4.0.0**.
+-   Adapt deprecation of **ggplot2** (4.0.0):
+    -   `geom_spatvector_label()` / `geom_spatvector_text()`: `label.size`
+        aesthetic replaced by `linewidth`. Also `nudge_x` and `nudge_y` are not
+        explicitly documented and are passed to `ggplot2::geom_sf_label()` /
+        `_text()` via dots (`...`).
+-   `get_coltab_pal()` can extract colors with alpha values (#180).
+-   New dependency **generics** added to Imports. New methods (`SpatRaster`,
+    `SpatVector`, `SpatGraticule`, `SpatExtent`) included:
+    -   `tidy.SpatRaster()`, etc.
+    -   `glance.SpatRaster()`, etc.
+    -   `required_pkgs.SpatRaster()`, etc.
+-   `fortify.Spat` methods now uses `tidy.Spat` methods under the hood:
+    -   New `fortify.SpatExtent()` method.
+-   New `autoplot.SpatExtent()` and `autoplot.SpatGraticule()` methods.
+-   `summarise.SpatVector()` supports now the `.by` argument.
+-   `geom_spatraster_contour_text()` is now a stable function.
+-   **testthat**: Internal changes in tests:
+    -   Move snapshot testing to its own directory, that is included in
+        `.Rbuildignore`: .`/tests/testthat/test_ci`.
+
 # tidyterra 0.7.2
 
 -   Hotfix: Correct error on tests for **CRAN**.
 
 # tidyterra 0.7.1
 
--   New parameters in `geom_spatraster_*`: `mask_projection`. When set to `TRUE`
+-   New arguments in `geom_spatraster_*`: `mask_projection`. When set to `TRUE`
     avoid `SpatRaster` to wrapping around on some projections (see #115 and
     #169, by \@dramanica).
 -   Fix an old bug exposed after **terra 1.8-42**: Plots crash when using
@@ -18,7 +42,7 @@
 -   Improve handling of factors when several layers have different levels. This
     is done using `terra::combineLevels()` (**terra** \>= `1.8-10`). See
     <https://stackoverflow.com/questions/79340152>.
--   Now `scales` that uses limits truncate the legend when `limits` parameter is
+-   Now `scales` that uses limits truncate the legend when `limits` argument is
     provided (#165 \@Fan-iX). Scales impacted:
     -   `scale_*_cross_blended_tint_c` and `scale_*_cross_blended_tint_b`.
     -   `scale_*_hypso_tint_c` and `scale_*_hypso_tint_b`.
@@ -148,7 +172,7 @@ Other changes on this version:
 -   New **ggplot2** methods added:
     -   Methods for `autoplot.SpatVector()`, `autoplot.SpatRaster()`.
         -   `autoplot.SpatRaster()` now is smarter on identifying the type of
-            plot to produce. Can still be overridden with parameters.
+            plot to produce. Can still be overridden with arguments.
     -   Methods for fortifying `SpatRaster` and `SpatVector` objects:
         `fortify.SpatRaster()`, `fortify.SpatVector()`.
 -   Three additional palettes are included on `hypso.colors()`: `"artic"`,
@@ -193,7 +217,7 @@ Other changes on this version:
     (2013)](https://data.linz.govt.nz/layer/53405-auckland-lidar-1m-dem-2013/).
 -   Add `volcano2` dataset.
 -   Fix errors on `slice_min()` and `slice_max()` for `SpatRaster` objects
-    (#20). Also add a new parameter `na.rm`.
+    (#20). Also add a new argument `na.rm`.
 -   Add new gradient scales for use on hypsometry:
     -   `scale_fill_hypso_c()`
     -   `scale_fill_whitebox_c()`

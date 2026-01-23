@@ -31,7 +31,7 @@
 #' The default returns the last layer/attribute (on the assumption that's the
 #' column you've created most recently).
 #'
-#' @param name An optional parameter that specifies the column to be used as
+#' @param name An optional argument that specifies the column to be used as
 #'   names for a named vector. Specified in a similar manner as `var`.
 #' @param ...  Arguments passed on to [`as_tibble.Spat()`][as_tibble.Spat]
 #'
@@ -75,27 +75,27 @@
 #' r <- rast(f)
 #'
 #' # Extract second layer
-#' r %>%
-#'   pull(2) %>%
+#' r |>
+#'   pull(2) |>
 #'   head()
 #'
 #' # With xy the first two cols are `x` (longitude) and `y` (latitude)
 #'
-#' r %>%
-#'   pull(2, xy = TRUE) %>%
+#' r |>
+#'   pull(2, xy = TRUE) |>
 #'   head()
 #'
 #' # With renaming
 #'
-#' r %>%
-#'   mutate(cat = cut(cyl_tile_3, c(0, 100, 300))) %>%
-#'   pull(cyl_tile_3, name = cat) %>%
+#' r |>
+#'   mutate(cat = cut(cyl_tile_3, c(0, 100, 300))) |>
+#'   pull(cyl_tile_3, name = cat) |>
 #'   head()
 #'
 pull.SpatRaster <- function(.data, var = -1, name = NULL, ...) {
   var <- rlang::enquo(var)
   name <- rlang::enquo(name)
-  return(dplyr::pull(as_tibble(.data, ...), !!var, !!name))
+  dplyr::pull(as_tibble(.data, ...), !!var, !!name)
 }
 
 #' @export
@@ -103,7 +103,7 @@ pull.SpatRaster <- function(.data, var = -1, name = NULL, ...) {
 pull.SpatVector <- function(.data, var = -1, name = NULL, ...) {
   var <- rlang::enquo(var)
   name <- rlang::enquo(name)
-  return(dplyr::pull(as_tibble(.data, ...), !!var, !!name))
+  dplyr::pull(as_tibble(.data, ...), !!var, !!name)
 }
 
 #' @export

@@ -61,13 +61,13 @@
 #'   vals = seq_len(10 * 10 * 6)
 #' )
 #'
-#' spatrast %>% select(1)
+#' spatrast |> select(1)
 #'
 #' # By name
-#' spatrast %>% select(lyr.1:lyr.4)
+#' spatrast |> select(lyr.1:lyr.4)
 #'
 #' # Rename
-#' spatrast %>% select(a = lyr.1, c = lyr.6)
+#' spatrast |> select(a = lyr.1, c = lyr.6)
 #'
 #' # SpatVector method
 #'
@@ -77,9 +77,9 @@
 #'
 #' v
 #'
-#' v %>% select(1, 3)
+#' v |> select(1, 3)
 #'
-#' v %>% select(iso2, name2 = cpro)
+#' v |> select(iso2, name2 = cpro)
 select.SpatRaster <- function(.data, ...) {
   # Create a template df for assessing results
   # Use only first cell for speed up
@@ -91,7 +91,6 @@ select.SpatRaster <- function(.data, ...) {
 
   df[1, ] <- seq_len(ncol(df))
 
-
   result <- dplyr::select(df, ...)
 
   # Now translate from result to terra
@@ -101,7 +100,7 @@ select.SpatRaster <- function(.data, ...) {
   # Set new names if anything has changed
   names(final_rast) <- names(result)
 
-  return(final_rast)
+  final_rast
 }
 
 #' @export
@@ -116,7 +115,7 @@ select.SpatVector <- function(.data, ...) {
 
   vend <- group_prepare_spat(vend, selected)
 
-  return(vend)
+  vend
 }
 
 #' @export
