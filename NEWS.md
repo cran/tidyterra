@@ -1,3 +1,41 @@
+# tidyterra 1.1.0
+
+-   New **dplyr** minimum version: **1.2.0**.
+
+## New Methods
+
+-   `add_count.SpatVector()` (#195).
+-   `filter_out.SpatVector()` (#196).
+
+## Changes in arguments
+
+-   In **dplyr** **1.2.0** `.by` has moved from experimental to stable. In
+    `summarise.SpatVector()` this was implemented in version 1.0.0. Now it has
+    been extended to the following **tidyterra** methods as new arguments
+    (#193):
+    -   `mutate.SpatVector()`.
+    -   `filter.SpatVector()`.
+    -   `?slice.Spat` methods for `SpatVector`.
+    -   `fill.SpatVector()`.
+-   Other arguments added to methods:
+    -   `?mutate.Spat`: New arguments `.keep, .before, .after` (see
+        `dplyr::mutate()`).
+    -   `arrange.SpatVector()`: `.locale` added (see `dplyr::arrange()`).
+    -   `filter.SpatVector()`: `.preserve` argument support added (previously it
+        was ignored).
+        -   In `count.SpatVector()`:
+            -   `wt` argument for performing weighted counts supported.
+            -   `.drop` argument deprecated, (it never really worked).
+
+## Deprecations
+
+-   `?transmute.Spat` is marked as superseded, as in `dplyr::transmute()`
+    **dplyr 1.1.0** (January 2023). Use `mutate(.keep = "none")`.
+
+## Other changes
+
+-   Migrate vignettes and articles to Quarto.
+
 # tidyterra 1.0.0
 
 -   Minimal **R** version required updated to **\>= 4.1.0**.
@@ -10,10 +48,10 @@
 -   `get_coltab_pal()` can extract colors with alpha values (#180).
 -   New dependency **generics** added to Imports. New methods (`SpatRaster`,
     `SpatVector`, `SpatGraticule`, `SpatExtent`) included:
-    -   `tidy.SpatRaster()`, etc.
-    -   `glance.SpatRaster()`, etc.
-    -   `required_pkgs.SpatRaster()`, etc.
--   `fortify.Spat` methods now uses `tidy.Spat` methods under the hood:
+    -   `?tidy.Spat`.
+    -   `?glance.Spat`.
+    -   `?required_pkgs.Spat`.
+-   `?fortify.Spat` methods now uses `?tidy.Spat` methods under the hood:
     -   New `fortify.SpatExtent()` method.
 -   New `autoplot.SpatExtent()` and `autoplot.SpatGraticule()` methods.
 -   `summarise.SpatVector()` supports now the `.by` argument.
@@ -125,7 +163,7 @@ Other changes on this version:
     setup: `na.translate = FALSE`.
 -   By default, all the non-discrete (e.g. continuous or breaks) scales of
     **tidyterra** have now `na.value = "transparent"` (#120).
--   Enhanced `glimpse.Spat()` with meta-information on type of geometry, crs,
+-   Enhanced `glimpse.Spat()` with meta-information on type of geometry, CRS,
     etc.
 -   New messaging interface thanks to [**cli**](https://cli.r-lib.org/) package.
 

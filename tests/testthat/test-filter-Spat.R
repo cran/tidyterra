@@ -25,7 +25,6 @@ test_that("Filter with SpatRaster keeping extent", {
   expect_true(compare_spatrasters(r, r_keep))
 })
 
-
 test_that("Filter with SpatRaster non keeping extent", {
   skip_on_cran()
 
@@ -62,6 +61,36 @@ test_that("Filter with SpatVector", {
   expect_s4_class(v, "SpatVector")
 })
 
+# dplyr ------------------------------------------------------------------
+test_that("filter(.,TRUE,TRUE) works (#1210)", {
+  skip_on_cran()
+  df <- data.frame(x = 1:5)
+  df$lat <- 1
+  df$lon <- 1
+  df <- as_spatvector(df)
+
+  expect_identical(filter(df, TRUE, TRUE) |> pull(x), df$x)
+  expect_identical(
+    filter_out(df, TRUE, TRUE) |> pull(x),
+    df[0, , drop = FALSE]$x
+  )
+})
+
+test_that("filter and filter_out propagate attributes", {
+  skip_on_cran()
+
+  date.start <- ISOdate(2010, 01, 01, 0)
+  test <- data.frame(Date = ISOdate(2010, 01, 01, 1:10))
+  test$lat <- 1
+  test$lon <- 1
+  test <- as_spatvector(test)
+  expect_s4_class(test, "SpatVector")
+  test2 <- test |> filter(Date < ISOdate(2010, 01, 01, 5))
+  expect_equal(test$Date[1:4], test2$Date)
+  test2 <- test |> filter_out(Date < ISOdate(2010, 01, 01, 5))
+  expect_equal(test$Date[5:10], test2$Date)
+})
+
 test_that("filter works with rowwise data", {
   skip_on_cran()
 
@@ -80,7 +109,44 @@ test_that("filter works with rowwise data", {
   expect_equal(nrow(res), 1L)
   expect_equal(as_tibble(df[1, ]), as_tibble(ungroup(res)))
 })
+test_that("filter preserve works", {
+  skip_on_cran()
 
+  df1 <- data.frame(x = rep(1:3, each = 10), y = rep(1:6, each = 5))
+  v1 <- terra::vect(system.file("extdata/cyl.gpkg", package = "tidyterra"))
+  v1 <- v1[sample(seq_len(nrow(v1)), nrow(df1), replace = TRUE), ]
+  df <- cbind(v1[, 0], df1)
+
+  out <- df |>
+    group_by(x) |>
+    filter(y < 4, .preserve = TRUE)
+
+  out_tbl_v <- as_tibble(out)
+  attr(out_tbl_v, "crs") <- NULL
+
+  out_df <- df1 |>
+    group_by(x) |>
+    filter(y < 4, .preserve = TRUE)
+
+  expect_identical(out_tbl_v, out_df)
+  expect_identical(group_data(out_tbl_v), group_data(out_df))
+
+  # No preserve
+  out <- df |>
+    group_by(x) |>
+    filter(y < 4, .preserve = FALSE)
+
+  out_tbl_v2 <- as_tibble(out)
+  attr(out_tbl_v2, "crs") <- NULL
+
+  out_df2 <- df1 |>
+    group_by(x) |>
+    filter(y < 4, .preserve = FALSE)
+
+  expect_identical(out_tbl_v2, out_df2)
+  expect_identical(group_data(out_tbl_v2), group_data(out_df2))
+  expect_false(identical(group_data(out_tbl_v), group_data(out_tbl_v2)))
+})
 test_that("grouped filter handles indices", {
   skip_on_cran()
 
@@ -100,8 +166,47 @@ test_that("grouped filter handles indices", {
   expect_equal(group_keys(res), group_keys(res2))
 })
 
+test_that("filter(FALSE) and filter_out(TRUE) handle indices", {
+  skip_on_cran()
 
-test_that("filter() preserve order across groups", {
+  indices <- mtcars |>
+    group_by(cyl) |>
+    filter(FALSE, .preserve = TRUE) |>
+    group_rows()
+
+  mtcars2 <- mtcars |> as_spatvector(geom = c("mpg", "cyl"), keepgeom = TRUE)
+
+  out <- mtcars2 |>
+    group_by(cyl) |>
+    filter(FALSE, .preserve = TRUE) |>
+    group_rows()
+  expect_identical(out, indices)
+
+  out <- mtcars2 |>
+    group_by(cyl) |>
+    filter_out(TRUE, .preserve = TRUE) |>
+    group_rows()
+  expect_identical(out, indices)
+
+  indices <- mtcars |>
+    group_by(cyl) |>
+    filter(FALSE, .preserve = FALSE) |>
+    group_rows()
+
+  out <- mtcars2 |>
+    group_by(cyl) |>
+    filter(FALSE, .preserve = FALSE) |>
+    group_rows()
+  expect_identical(out, indices)
+
+  out <- mtcars2 |>
+    group_by(cyl) |>
+    filter_out(TRUE, .preserve = FALSE) |>
+    group_rows()
+  expect_identical(out, indices)
+})
+
+test_that("filter() and filter_out() preserve order across groups", {
   skip_on_cran()
 
   df <- data.frame(g = c(1, 2, 1, 2, 1), time = 5:1, x = 5:1)
@@ -122,9 +227,146 @@ test_that("filter() preserve order across groups", {
     arrange(time) |>
     group_by(g)
 
+  expect_identical(res1$time, 1:4)
   expect_equal(as_tibble(res1), as_tibble(res2))
   expect_equal(as_tibble(res1), as_tibble(res3))
-  expect_false(is.unsorted(res1$time))
-  expect_false(is.unsorted(res2$time))
-  expect_false(is.unsorted(res3$time))
+
+  res1 <- df |>
+    group_by(g) |>
+    filter_out(x <= 2) |>
+    arrange(time)
+
+  res2 <- df |>
+    group_by(g) |>
+    arrange(time) |>
+    filter_out(x <= 2)
+
+  res3 <- df |>
+    filter_out(x <= 2) |>
+    arrange(time) |>
+    group_by(g)
+
+  expect_identical(res1$time, 3:5)
+  expect_equal(as_tibble(res1), as_tibble(res2))
+  expect_equal(as_tibble(res1), as_tibble(res3))
+})
+
+# .by -------------------------------------------------------------------------
+
+test_that("can group transiently using `.by`", {
+  skip_on_cran()
+
+  df <- tibble(g = c(1, 1, 2, 1, 2), x = c(5, 10, 1, 2, 3))
+  df$lat <- 1
+  df$lon <- 1
+  df <- as_spatvector(df)
+
+  out <- filter(df, x > mean(x), .by = g)
+  expect_identical(out$g, c(1, 2))
+  expect_identical(out$x, c(10, 3))
+  expect_s4_class(out, class(df))
+
+  out <- filter_out(df, x > mean(x), .by = g)
+  expect_identical(out$g, c(1, 2, 1))
+  expect_identical(out$x, c(5, 1, 2))
+  expect_s4_class(out, class(df))
+})
+
+test_that("transient grouping retains bare data.frame class", {
+  skip_on_cran()
+  df <- tibble(g = c(1, 1, 2, 1, 2), x = c(5, 10, 1, 2, 3))
+  df$lat <- 1
+  df$lon <- 1
+  df <- as_spatvector(df)
+
+  out <- filter(df, x > mean(x), .by = g)
+  expect_s4_class(out, class(df))
+
+  out <- filter_out(df, x > mean(x), .by = g)
+  expect_s4_class(out, class(df))
+})
+
+test_that("transient grouping retains attributes", {
+  skip_on_cran()
+
+  df <- data.frame(g = c(1, 1, 2), x = c(1, 2, 1))
+  df$lat <- 1
+  df$lon <- 1
+  df <- as_spatvector(df)
+
+  attr(df, "foo") <- "bar"
+
+  out <- filter(df, x > mean(x), .by = g)
+  expect_identical(attr(out, "foo"), "bar")
+
+  out <- filter_out(df, x > mean(x), .by = g)
+  expect_identical(attr(out, "foo"), "bar")
+})
+
+test_that("can't use `.by` with `.preserve`", {
+  skip_on_cran()
+
+  df <- tibble(x = 1)
+  df$lat <- 1
+  df$lon <- 1
+  df <- as_spatvector(df)
+
+  expect_error(
+    filter(df, .by = x, .preserve = TRUE)
+  )
+
+  expect_error(
+    filter_out(df, .by = x, .preserve = TRUE)
+  )
+})
+
+test_that("catches `.by` with grouped-df", {
+  skip_on_cran()
+
+  df <- tibble(x = 1)
+  df$lat <- 1
+  df$lon <- 1
+  df <- as_spatvector(df)
+
+  gdf <- group_by(df, x)
+
+  expect_error(
+    filter(gdf, .by = x)
+  )
+
+  expect_error(
+    filter_out(gdf, .by = x)
+  )
+})
+
+test_that("catches `.by` with rowwise-df", {
+  skip_on_cran()
+
+  df <- tibble(x = 1)
+  df$lat <- 1
+  df$lon <- 1
+  df <- as_spatvector(df)
+
+  rdf <- rowwise(df)
+
+  expect_error(
+    filter(rdf, .by = x)
+  )
+  expect_error(
+    filter_out(rdf, .by = x)
+  )
+})
+
+test_that("catches `by` typo (#6647)", {
+  skip_on_cran()
+
+  df <- tibble(x = 1)
+  df$lat <- 1
+  df$lon <- 1
+  df <- as_spatvector(df)
+
+  expect_error(filter(df, by = x))
+  expect_error(
+    filter_out(df, by = x)
+  )
 })

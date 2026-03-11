@@ -2,17 +2,17 @@
 #'
 #' @description
 #'
-#' Replace `NA` values on layers/attributes with specified values
-#'
+#' Replace `NA`s values on layers/attributes with specified values
 #'
 #' @param data A `SpatRaster` created with [terra::rast()] or a `SpatVector`
 #'   created with [terra::vect()].
-#' @param replace list of values, with one value for each layer/attribute that
-#'   has `NA` values to be replaced.
-#' @param ... Ignored
+#' @param replace A named list of values, with one value for each
+#'   layer/attribute that has missing values to be replaced. Each value in
+#'   `replace` will be cast to the type of the column in `data` that it being
+#'   used as a replacement in.
+#' @param ... Additional arguments for methods. Currently unused.
 #'
-#' @return A `Spat*` object  of the same class than `data`. Geometries and
-#'   spatial attributes are preserved.
+#' @inherit drop_na.Spat return
 #'
 #' @export
 #' @rdname replace_na.Spat

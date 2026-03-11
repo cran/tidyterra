@@ -34,7 +34,7 @@ Keep only unique/distinct rows and geometries from a \code{SpatVector}.
 \section{Methods}{
 
 
-Implementation of the \strong{generic} \code{\link[dplyr:distinct]{dplyr::distinct()}} function.
+Implementation of the \strong{generic} \code{\link[dplyr:distinct]{dplyr::distinct()}} method.
 \subsection{\code{SpatVector}}{
 
 It is possible to remove duplicate geometries including the geometry
@@ -67,7 +67,6 @@ nrow(ex2)
 ex2b <- distinct(v, gr, .keep_all = TRUE)
 ex2b
 nrow(ex2b)
-
 
 # Unique geometries
 ex3 <- distinct(v, geometry)

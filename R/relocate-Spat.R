@@ -18,7 +18,7 @@
 #'   of layers/attributes selected by `...`. Supplying neither will move
 #'   layers/attributes to the left-hand side; specifying both is an error.
 #'
-#' @return A `Spat*` object  of the same class than `.data`. See **Methods**.
+#' @inherit select.Spat return
 #'
 #' @seealso [dplyr::relocate()]
 #'
@@ -33,7 +33,7 @@
 #'
 #' @section Methods:
 #'
-#' Implementation of the **generic** [dplyr::relocate()] function.
+#' Implementation of the **generic** [dplyr::relocate()] method.
 #'
 #' ## `SpatRaster`
 #'
@@ -47,12 +47,10 @@
 #'
 #' library(terra)
 #'
-#'
 #' f <- system.file("extdata/cyl_tile.tif", package = "tidyterra")
 #' spatrast <- rast(f) |> mutate(aa = 1, bb = 2, cc = 3)
 #'
 #' names(spatrast)
-#'
 #'
 #' spatrast |>
 #'   relocate(bb, .before = cyl_tile_3) |>
@@ -74,7 +72,6 @@ relocate.SpatRaster <- function(.data, ..., .before = NULL, .after = NULL) {
 
   finalrast
 }
-
 
 #' @rdname relocate.Spat
 #' @export

@@ -1,11 +1,10 @@
 #' Drop attributes of `Spat*` objects containing missing values
 #'
 #' @description
-#' - `SpatVector`: `drop_na()` method drops geometries where any attribute
+#' * `SpatVector`: `drop_na()` method drops geometries where any attribute
 #' specified by `...` contains a missing value.
-#' - `SpatRaster`: `drop_na()` method drops cells where any layer specified by
+#' * `SpatRaster`: `drop_na()` method drops cells where any layer specified by
 #' `...` contains a missing value.
-#'
 #'
 #' @return A `Spat*` object of the same class than `data`. See **Methods**.
 #'
@@ -29,10 +28,9 @@
 #'
 #' [terra::trim()]
 #'
-#'
 #' @section Methods:
 #'
-#' Implementation of the **generic** [tidyr::drop_na()] function.
+#' Implementation of the **generic** [tidyr::drop_na()] method.
 #'
 #' ## `SpatVector`
 #'
@@ -106,7 +104,6 @@ drop_na.SpatVector <- function(data, ...) {
   vend
 }
 
-
 #' @export
 #' @rdname drop_na.Spat
 #'
@@ -121,7 +118,6 @@ drop_na.SpatVector <- function(data, ...) {
 #'   resolution = c(2.5, 2.5)
 #' )
 #' terra::values(r) <- seq_len(ncell(r) * nlyr(r))
-#'
 #'
 #' # Add NAs
 #' r[r > 13 & r < 22 | r > 31 & r < 45] <- NA

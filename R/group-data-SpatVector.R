@@ -34,7 +34,7 @@
 #'
 #' @return
 #'
-#' See the description of the function. The results are usually tibbles,
+#' See the description of the method. The results are usually tibbles,
 #' lists or vectors. These functions does not return `SpatVector` objects.
 #'
 #' @rdname group_data.SpatVector
@@ -124,7 +124,6 @@ group_keys.SpatVector <- function(.tbl, ...) {
 #' @export
 dplyr::group_keys
 
-
 #' @importFrom dplyr group_rows
 #' @export
 dplyr::group_rows
@@ -139,7 +138,6 @@ group_indices.SpatVector <- function(.data, ...) {
 
 #' @export
 dplyr::group_indices
-
 
 #' @export
 #' @rdname group_data.SpatVector

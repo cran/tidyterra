@@ -11,12 +11,12 @@
 #'
 #' It is accompanied by a number of helpers for common use cases:
 #'
-#' - `slice_head()` and `slice_tail()` select the first or last
+#' * `slice_head()` and `slice_tail()` select the first or last
 #'   cells/geometries.
-#' - `slice_sample()` randomly selects cells/geometries.
-#' - `slice_rows()` and `slice_cols()` allow to subset entire rows or columns,
+#' * `slice_sample()` randomly selects cells/geometries.
+#' * `slice_rows()` and `slice_cols()` allow to subset entire rows or columns,
 #'   of a `SpatRaster`.
-#' - `slice_colrows()` subsets regions of the `SpatRaster` by row and column
+#' * `slice_colrows()` subsets regions of the `SpatRaster` by row and column
 #'   position of a `SpatRaster`.
 #'
 #' You can get a skeleton of your `SpatRaster` with the cell, column and row
@@ -40,12 +40,11 @@
 #' @family dplyr.rows
 #' @family dplyr.methods
 #'
-#' @return A `Spat*` object  of the same class than `.data`. See **Methods**.
-#'
+#' @inherit select.Spat return
 #' @importFrom dplyr slice
 #'
-#' @inheritParams mutate.Spat
-#'
+#' @param .data A `SpatRaster` created with [terra::rast()] or a `SpatVector`
+#'   created with [terra::vect()].
 #' @param .preserve Ignored for `Spat*` objects.
 #' @param .keep_extent Should the extent of the resulting `SpatRaster` be kept?
 #'   See also [terra::trim()], [terra::extend()].
@@ -69,11 +68,11 @@
 #'
 #' @section Methods:
 #'
-#' Implementation of the **generic** [dplyr::slice()] function.
+#' Implementation of the **generic** [dplyr::slice()] method.
 #'
 #' ## `SpatRaster`
 #'
-#' The result is a `SpatRaster` with the crs and resolution of the input and
+#' The result is a `SpatRaster` with the CRS and resolution of the input and
 #' where cell values of the selected cells/columns/rows are preserved.
 #'
 #' Use `.keep_extent = TRUE` to preserve the extent of `.data` on the output.
@@ -88,7 +87,6 @@
 #' the first five rows in each group.
 #'
 #' @examples
-#'
 #'
 #' library(terra)
 #'
@@ -114,7 +112,6 @@
 #' r |>
 #'   slice_sample(prop = 0.2) |>
 #'   plot()
-#'
 #'
 #' # Slice regions
 #' r |>
@@ -185,12 +182,12 @@ slice.SpatRaster <- function(
 }
 #' @export
 #' @rdname slice.Spat
-slice.SpatVector <- function(.data, ..., .preserve = FALSE) {
+slice.SpatVector <- function(.data, ..., .by = NULL, .preserve = FALSE) {
   # Use own method
   tbl <- as_tibble(.data)
   ind <- make_safe_index("tterra_index", tbl)
   tbl[[ind]] <- seq_len(nrow(tbl))
-  sliced <- dplyr::slice(tbl, ..., .preserve = .preserve)
+  sliced <- dplyr::slice(tbl, ..., .by = {{ .by }}, .preserve = .preserve)
 
   # Regenerate
   vend <- .data[as.integer(sliced[[ind]]), ]
@@ -230,13 +227,13 @@ slice_head.SpatRaster <- function(.data, ..., n, prop, .keep_extent = FALSE) {
 
 #' @export
 #' @rdname slice.Spat
-slice_head.SpatVector <- function(.data, ..., n, prop) {
+slice_head.SpatVector <- function(.data, ..., n, prop, by = NULL) {
   # Use own method
   tbl <- as_tibble(.data)
   ind <- make_safe_index("tterra_index", tbl)
   tbl[[ind]] <- seq_len(nrow(tbl))
 
-  sliced <- dplyr::slice_head(tbl, ..., n = n, prop = prop)
+  sliced <- dplyr::slice_head(tbl, ..., n = n, prop = prop, by = {{ by }})
 
   # Regenerate
   vend <- .data[as.integer(sliced[[ind]]), ]
@@ -277,13 +274,13 @@ slice_tail.SpatRaster <- function(.data, ..., n, prop, .keep_extent = FALSE) {
 
 #' @export
 #' @rdname slice.Spat
-slice_tail.SpatVector <- function(.data, ..., n, prop) {
+slice_tail.SpatVector <- function(.data, ..., n, prop, by = NULL) {
   # Use own method
   tbl <- as_tibble(.data)
   ind <- make_safe_index("tterra_index", tbl)
   tbl[[ind]] <- seq_len(nrow(tbl))
 
-  sliced <- dplyr::slice_tail(tbl, ..., n = n, prop = prop)
+  sliced <- dplyr::slice_tail(tbl, ..., n = n, prop = prop, by = {{ by }})
 
   # Regenerate
   vend <- .data[as.integer(sliced[[ind]]), ]
@@ -361,6 +358,7 @@ slice_min.SpatVector <- function(
   ...,
   n,
   prop,
+  by = NULL,
   with_ties = TRUE,
   na_rm = FALSE
 ) {
@@ -371,11 +369,11 @@ slice_min.SpatVector <- function(
 
   sliced <- dplyr::slice_min(
     tbl,
-    ...,
     order_by = {{ order_by }},
     ...,
     n = n,
     prop = prop,
+    by = {{ by }},
     with_ties = with_ties,
     na_rm = na_rm
   )
@@ -456,6 +454,7 @@ slice_max.SpatVector <- function(
   ...,
   n,
   prop,
+  by = NULL,
   with_ties = TRUE,
   na_rm = FALSE
 ) {
@@ -471,6 +470,7 @@ slice_max.SpatVector <- function(
     ...,
     n = n,
     prop = prop,
+    by = {{ by }},
     with_ties = with_ties,
     na_rm = na_rm
   )
@@ -544,6 +544,7 @@ slice_sample.SpatVector <- function(
   ...,
   n,
   prop,
+  by = NULL,
   weight_by = NULL,
   replace = FALSE
 ) {
@@ -552,7 +553,15 @@ slice_sample.SpatVector <- function(
   ind <- make_safe_index("tterra_index", tbl)
   tbl[[ind]] <- seq_len(nrow(tbl))
 
-  sliced <- dplyr::slice_sample(tbl, ..., n = n, prop = prop, replace = replace)
+  sliced <- dplyr::slice_sample(
+    tbl,
+    ...,
+    n = n,
+    prop = prop,
+    by = {{ by }},
+    weight_by = {{ weight_by }},
+    replace = replace
+  )
 
   # Regenerate
   vend <- .data[as.integer(sliced[[ind]]), ]

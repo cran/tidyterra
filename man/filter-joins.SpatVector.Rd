@@ -78,7 +78,7 @@ See \code{\link[dplyr:filter-joins]{dplyr::semi_join()}} for details.
 Implementation of the \strong{generic} \code{\link[dplyr:filter-joins]{dplyr::semi_join()}} family
 \subsection{\code{SpatVector}}{
 
-The geometry column has a sticky behavior. This means that the result would
+The geometry column has a sticky behaviour. This means that the result would
 have always the geometry of \code{x} for the records that matches the join
 conditions.
 }
@@ -106,8 +106,7 @@ semi <- v |> semi_join(df)
 
 semi
 
-autoplot(semi, aes(fill = iso2)) + ggtitle("Semi Join")
-
+autoplot(semi, aes(fill = iso2)) + labs(title = "Semi Join")
 
 # Anti join
 
@@ -115,7 +114,7 @@ anti <- v |> anti_join(df)
 
 anti
 
-autoplot(anti, aes(fill = iso2)) + ggtitle("Anti Join")
+autoplot(anti, aes(fill = iso2)) + labs(title = "Anti Join")
 
 }
 \seealso{

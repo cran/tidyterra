@@ -3,11 +3,11 @@
 #' @order 2
 #'
 #' @param label_format One of:
-#'   - `NULL` for no labels. This produced the same result than
+#'   * `NULL` for no labels. This produced the same result than
 #'     `geom_spatraster_contour()`.
-#'   - A character vector giving labels (must be same length as the breaks
+#'   * A character vector giving labels (must be same length as the breaks
 #'     produced by `bins`, `binwidth`, or `breaks`).
-#'   - A function that takes the breaks as input and returns labels as output,
+#'   * A function that takes the breaks as input and returns labels as output,
 #'     as the default setup ([scales::label_number()]).
 #' @inheritParams isoband::isolines_grob
 #'
@@ -27,16 +27,6 @@ geom_spatraster_contour_text <- function(
   inherit.aes = TRUE,
   mask_projection = FALSE
 ) {
-  # Is a suggestion so far
-  # nocov start
-  if (!requireNamespace("isoband", quietly = TRUE)) {
-    cli::cli_abort(paste(
-      "Package {.pkg isoband} required.",
-      "Run {.run install.packages('isoband')}"
-    ))
-  }
-  # nocov end
-
   if (!inherits(data, "SpatRaster")) {
     cli::cli_abort(paste(
       "{.fun tidyterra::geom_spatraster_contour_text} only works with",
@@ -141,7 +131,6 @@ geom_spatraster_contour_text <- function(
 
   layer_spatrast
 }
-
 
 GeomSpatRasterContourText <- ggplot2::ggproto(
   "GeomSpatRasterContourText",
@@ -306,7 +295,6 @@ get_aes_iso <- function(x, aesx = "colour") {
 
   unlist(get_aes)
 }
-
 
 ## from ggplot2 ----
 

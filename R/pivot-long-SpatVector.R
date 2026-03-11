@@ -16,10 +16,8 @@
 #' @rdname pivot_longer.SpatVector
 #' @name pivot_longer.SpatVector
 #'
-#'
 #' @param data A `SpatVector` to pivot.
-#' @param cols <[`tidy-select`][tidyr::tidyr_tidy_select]> Columns to pivot into
-#'   longer format.
+#'
 #' @inheritParams tidyr::pivot_longer
 #'
 #' @return A `SpatVector` object.
@@ -28,11 +26,11 @@
 #'
 #' @section Methods:
 #'
-#' Implementation of the **generic** [tidyr::pivot_longer()] function.
+#' Implementation of the **generic** [tidyr::pivot_longer()] method.
 #'
 #' ## `SpatVector`
 #'
-#' The geometry column has a sticky behavior. This means that the result would
+#' The geometry column has a sticky behaviour. This means that the result would
 #' have always the geometry of `data`.
 #'
 #' @examples
@@ -44,22 +42,22 @@
 #' library(terra)
 #'
 #' temp <- rast((system.file("extdata/cyl_temp.tif", package = "tidyterra")))
-#' cyl <- vect(system.file("extdata/cyl.gpkg", package = "tidyterra")) %>%
+#' cyl <- vect(system.file("extdata/cyl.gpkg", package = "tidyterra")) |>
 #'   project(temp)
 #'
 #' # Add average temp
 #'
 #' temps <- terra::extract(temp, cyl, fun = "mean", na.rm = TRUE, xy = TRUE)
-#' cyl_temp <- cbind(cyl, temps) %>%
+#' cyl_temp <- cbind(cyl, temps) |>
 #'   glimpse()
 #'
 #' # And pivot long for plot
-#' cyl_temp %>%
+#' cyl_temp |>
 #'   pivot_longer(
 #'     cols = tavg_04:tavg_06,
 #'     names_to = "label",
 #'     values_to = "temp"
-#'   ) %>%
+#'   ) |>
 #'   ggplot() +
 #'   geom_spatvector(aes(fill = temp)) +
 #'   facet_wrap(~label, ncol = 1) +

@@ -1,9 +1,17 @@
 #' Subset cells/geometries of `Spat*` objects
 #'
 #' @description
-#' The `filter()` function is used to subset `Spat*` objects, retaining all
-#' cells/geometries that satisfy your conditions. To be retained, the
-#' cell/geometry must produce a value of `TRUE` for all conditions.
+#' These functions are used to subset a data frame, applying the expressions in
+#' `...` to determine which rows should be kept (for `filter()`) or dropped (
+#' for `filter_out()`).
+#'
+#' Multiple conditions can be supplied separated by a comma. These will be
+#' combined with the `&` operator. To combine comma separated conditions using
+#' `|` instead, wrap them in [dplyr::when_any()].
+#'
+#' Both `filter()` and `filter_out()` treat `NA` like `FALSE`. This subtle
+#' behaviour can impact how you write your conditions when missing values are
+#' involved. See [dplyr::filter()].
 #'
 #' **It is possible to filter a `SpatRaster` by its geographic coordinates**.
 #' You need to use `filter(.data, x > 42)`. Note that `x` and `y` are reserved
@@ -24,21 +32,22 @@
 #'
 #' @importFrom dplyr filter
 #' @inheritParams select.Spat
+#' @inheritParams dplyr::filter
+#'
 #' @param ... <[`data-masking`][rlang::args_data_masking]> Expressions that
 #'   return a logical value, and are defined in terms of the layers/attributes
 #'   in `.data`. If multiple expressions are included, they are combined with
 #'   the `&` operator. Only cells/geometries for which all conditions evaluate
 #'   to `TRUE` are kept. See **Methods**.
-#' @param .preserve Ignored for `Spat*` objects.
 #' @param .keep_extent Should the extent of the resulting `SpatRaster` be kept?
 #'   On `FALSE`, [terra::trim()] is called so the extent of the result may be
 #'   different of the extent of the output. See also [drop_na.SpatRaster()].
 #'
-#' @return A `Spat*` object  of the same class than `.data`. See **Methods**.
+#' @inherit select.Spat return
 #'
 #' @section Methods:
 #'
-#' Implementation of the **generic** [dplyr::filter()] function.
+#' Implementation of the **generic** [dplyr::filter()] method.
 #'
 #' ## `SpatRaster`
 #'
@@ -46,11 +55,11 @@
 #' `NA`. On a multi-layer `SpatRaster` the `NA` is propagated across all the
 #' layers.
 #'
-#' If `.keep_extent = TRUE` the returning `SpatRaster` has the same crs, extent,
+#' If `.keep_extent = TRUE` the returning `SpatRaster` has the same CRS, extent,
 #' resolution and hence the same number of cells than `.data`. If
 #' `.keep_extent = FALSE` the outer `NA` cells are trimmed with [terra::trim()],
 #' so the extent and number of cells may differ. The output would present in
-#' any case the same crs and resolution than `.data`.
+#' any case the same CRS and resolution than `.data`.
 #'
 #' `x` and `y` variables (i.e. the longitude and latitude of the `SpatRaster`)
 #' are also available internally for filtering. See **Examples**.
@@ -59,7 +68,6 @@
 #'
 #' The result is a `SpatVector` with all the geometries that produce a value of
 #' `TRUE` for all conditions.
-#'
 #'
 #' @examples
 #'
@@ -70,20 +78,17 @@
 #'
 #' plot(r)
 #'
-#'
 #' # Filter temps
 #' r_f <- r |> filter(tavg_04 > 11.5)
 #'
 #' # Extent is kept
 #' plot(r_f)
 #'
-#'
 #' # Filter temps and extent
 #' r_f2 <- r |> filter(tavg_04 > 11.5, .keep_extent = FALSE)
 #'
 #' # Extent has changed
 #' plot(r_f2)
-#'
 #'
 #' # Filter by geographic coordinates
 #' r2 <- project(r, "epsg:4326")
@@ -108,7 +113,7 @@ filter.SpatRaster <- function(
   values <- df
 
   # Filter
-  filtered <- dplyr::filter(values, ...)
+  filtered <- dplyr::filter(values, ..., .preserve = .preserve)
 
   # Rebuild raster
   rebuild_df <- dplyr::left_join(xy, filtered, by = c("x", "y"))
@@ -131,14 +136,21 @@ filter.SpatRaster <- function(
 
 #' @export
 #' @rdname filter.Spat
-filter.SpatVector <- function(.data, ..., .preserve = FALSE) {
+#' @examples
+#' v <- terra::vect(system.file("extdata/cyl.gpkg", package = "tidyterra"))
+#' glimpse(v)
+#' v |> filter(cpro < 10)
+#'
+#' # Same as
+#' v |> filter_out(cpro >= 10)
+filter.SpatVector <- function(.data, ..., .by = NULL, .preserve = FALSE) {
   # Use own method
   tbl <- as_tibble(.data)
 
   var_index <- make_safe_index("tterra_index", tbl)
   tbl[[var_index]] <- seq_len(nrow(tbl))
 
-  filtered <- dplyr::filter(tbl, ..., .preserve = .preserve)
+  filtered <- dplyr::filter(tbl, ..., .by = {{ .by }}, .preserve = .preserve)
 
   vend <- .data[as.integer(filtered[[var_index]]), ]
 
@@ -149,3 +161,30 @@ filter.SpatVector <- function(.data, ..., .preserve = FALSE) {
 
 #' @export
 dplyr::filter
+
+#' @importFrom dplyr filter_out
+#' @export
+#' @rdname filter.Spat
+filter_out.SpatVector <- function(.data, ..., .by = NULL, .preserve = FALSE) {
+  # Use own method
+  tbl <- as_tibble(.data)
+
+  var_index <- make_safe_index("tterra_index", tbl)
+  tbl[[var_index]] <- seq_len(nrow(tbl))
+
+  filtered <- dplyr::filter_out(
+    tbl,
+    ...,
+    .by = {{ .by }},
+    .preserve = .preserve
+  )
+
+  vend <- .data[as.integer(filtered[[var_index]]), ]
+
+  vend <- group_prepare_spat(vend, filtered)
+
+  vend
+}
+
+#' @export
+dplyr::filter_out

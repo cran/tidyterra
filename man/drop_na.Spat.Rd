@@ -37,7 +37,7 @@ specified by \code{...} contains a missing value.
 \section{Methods}{
 
 
-Implementation of the \strong{generic} \code{\link[tidyr:drop_na]{tidyr::drop_na()}} function.
+Implementation of the \strong{generic} \code{\link[tidyr:drop_na]{tidyr::drop_na()}} method.
 \subsection{\code{SpatVector}}{
 
 The implementation of this method is performed on a \code{by-attribute} basis,
@@ -100,7 +100,6 @@ r <- rast(
   resolution = c(2.5, 2.5)
 )
 terra::values(r) <- seq_len(ncell(r) * nlyr(r))
-
 
 # Add NAs
 r[r > 13 & r < 22 | r > 31 & r < 45] <- NA

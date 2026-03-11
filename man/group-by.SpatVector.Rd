@@ -13,20 +13,16 @@
 \arguments{
 \item{.data, x}{A \code{SpatVector} object. See \strong{Methods}.}
 
-\item{...}{In \code{group_by()}, variables or computations to group by.
-Computations are always done on the ungrouped data frame.
-To perform computations on the grouped data, you need to use
-a separate \code{mutate()} step before the \code{group_by()}.
+\item{...}{<\code{\link[rlang:args_data_masking]{data-masking}}> In \code{group_by()},
+variables or computations to group by. Computations are always done on the
+ungrouped data frame. To perform computations on the grouped data, you need
+to use a separate \code{mutate()} step before the \code{group_by()}.
 Computations are not allowed in \code{nest_by()}.
 In \code{ungroup()}, variables to remove from the grouping.}
 
 \item{.add}{When \code{FALSE}, the default, \code{group_by()} will
 override existing groups. To add to the existing groups, use
-\code{.add = TRUE}.
-
-This argument was previously called \code{add}, but that prevented
-creating a new grouping variable called \code{add}, and conflicts with
-our naming conventions.}
+\code{.add = TRUE}.}
 
 \item{.drop}{Drop groups formed by factor levels that don't appear in the
 data? The default is \code{TRUE} except when \code{.data} has been previously
@@ -67,7 +63,6 @@ library(terra)
 f <- system.file("ex/lux.shp", package = "terra")
 p <- vect(f)
 
-
 by_name1 <- p |> group_by(NAME_1)
 
 # grouping doesn't change how the SpatVector looks
@@ -84,7 +79,6 @@ head(p_tbl, 3)
 by_name1_tbl <- as_tibble(by_name1)
 class(by_name1_tbl)
 head(by_name1_tbl, 3)
-
 
 # It changes how it acts with the other dplyr verbs:
 by_name1 |> summarise(
@@ -111,7 +105,6 @@ by_name2 |>
 by_name2_name1 |>
   group_by(ID_1, ID_2) |>
   group_vars()
-
 
 # Use add = TRUE to instead append
 by_name2_name1 |>

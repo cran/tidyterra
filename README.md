@@ -1,7 +1,8 @@
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# tidyterra <a href="https://dieghernan.github.io/tidyterra/"><img src="man/figures/logo.png" align="right" height="139"/></a>
+<!-- README.md is generated from README.qmd. Please edit that file -->
+
+# tidyterra <a href="https://dieghernan.github.io/tidyterra/"><img src="man/figures/logo.png" alt="tidyterra website" align="right" height="139"/></a>
 
 <!-- badges: start -->
 
@@ -12,7 +13,6 @@ results](https://badges.cranchecks.info/worst/tidyterra.svg)](https://cran.r-pro
 [![Downloads](https://cranlogs.r-pkg.org/badges/tidyterra)](https://CRAN.R-project.org/package=tidyterra)
 [![DOI](https://joss.theoj.org/papers/10.21105/joss.05751/status.svg)](https://doi.org/10.21105/joss.05751)
 [![R-CMD-check](https://github.com/dieghernan/tidyterra/actions/workflows/check-full.yaml/badge.svg)](https://github.com/dieghernan/tidyterra/actions/workflows/check-full.yaml)
-[![R-hub](https://github.com/dieghernan/tidyterra/actions/workflows/rhub.yaml/badge.svg)](https://github.com/dieghernan/tidyterra/actions/workflows/rhub.yaml)
 [![codecov](https://codecov.io/gh/dieghernan/tidyterra/branch/main/graph/badge.svg?token=blvDmRjcfb)](https://app.codecov.io/gh/dieghernan/tidyterra)
 [![CodeFactor](https://www.codefactor.io/repository/github/dieghernan/tidyterra/badge)](https://www.codefactor.io/repository/github/dieghernan/tidyterra)
 [![r-universe](https://dieghernan.r-universe.dev/badges/tidyterra)](https://dieghernan.r-universe.dev/tidyterra)
@@ -41,9 +41,9 @@ plotting these objects with
 
 Please cite **tidyterra** as:
 
-> Hernangómez, D., (2023). Using the tidyverse with terra objects: the
-> tidyterra package. *Journal of Open Source Software*, *8*(91), 5751,
-> <https://doi.org/10.21105/joss.05751>.
+Hernangómez, D., (2023). Using the tidyverse with terra objects: the
+tidyterra package. *Journal of Open Source Software*, *8*(91), 5751,
+<https://doi.org/10.21105/joss.05751>.
 
 A BibTeX entry for LaTeX users is:
 
@@ -93,6 +93,7 @@ Current methods and functions provided by **tidyterra** are:
 | `dplyr::mutate()` | ✔️ | ✔️ Create /modify layers |
 | `dplyr::transmute()` | ✔️ | ✔️ |
 | `dplyr::filter()` | ✔️ | ✔️ Modify cells values and (additionally) remove outer cells. |
+| `dplyr::filter_out()` | ✔️ |  |
 | `dplyr::slice()` | ✔️ | ✔️ Additional methods for slicing by row and column. |
 | `dplyr::pull()` | ✔️ | ✔️ |
 | `dplyr::rename()` | ✔️ | ✔️ |
@@ -105,6 +106,7 @@ Current methods and functions provided by **tidyterra** are:
 | `dplyr::group_by()` family | ✔️ |  |
 | `dplyr::rowwise()` | ✔️ |  |
 | `dplyr::count()`, `tally()` | ✔️ |  |
+| `dplyr::add_count()` | ✔️ |  |
 | `dplyr::bind_cols()` / `dplyr::bind_rows()` | ✔️ as `bind_spat_cols()` / `bind_spat_rows()` |  |
 | `tidyr::drop_na()` | ✔️ | ✔️ Remove cell values with `NA` on any layer. Additionally, outer cells with `NA` are removed. |
 | `tidyr::replace_na()` | ✔️ | ✔️ |
@@ -118,26 +120,31 @@ Current methods and functions provided by **tidyterra** are:
 | `generics::glance()` | ✔️ | ✔️ |
 | `generics::required_pkgs()` | ✔️ | ✔️ |
 
-## :exclamation: A note on performance
-
-**tidyterra** is conceived as a user-friendly wrapper of **terra** using
-the **tidyverse** methods and verbs. This approach therefore has a
-**cost in terms of performance**.
-
-If you are a **heavy user** of **terra** or you need to work with **big
-raster files**, **terra** is much more performant. When possible, each
-function of **tidyterra** refers to its equivalent on **terra**.
-
-As a rule of thumb if your raster has less than 10,000,000 data slots
-counting cells and layers
-(i.e. `terra::ncell(your_rast)*terra::nlyr(your_rast) < 10e6`) you are
-good to go with **tidyterra**.
-
-When plotting rasters, resampling is performed automatically (as
-`terra::plot()` does, see the help page). You can adjust this with the
-`maxcell` argument.
+> [!IMPORTANT]
+>
+> ### A note on performance
+>
+> **tidyterra** is conceived as a user-friendly wrapper of **terra**
+> using the **tidyverse** methods and verbs. This approach therefore has
+> a **cost in terms of performance**.
+>
+> If you are a **heavy user** of **terra** or you need to work with
+> **big raster files**, **terra** is much more performant. When
+> possible, each function of **tidyterra** refers to its equivalent on
+> **terra**.
+>
+> As a rule of thumb if your raster has less than 10,000,000 data slots
+> counting cells and layers
+> (i.e. `terra::ncell(your_rast)*terra::nlyr(your_rast) < 10e6`) you are
+> good to go with **tidyterra**.
+>
+> When plotting rasters, resampling is performed automatically (as
+> `terra::plot()` does, see the help page). You can adjust this with the
+> `maxcell` argument.
 
 ## Installation
+
+<div class="pkgdown-release">
 
 Install **tidyterra** from
 [**CRAN**](https://CRAN.R-project.org/package=tidyterra):
@@ -146,7 +153,14 @@ Install **tidyterra** from
 install.packages("tidyterra")
 ```
 
-You can install the development version of **tidyterra** like so:
+</div>
+
+<div class="pkgdown-devel">
+
+Check the docs of the developing version in
+<https://dieghernan.github.io/tidyterra/dev/>
+
+You can install the developing version of **tidyterra** like so:
 
 ``` r
 # install.packages("pak")
@@ -158,11 +172,16 @@ Alternatively, you can install **tidyterra** using the
 
 ``` r
 # Enable this universe
-install.packages("tidyterra", repos = c(
-  "https://dieghernan.r-universe.dev",
-  "https://cloud.r-project.org"
-))
+install.packages(
+  "tidyterra",
+  repos = c(
+    "https://dieghernan.r-universe.dev",
+    "https://cloud.r-project.org"
+  )
+)
 ```
+
+</div>
 
 ## Example
 
@@ -212,10 +231,9 @@ ggplot() +
   )
 ```
 
-<img src="https://raw.githubusercontent.com/dieghernan/tidyterra/main/img/README-example-temp-1.png" alt="Average temperature in Castille and Leon, Spain" width="100%" />
+<img src="https://dieghernan.github.io/tidyterra/README-example-temp-1.png" alt="Average temperature in Castille and Leon, Spain" width="100%" />
 
 ``` r
-
 # Create maximum differences of two months
 variation <- rastertemp |>
   mutate(diff = June - May) |>
@@ -228,7 +246,8 @@ ggplot(prov) +
   geom_spatraster(data = variation) +
   geom_spatvector(fill = NA) +
   scale_fill_whitebox_c(
-    palette = "deep", direction = -1,
+    palette = "deep",
+    direction = -1,
     labels = scales::label_number(suffix = "º"),
     n.breaks = 5
   ) +
@@ -241,7 +260,7 @@ ggplot(prov) +
   )
 ```
 
-<img src="https://raw.githubusercontent.com/dieghernan/tidyterra/main/img/README-example-temp-2.png" alt="Average temperature in Castille and Leon, Spain" width="100%" />
+<img src="https://dieghernan.github.io/tidyterra/README-example-temp2-1.png" alt="Variation of temperature in Castille and Leon, Spain" width="100%" />
 
 **tidyterra** also provides a geom for plotting RGB `SpatRaster` tiles
 with **ggplot2**:
@@ -249,38 +268,21 @@ with **ggplot2**:
 ``` r
 rgb_tile <- rast(system.file("extdata/cyl_tile.tif", package = "tidyterra"))
 
-plot <- ggplot(prov) +
+ggplot(prov) +
   geom_spatraster_rgb(data = rgb_tile) +
   geom_spatvector(fill = NA) +
-  theme_light()
-
-plot
-```
-
-<img src="https://raw.githubusercontent.com/dieghernan/tidyterra/main/img/README-example-tile-1.png" alt="Example: Plotting a tile in tidyterra" width="100%" />
-
-``` r
-
-# Automatically recognizes and applies coord_sf() for spatial data.
-plot +
+  theme_light() +
   # Change the CRS and datum (useful for relabeling graticules).
   coord_sf(crs = 3857, datum = 3857)
 ```
 
-<img src="https://raw.githubusercontent.com/dieghernan/tidyterra/main/img/README-example-tile-2.png" alt="Example: Plotting a tile in tidyterra" width="100%" />
+<img src="https://dieghernan.github.io/tidyterra/README-example-tile-1.png" alt="Example: Plotting a tile in tidyterra" width="100%" />
 
 **tidyterra** provides specific scales for plotting hypsometric maps
 with **ggplot2**:
 
 ``` r
 asia <- rast(system.file("extdata/asia.tif", package = "tidyterra"))
-
-terra::plot(asia)
-```
-
-<img src="https://raw.githubusercontent.com/dieghernan/tidyterra/main/img/README-hypso-1.png" alt="Hypsometric map of Asia" width="100%" />
-
-``` r
 
 ggplot() +
   geom_spatraster(data = asia) +
@@ -304,7 +306,7 @@ ggplot() +
   )
 ```
 
-<img src="https://raw.githubusercontent.com/dieghernan/tidyterra/main/img/README-hypso-2.png" alt="Hypsometric map of Asia" width="100%" />
+<img src="https://dieghernan.github.io/tidyterra/README-hypso-1.png" alt="Hypsometric map of Asia" width="100%" />
 
 ### `SpatVectors`
 
@@ -336,7 +338,7 @@ vect(system.file("ex/lux.shp", package = "terra")) |>
 #> $ pop_dens <dbl> 57.95192, 149.27982, 72.06178, 67.93421, 63.63118, 100.52660,…
 ```
 
-<img src="https://raw.githubusercontent.com/dieghernan/tidyterra/main/img/README-spatvec-1.png" alt="" width="100%" />
+<img src="https://dieghernan.github.io/tidyterra/README-spatvec-1.png" alt="A SpatVector plotted with tidyterra" width="100%" />
 
 ## I need your feedback
 

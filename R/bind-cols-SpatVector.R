@@ -10,11 +10,11 @@
 #' without realizing it.
 #'
 #' @param ... Objects to combine. The first argument should be a `SpatVector`
-#'  and each of the subsequent arguments can either be a `SpatVector`, a `sf`
-#'  object or a data frame. Inputs are [recycled][dplyr::bind_cols()] to the
-#'  same length, then matched by position.
-#' @param .name_repair One of `"unique"`, `"universal"`, or `"check_unique"`.
-#'   See [dplyr::bind_cols()] for **Details**.
+#'   and each of the subsequent arguments can either be a `SpatVector`, a `sf`
+#'   object or a data frame. Inputs are [recycled][vctrs::theory-faq-recycling]
+#'   to the same length, then matched by position.
+#'
+#' @inheritParams dplyr::bind_cols
 #'
 #' @return A `SpatVector` with the corresponding columns. The geometry and CRS
 #' would correspond to the the first `SpatVector` of `...`.
@@ -46,7 +46,6 @@
 #'
 #' # Data frame
 #' bind_spat_cols(sv, df2)
-#'
 #'
 #' # Another SpatVector
 #' bind_spat_cols(sv[1:2, ], sv[3:4, ])

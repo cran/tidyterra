@@ -6,12 +6,10 @@
 #' output will contain all columns that appear in any of the inputs.
 #'
 #' @param ... Objects to combine. The first argument should be a `SpatVector`
-#'  and each of the subsequent arguments can either be a `SpatVector`, a
-#'  `sf/sfc` object or a data frame. Columns are matched by name, and any
-#'  missing columns will be filled with `NA`.
-#' @param .id The name of an optional identifier column. Provide a string to
-#'   create an output column that identifies each input. The column will use
-#'   names if available, otherwise it will use positions.
+#'   and each of the subsequent arguments can either be a `SpatVector`, a
+#'   `sf/sfc` object or a data frame. Columns are matched by name, and any
+#'   missing columns will be filled with `NA`.
+#' @inheritParams dplyr::bind_rows
 #'
 #' @return A `SpatVector` of the same type as the first element of `...`.
 #' @aliases bind.Spat
@@ -36,11 +34,11 @@
 #'
 #' The first element of `...` should be a `SpatVector`. Subsequent elements may
 #' be `SpatVector`, `sf/sfc` objects or data frames:
-#'  - If subsequent `SpatVector/sf/sfc` objects present a different CRS than the
-#'    first element, those elements would be reprojected to the CRS of the first
-#'    element with a message.
-#'  - If any element of `...` is a tibble/data frame the rows would be
-#'    `cbind`ed with empty geometries with a message.
+#' * If subsequent `SpatVector/sf/sfc` objects present a different CRS than
+#'   the first element, those elements would be reprojected to the CRS of the
+#'   first element with a message.
+#' * If any element of `...` is a tibble/data frame the rows would be
+#'   `cbind`ed with empty geometries with a message.
 #'
 #' @examples
 #'
@@ -73,7 +71,6 @@
 #' # And with data frames with a message
 #' data("mtcars")
 #' bind_spat_rows(v1, sfobj, mtcars, .id = "id2")
-#'
 #'
 #' # Use lists
 #' bind_spat_rows(list(v1[1, ], sfobj[1:2, ]))
@@ -203,7 +200,7 @@ bind_spat_rows <- function(..., .id = NULL) {
 crs_compare <- function(a, b, index) {
   if (!identical(pull_crs(a), pull_crs(b))) {
     cli::cli_alert_warning(
-      paste(
+      paste0(
         "Reprojecting object {.field {index}} in {.arg ...} since it",
         " doesn't have the same CRS than object {.field 1}"
       )

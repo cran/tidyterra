@@ -24,15 +24,15 @@
 \usage{
 \method{slice}{SpatRaster}(.data, ..., .preserve = FALSE, .keep_extent = FALSE)
 
-\method{slice}{SpatVector}(.data, ..., .preserve = FALSE)
+\method{slice}{SpatVector}(.data, ..., .by = NULL, .preserve = FALSE)
 
 \method{slice_head}{SpatRaster}(.data, ..., n, prop, .keep_extent = FALSE)
 
-\method{slice_head}{SpatVector}(.data, ..., n, prop)
+\method{slice_head}{SpatVector}(.data, ..., n, prop, by = NULL)
 
 \method{slice_tail}{SpatRaster}(.data, ..., n, prop, .keep_extent = FALSE)
 
-\method{slice_tail}{SpatVector}(.data, ..., n, prop)
+\method{slice_tail}{SpatVector}(.data, ..., n, prop, by = NULL)
 
 \method{slice_min}{SpatRaster}(
   .data,
@@ -45,7 +45,16 @@
   na.rm = TRUE
 )
 
-\method{slice_min}{SpatVector}(.data, order_by, ..., n, prop, with_ties = TRUE, na_rm = FALSE)
+\method{slice_min}{SpatVector}(
+  .data,
+  order_by,
+  ...,
+  n,
+  prop,
+  by = NULL,
+  with_ties = TRUE,
+  na_rm = FALSE
+)
 
 \method{slice_max}{SpatRaster}(
   .data,
@@ -58,7 +67,16 @@
   na.rm = TRUE
 )
 
-\method{slice_max}{SpatVector}(.data, order_by, ..., n, prop, with_ties = TRUE, na_rm = FALSE)
+\method{slice_max}{SpatVector}(
+  .data,
+  order_by,
+  ...,
+  n,
+  prop,
+  by = NULL,
+  with_ties = TRUE,
+  na_rm = FALSE
+)
 
 \method{slice_sample}{SpatRaster}(
   .data,
@@ -70,7 +88,7 @@
   .keep_extent = FALSE
 )
 
-\method{slice_sample}{SpatVector}(.data, ..., n, prop, weight_by = NULL, replace = FALSE)
+\method{slice_sample}{SpatVector}(.data, ..., n, prop, by = NULL, weight_by = NULL, replace = FALSE)
 
 slice_rows(.data, ...)
 
@@ -99,6 +117,10 @@ beyond the number of rows in the input are silently ignored. See
 
 \item{.keep_extent}{Should the extent of the resulting \code{SpatRaster} be kept?
 See also \code{\link[terra:trim]{terra::trim()}}, \code{\link[terra:extend]{terra::extend()}}.}
+
+\item{.by, by}{<\code{\link[dplyr:dplyr_tidy_select]{tidy-select}}> Optionally, a selection of columns to
+group by for just this operation, functioning as an alternative to \code{\link[dplyr:group_by]{group_by()}}. For
+details and examples, see \link[dplyr:dplyr_by]{?dplyr_by}.}
 
 \item{n, prop}{Provide either \code{n}, the number of rows, or \code{prop}, the
 proportion of rows to select. If neither are supplied, \code{n = 1} will be
@@ -129,7 +151,9 @@ reach \code{n}/\code{prop}.}
 
 \item{weight_by}{<\code{\link[rlang:args_data_masking]{data-masking}}> Sampling
 weights. This must evaluate to a vector of non-negative numbers the same
-length as the input. Weights are automatically standardised to sum to 1.}
+length as the input. Weights are automatically standardised to sum to 1.
+See the \code{Details} section for more technical details regarding these
+weights.}
 
 \item{replace}{Should sampling be performed with (\code{TRUE}) or without
 (\code{FALSE}, the default) replacement.}
@@ -140,7 +164,7 @@ length as the input. Weights are automatically standardised to sum to 1.}
 See \code{\link[terra:mask]{terra::mask()}}.}
 }
 \value{
-A \verb{Spat*} object  of the same class than \code{.data}. See \strong{Methods}.
+A \verb{Spat*} object of the same class than \code{.data}. See \strong{Methods}.
 }
 \description{
 \code{slice()} methods lets you index cells/rows/columns/geometries by their
@@ -175,10 +199,10 @@ See \strong{Methods} for details.
 \section{Methods}{
 
 
-Implementation of the \strong{generic} \code{\link[dplyr:slice]{dplyr::slice()}} function.
+Implementation of the \strong{generic} \code{\link[dplyr:slice]{dplyr::slice()}} method.
 \subsection{\code{SpatRaster}}{
 
-The result is a \code{SpatRaster} with the crs and resolution of the input and
+The result is a \code{SpatRaster} with the CRS and resolution of the input and
 where cell values of the selected cells/columns/rows are preserved.
 
 Use \code{.keep_extent = TRUE} to preserve the extent of \code{.data} on the output.
@@ -196,7 +220,6 @@ the first five rows in each group.
 }
 
 \examples{
-
 
 library(terra)
 
@@ -222,7 +245,6 @@ r |>
 r |>
   slice_sample(prop = 0.2) |>
   plot()
-
 
 # Slice regions
 r |>

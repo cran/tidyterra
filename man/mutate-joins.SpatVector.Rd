@@ -129,7 +129,7 @@ See \code{\link[dplyr:mutate-joins]{dplyr::inner_join()}} for details.
 Implementation of the \strong{generic} \code{\link[dplyr:mutate-joins]{dplyr::inner_join()}} family
 \subsection{\code{SpatVector}}{
 
-The geometry column has a sticky behavior. This means that the result would
+The geometry column has a sticky behaviour. This means that the result would
 have always the geometry of \code{x} for the records that matches the join
 conditions.
 
@@ -159,33 +159,31 @@ df <- data.frame(
 inner <- v |> inner_join(df)
 
 nrow(inner)
-autoplot(inner, aes(fill = letter)) + ggtitle("Inner Join")
-
+autoplot(inner, aes(fill = letter)) + labs(title = "Inner Join")
 
 # Left join
 
 left <- v |> left_join(df)
 nrow(left)
 
-autoplot(left, aes(fill = letter)) + ggtitle("Left Join")
+autoplot(left, aes(fill = letter)) + labs(title = "Left Join")
 
 \donttest{
 # Right join
 right <- v |> right_join(df)
 nrow(right)
 
-autoplot(right, aes(fill = letter)) + ggtitle("Right Join")
+autoplot(right, aes(fill = letter)) + labs(title = "Right Join")
 
 # There are empty geometries, check with data from df
 ggplot(right, aes(x, y)) +
   geom_point(aes(color = letter))
 
-
 # Full join
 full <- v |> full_join(df)
 nrow(full)
 
-autoplot(full, aes(fill = letter)) + ggtitle("Full Join")
+autoplot(full, aes(fill = letter)) + labs(title = "Full Join")
 
 # Check with data from df
 ggplot(full, aes(x, y)) +

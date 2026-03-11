@@ -14,7 +14,6 @@
 #' @rdname pivot_wider.SpatVector
 #' @name pivot_wider.SpatVector
 #'
-#'
 #' @param id_cols <[`tidy-select`][tidyr::tidyr_tidy_select]> A set of columns
 #'   that uniquely identify each observation. Typically used when you have
 #'   redundant variables, i.e. variables whose values are perfectly correlated
@@ -38,11 +37,11 @@
 #'
 #' @section Methods:
 #'
-#' Implementation of the **generic** [tidyr::pivot_wider()] function.
+#' Implementation of the **generic** [tidyr::pivot_wider()] method.
 #'
 #' ## `SpatVector`
 #'
-#' The geometry column has a sticky behavior. This means that the result would
+#' The geometry column has a sticky behaviour. This means that the result would
 #' have always the geometry of `data`.
 #'
 #' @examples

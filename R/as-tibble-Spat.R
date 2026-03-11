@@ -12,17 +12,10 @@
 #'
 #' @param x A `SpatRaster` created with [terra::rast()] or a `SpatVector`
 #'   created with [terra::vect()].
-#' @inheritParams terra::as.data.frame
 #' @param ... Arguments passed on to [terra::as.data.frame()].
-#' @param .name_repair Treatment of problematic column names:
-#'   * `"minimal"`: No name repair or checks, beyond basic existence.
-#'   * `"unique"`: Make sure names are unique and not empty.
-#'   * `"check_unique"`: (default value), no name repair, but check they are
-#'     `unique`.
-#'   * `"universal"`: Make the names `unique` and syntactic.
-#'   * a function: apply custom name repair (e.g., `.name_repair = make.names`
-#'     for names in the style of base **R**).
-#'   * A purrr-style anonymous function, see [rlang::as_function()].
+#'
+#' @inheritParams terra::as.data.frame
+#' @inheritParams tibble::as_tibble
 #'
 #' @export
 #' @importFrom terra as.data.frame
@@ -40,11 +33,11 @@
 #'
 #' @section Methods:
 #'
-#' Implementation of the **generic** [tibble::as_tibble()] function.
+#' Implementation of the **generic** [tibble::as_tibble()] method.
 #'
 #' ## `SpatRaster` and `SpatVector`
 #'
-#' The tibble is returned with an attribute including the crs of the initial
+#' The tibble is returned with an attribute including the CRS of the initial
 #' object in WKT format (see [pull_crs()]).
 #'
 #' @section About layer/column names:
@@ -95,7 +88,14 @@ as_tibble.SpatRaster <- function(
   ...,
   xy = FALSE,
   na.rm = FALSE,
-  .name_repair = "unique"
+  .name_repair = c(
+    "unique",
+    "check_unique",
+    "universal",
+    "minimal",
+    "unique_quiet",
+    "universal_quiet"
+  )
 ) {
   if (xy) {
     x <- make_safe_names(x)
@@ -117,7 +117,19 @@ as_tibble.SpatRaster <- function(
 
 #' @export
 #' @rdname as_tibble.Spat
-as_tibble.SpatVector <- function(x, ..., geom = NULL, .name_repair = "unique") {
+as_tibble.SpatVector <- function(
+  x,
+  ...,
+  geom = NULL,
+  .name_repair = c(
+    "unique",
+    "check_unique",
+    "universal",
+    "minimal",
+    "unique_quiet",
+    "universal_quiet"
+  )
+) {
   if (!is.null(geom)) {
     x <- make_safe_names(x, geom = geom)
   }
@@ -196,7 +208,6 @@ as_tbl_spat_attr <- function(x) {
   todf
 }
 
-
 #' Strict internal version, returns a tibble with required attributes to
 #' rebuild a `SpatVector`
 #' This is the underlying object that would be handled by the tidyverse
@@ -234,7 +245,6 @@ as_tbl_vector_internal <- function(x) {
 
   todf
 }
-
 
 # Protect reserved names on coercion
 make_safe_names <- function(x, geom = NULL, messages = TRUE) {

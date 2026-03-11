@@ -23,20 +23,18 @@
 #' @inheritParams dplyr::distinct
 #' @return A `SpatVector` object.
 #'
-#'
 #' @section \CRANpkg{terra} equivalent:
 #'
 #' [terra::unique()]
 #'
 #' @section Methods:
 #'
-#' Implementation of the **generic** [dplyr::distinct()] function.
+#' Implementation of the **generic** [dplyr::distinct()] method.
 #'
 #' ## `SpatVector`
 #'
 #' It is possible to remove duplicate geometries including the geometry
 #' variable explicitly in the `...` call. See **Examples**.
-#'
 #'
 #' @examples
 #'
@@ -63,7 +61,6 @@
 #' ex2b <- distinct(v, gr, .keep_all = TRUE)
 #' ex2b
 #' nrow(ex2b)
-#'
 #'
 #' # Unique geometries
 #' ex3 <- distinct(v, geometry)
@@ -125,7 +122,6 @@ distinct.SpatVector <- function(.data, ..., .keep_all = FALSE) {
 
   vend
 }
-
 
 #' @export
 dplyr::distinct

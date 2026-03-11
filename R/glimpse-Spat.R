@@ -2,7 +2,7 @@
 #'
 #' @description
 #' `glimpse()` is like a transposed version of [print()]: layers/columns run
-#' down the  page, and data runs across. This makes it possible to see every
+#' down the page, and data runs across. This makes it possible to see every
 #' layer/column in a `Spat*` object.
 #'
 #' @export
@@ -16,17 +16,14 @@
 #'
 #' @importFrom dplyr glimpse
 #'
-#'
 #' @return original `x` is (invisibly) returned, allowing `glimpse()` to
 #' be used within a data pipeline.
 #'
 #' @inheritParams as_tibble.Spat
-#' @inheritParams tibble::print.tbl_df
+#' @inheritParams pillar::glimpse
 #'
-#' @param width Width of output: defaults to the setting of the width option
-#'   (if finite) or the width of the console. See [dplyr::glimpse()].
 #' @param ... Arguments passed on to [`as_tibble()`][as_tibble.Spat] methods
-#'   for `SpatRaster` and `SpatVector`. See [as_tibble.SpatRaster()].
+#'   for `SpatRaster` and `SpatVector`.
 #' @param max_extra_cols Number of extra columns or layers to print abbreviated
 #'   information for, if `n` is too small for the `Spat*` object.
 #' @param n Maximum number of rows to show.
@@ -35,12 +32,10 @@
 #'
 #' `print()`
 #'
-#'
 #' @section Methods:
 #'
 #' Implementation of the **generic** [dplyr::glimpse()] function for
 #' `Spat*`. objects.
-#'
 #'
 #' @examples
 #'
@@ -406,14 +401,7 @@ tterra_body <- function(
     extra_text <- vapply(
       extra_cols,
       function(x) {
-        if (requireNamespace("vctrs", quietly = TRUE)) {
-          aa <- paste0(vctrs::vec_ptype_abbr(x), collapse = "/")
-        } else {
-          # nocov start
-          aa <- paste0(class(x), collapse = "/")
-          # nocov end
-        }
-
+        aa <- paste0(vctrs::vec_ptype_abbr(x), collapse = "/")
         paste0("<", aa, ">")
       },
       character(1)

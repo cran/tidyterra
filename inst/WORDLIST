@@ -5,6 +5,7 @@ CodeFactor
 Colorimetric
 Coords
 DSM
+Deprecations
 EPSG
 ETOPO
 Geospatial
@@ -16,6 +17,7 @@ ISSN
 JOSS
 LiDAR
 Licence
+Lightbox
 Maungawhau
 NZGD
 ORCID
@@ -40,6 +42,7 @@ bathymetry
 behaviour
 binwidth
 biomod
+callout
 centimetres
 cli
 codecov
@@ -48,7 +51,6 @@ colours
 coltab
 coord
 cpt
-crs
 de
 disaggregated
 downsampled
@@ -77,6 +79,7 @@ millimetres
 natively
 performant
 picas
+pkgdown
 plotmath
 proj
 ptype
@@ -87,9 +90,11 @@ reprojected
 reprojecting
 resamp
 rlang
+rowwise
 rst
 sparrpowR
 standardised
+stringi
 summarise
 summarises
 summarising

@@ -18,19 +18,28 @@ summary functions. The name will be the name of the variable in the result.
 The value can be:
 \itemize{
 \item A vector of length 1, e.g. \code{min(x)}, \code{n()}, or \code{sum(is.na(y))}.
-\item A data frame, to add multiple columns from a single expression.
-}
+\item A data frame with 1 row, to add multiple columns from a single expression.
+}}
 
-\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}} Returning values with size 0 or >1 was
-deprecated as of 1.1.0. Please use \code{\link[dplyr:reframe]{reframe()}} for this instead.}
-
-\item{.by}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
-
-<\code{\link[dplyr:dplyr_tidy_select]{tidy-select}}> Optionally, a selection of columns to
+\item{.by}{<\code{\link[dplyr:dplyr_tidy_select]{tidy-select}}> Optionally, a selection of columns to
 group by for just this operation, functioning as an alternative to \code{\link[dplyr:group_by]{group_by()}}. For
 details and examples, see \link[dplyr:dplyr_by]{?dplyr_by}.}
 
-\item{.groups}{See \code{\link[dplyr:summarise]{dplyr::summarise()}}}
+\item{.groups}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}} Grouping structure of the
+result.
+\itemize{
+\item \code{"drop_last"}: drops the last level of grouping. This was the
+only supported option before version 1.0.0.
+\item \code{"drop"}: All levels of grouping are dropped.
+\item \code{"keep"}: Same grouping structure as \code{.data}.
+\item \code{"rowwise"}: Each row is its own group.
+}
+
+When \code{.groups} is not specified, it is set to \code{"drop_last"} for a grouped
+data frame, and \code{"keep"} for a rowwise data frame. In addition, a message
+informs you of how the result will be grouped unless the result is
+ungrouped, the option \code{"dplyr.summarise.inform"} is set to \code{FALSE}, or when
+\code{summarise()} is called from a function in a package.}
 
 \item{.dissolve}{logical. Should borders between aggregated geometries
 be dissolved?}
@@ -57,7 +66,7 @@ the summary statistics that you have specified.
 \section{Methods}{
 
 
-Implementation of the \strong{generic} \code{\link[dplyr:summarise]{dplyr::summarise()}} function.
+Implementation of the \strong{generic} \code{\link[dplyr:summarise]{dplyr::summarise()}} method.
 \subsection{\code{SpatVector}}{
 
 Similarly to the implementation on \CRANpkg{sf} this function can be used to
@@ -77,14 +86,14 @@ gr_v <- v |>
   mutate(start_with_s = substr(name, 1, 1) == "S") |>
   group_by(start_with_s)
 
-
 # Dissolving
 diss <- gr_v |>
   summarise(n = dplyr::n(), mean = mean(as.double(cpro)))
 
 diss
 
-autoplot(diss, aes(fill = start_with_s)) + ggplot2::ggtitle("Dissolved")
+autoplot(diss, aes(fill = start_with_s)) +
+  ggplot2::labs(title = "Dissolved")
 
 # Not dissolving
 no_diss <- gr_v |>
@@ -94,7 +103,7 @@ no_diss <- gr_v |>
 no_diss
 
 autoplot(no_diss, aes(fill = start_with_s)) +
-  ggplot2::ggtitle("Not Dissolved")
+  ggplot2::labs(title = "Not Dissolved")
 }
 \seealso{
 \code{\link[dplyr:summarise]{dplyr::summarise()}}, \code{\link[terra:aggregate]{terra::aggregate()}}

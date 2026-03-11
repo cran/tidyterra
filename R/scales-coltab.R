@@ -60,7 +60,6 @@
 #' gg <- ggplot() +
 #'   geom_spatraster(data = r)
 #'
-#'
 #' # Default plot
 #' gg
 #'
@@ -147,7 +146,6 @@ scale_colour_coltab <- function(
 #' @rdname scale_wiki
 #' @usage NULL
 scale_color_coltab <- scale_colour_coltab
-
 
 #' @rdname scale_coltab
 #' @export

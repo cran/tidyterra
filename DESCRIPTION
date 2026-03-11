@@ -1,6 +1,6 @@
 Package: tidyterra
 Title: 'tidyverse' Methods and 'ggplot2' Helpers for 'terra' Objects
-Version: 1.0.0
+Version: 1.1.0
 Authors@R: c(
     person("Diego", "Hernangómez", , "diego.hernangomezherrero@gmail.com", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0000-0001-8457-4658")),
@@ -20,15 +20,16 @@ URL: https://dieghernan.github.io/tidyterra/,
         https://github.com/dieghernan/tidyterra
 BugReports: https://github.com/dieghernan/tidyterra/issues
 Depends: R (>= 4.1.0)
-Imports: cli (>= 3.0.0), data.table, dplyr (>= 1.0.0), generics,
-        ggplot2 (>= 4.0.0), magrittr, rlang, scales, sf (>= 1.0.0),
-        terra (>= 1.8-10), tibble (>= 3.0.0), tidyr (>= 1.0.0)
-Suggests: hexbin, isoband, knitr, lifecycle, maptiles, rmarkdown, s2,
-        testthat (>= 3.0.0), vctrs
-VignetteBuilder: knitr
+Imports: cli (>= 3.0.0), data.table, dplyr (>= 1.2.0), generics,
+        ggplot2 (>= 4.0.0), grDevices, isoband, lifecycle, magrittr,
+        rlang, scales, sf (>= 1.0.0), terra (>= 1.8-10), tibble (>=
+        3.0.0), tidyr (>= 1.0.0), tools, utils, vctrs
+Suggests: hexbin, knitr, maptiles, quarto, rmarkdown, s2, stringi,
+        testthat (>= 3.0.0)
+VignetteBuilder: quarto
 Config/Needs/coverage: covr
 Config/Needs/website: geodata, dieghernan/gitdevr, ragg, styler, metR,
-        ggspatial, cpp11, remotes, gganimate, gifski
+        ggspatial, cpp11, remotes, gganimate, gifski, tidyverse
 Config/testthat/edition: 3
 Config/testthat/parallel: true
 Encoding: UTF-8
@@ -37,7 +38,7 @@ RoxygenNote: 7.3.3
 X-schema.org-keywords: r, terra, ggplot-extension, r-spatial, rspatial,
         cran, cran-r, r-package, rstats, rstats-package
 NeedsCompilation: no
-Packaged: 2026-01-22 20:07:37 UTC; diego
+Packaged: 2026-03-10 21:37:47 UTC; diego
 Author: Diego Hernangómez [aut, cre, cph] (ORCID:
     <https://orcid.org/0000-0001-8457-4658>),
   Dewey Dunnington [ctb] (ORCID: <https://orcid.org/0000-0002-9415-4582>,
@@ -46,4 +47,4 @@ Author: Diego Hernangómez [aut, cre, cph] (ORCID:
   Andrea Manica [ctb] (ORCID: <https://orcid.org/0000-0003-1895-450X>)
 Maintainer: Diego Hernangómez <diego.hernangomezherrero@gmail.com>
 Repository: CRAN
-Date/Publication: 2026-01-23 06:40:14 UTC
+Date/Publication: 2026-03-11 06:30:13 UTC

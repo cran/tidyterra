@@ -127,10 +127,10 @@ Learn more in \code{\link[tidyr:pivot_wider]{tidyr::pivot_wider()}}.
 \section{Methods}{
 
 
-Implementation of the \strong{generic} \code{\link[tidyr:pivot_longer]{tidyr::pivot_longer()}} function.
+Implementation of the \strong{generic} \code{\link[tidyr:pivot_longer]{tidyr::pivot_longer()}} method.
 \subsection{\code{SpatVector}}{
 
-The geometry column has a sticky behavior. This means that the result would
+The geometry column has a sticky behaviour. This means that the result would
 have always the geometry of \code{data}.
 }
 }
@@ -144,22 +144,22 @@ library(ggplot2)
 library(terra)
 
 temp <- rast((system.file("extdata/cyl_temp.tif", package = "tidyterra")))
-cyl <- vect(system.file("extdata/cyl.gpkg", package = "tidyterra")) \%>\%
+cyl <- vect(system.file("extdata/cyl.gpkg", package = "tidyterra")) |>
   project(temp)
 
 # Add average temp
 
 temps <- terra::extract(temp, cyl, fun = "mean", na.rm = TRUE, xy = TRUE)
-cyl_temp <- cbind(cyl, temps) \%>\%
+cyl_temp <- cbind(cyl, temps) |>
   glimpse()
 
 # And pivot long for plot
-cyl_temp \%>\%
+cyl_temp |>
   pivot_longer(
     cols = tavg_04:tavg_06,
     names_to = "label",
     values_to = "temp"
-  ) \%>\%
+  ) |>
   ggplot() +
   geom_spatvector(aes(fill = temp)) +
   facet_wrap(~label, ncol = 1) +
