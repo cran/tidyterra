@@ -53,19 +53,13 @@ test_that("select", {
   d3 <- select(rend, aa, era)
 
   expect_equal(terra::has.colors(d3), c(FALSE, TRUE))
-  expect_identical(
-    terra::coltab(d3),
-    c(list(NULL), terra::coltab(r))
-  )
+  expect_identical(terra::coltab(d3), c(list(NULL), terra::coltab(r)))
 
   # Selecting severals with rename
   d4 <- select(rend, f = aa, era2 = era)
 
   expect_equal(terra::has.colors(d4), c(FALSE, TRUE))
-  expect_identical(
-    terra::coltab(d4),
-    c(list(NULL), terra::coltab(r))
-  )
+  expect_identical(terra::coltab(d4), c(list(NULL), terra::coltab(r)))
 })
 
 test_that("mutate", {
@@ -136,7 +130,7 @@ test_that("transmute", {
     )
   )
 
-  expect_identical(terra::has.colors(d1), TRUE)
+  expect_true(terra::has.colors(d1))
   expect_identical(terra::coltab(r), terra::coltab(d1))
 
   # transmute a new var with no coltab
@@ -149,7 +143,7 @@ test_that("transmute", {
     )
   )
 
-  expect_identical(terra::has.colors(d2), FALSE)
+  expect_false(terra::has.colors(d2))
 
   # Adding a new layer with different coltab
   newctb <- terra::rast(r)
@@ -177,11 +171,7 @@ test_that("transmute", {
   expect_identical(terra::has.colors(d4), c(FALSE, TRUE, FALSE))
   expect_identical(
     terra::coltab(d4),
-    c(
-      list(NULL),
-      terra::coltab(newctb),
-      list(NULL)
-    )
+    c(list(NULL), terra::coltab(newctb), list(NULL))
   )
 })
 

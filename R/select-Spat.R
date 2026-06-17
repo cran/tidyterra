@@ -6,25 +6,26 @@
 #' concise mini-language. See **Methods**.
 #'
 #' @export
+#' @encoding UTF-8
 #' @rdname select.Spat
 #' @name select.Spat
 #'
-#' @importFrom dplyr select
-#'
-#' @param .data A `SpatRaster` created with [terra::rast()] or a `SpatVector`
-#'   created with [terra::vect()].
-#' @param ... <[`tidy-select`][dplyr::dplyr_tidy_select]> One or more unquoted
-#'   expressions separated by commas. Layer/attribute names can be used as if
-#'   they were positions in the `Spat*` object, so expressions like `x:y` can
-#'   be used to select a range of layers/attributes.
-#'
-#' @return A `Spat*` object of the same class than `.data`. See **Methods**.
-#'
 #' @seealso [dplyr::select()], [terra::subset()]
 #'
-#' @family single table verbs
+#' @family dplyr.single_table
 #' @family dplyr.cols
 #' @family dplyr.methods
+#'
+#' @importFrom dplyr select
+#'
+#' @inheritParams mutate.Spat
+#'
+#' @param ... <[`tidy-select`][dplyr::dplyr_tidy_select]> One or more
+#'   unquoted expressions separated by commas. Layer/attribute names can be
+#'   used as if they were positions in the `Spat*` object, so expressions like
+#'   `x:y` can be used to select a range of layers/attributes.
+#'
+#' @returns A `Spat*` object of the same class as `.data`. See **Methods**.
 #'
 #' @section \CRANpkg{terra} equivalent:
 #'
@@ -37,7 +38,7 @@
 #' ## `SpatRaster`
 #'
 #' Select (and rename) layers of a `SpatRaster`. The result is a `SpatRaster`
-#' with the same extent, resolution and CRS than `.data`. Only the number (and
+#' with the same extent, resolution and CRS as `.data`. Only the number (and
 #' possibly the name) of layers is modified.
 #'
 #' ## `SpatVector`
@@ -103,6 +104,7 @@ select.SpatRaster <- function(.data, ...) {
 }
 
 #' @export
+#' @encoding UTF-8
 #' @rdname select.Spat
 select.SpatVector <- function(.data, ...) {
   # Use tibble method

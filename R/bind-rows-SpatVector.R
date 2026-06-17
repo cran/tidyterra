@@ -1,28 +1,29 @@
-#' Bind multiple `SpatVector`, `sf/sfc` and data frames objects by row
+#' Bind multiple `SpatVector`, `sf/sfc` and data frame objects by row
 #'
 #' @description
 #' Bind any number of `SpatVector`, data frames and `sf/sfc` objects by row,
-#' making a longer result. This is similar to `do.call(rbind, dfs)`, but the
-#' output will contain all columns that appear in any of the inputs.
+#' making a longer result. This is similar to `do.call(rbind, data_frames)`,
+#' but the output will contain all columns that appear in any of the inputs.
 #'
-#' @param ... Objects to combine. The first argument should be a `SpatVector`
-#'   and each of the subsequent arguments can either be a `SpatVector`, a
-#'   `sf/sfc` object or a data frame. Columns are matched by name, and any
-#'   missing columns will be filled with `NA`.
-#' @inheritParams dplyr::bind_rows
-#'
-#' @return A `SpatVector` of the same type as the first element of `...`.
-#' @aliases bind.Spat
 #' @export
-#'
-#' @family dplyr.pairs
-#' @family dplyr.methods
+#' @encoding UTF-8
 #'
 #' @rdname bind_rows.SpatVector
 #' @name bind_rows.SpatVector
 #'
+#' @aliases bind.Spat
 #' @seealso [dplyr::bind_rows()]
 #'
+#' @family dplyr.pairs
+#' @family dplyr.methods
+#'
+#' @inheritParams dplyr::bind_rows
+#'
+#' @param ... Objects to combine. The first argument must be a `SpatVector`.
+#'   Each subsequent argument can be a `SpatVector`, `sf/sfc` object or data
+#'   frame. Columns are matched by name and any missing columns are filled with
+#'   `NA`.
+#' @returns A `SpatVector` of the same type as the first element of `...`.
 #' @section \CRANpkg{terra} equivalent:
 #'
 #' `rbind()` method
@@ -32,13 +33,14 @@
 #' Implementation of the [dplyr::bind_rows()] function for
 #' `SpatVector` objects.
 #'
-#' The first element of `...` should be a `SpatVector`. Subsequent elements may
-#' be `SpatVector`, `sf/sfc` objects or data frames:
-#' * If subsequent `SpatVector/sf/sfc` objects present a different CRS than
-#'   the first element, those elements would be reprojected to the CRS of the
+#' The first argument should be a `SpatVector`. Each subsequent argument can be
+#' a `SpatVector`, `sf/sfc` object or data frame:
+#'
+#' - If subsequent `SpatVector/sf/sfc` objects have a different CRS than the
+#'   first element, those elements are reprojected to the CRS of the
 #'   first element with a message.
-#' * If any element of `...` is a tibble/data frame the rows would be
-#'   `cbind`ed with empty geometries with a message.
+#' - If any element of `...` is a tibble/data frame, the rows are column-bound
+#'   with empty geometries with a message.
 #'
 #' @examples
 #'
@@ -51,8 +53,8 @@
 #' # You can supply individual SpatVector as arguments:
 #' bind_spat_rows(v1, v2)
 #'
-#' # When you supply a column name with the `.id` argument, a new
-#' # column is created to link each row to its original data frame
+#' # When you supply a column name with the `.id` argument, a new column is
+#' # created to link each row to its original data frame.
 #' bind_spat_rows(v1, v2, .id = "id")
 #'
 #' \donttest{
@@ -83,49 +85,48 @@
 #' }
 bind_spat_rows <- function(..., .id = NULL) {
   dots <- rlang::list2(...)
-  # Return empty on none
+  # Return an empty object when no inputs are supplied.
   if (length(dots) == 0) {
-    return(terra::vect("POINT EMPTY"))
+    return(terra::vect("MULTIPOINT EMPTY"))
   }
 
-  # Make it work with list
+  # Support list input.
   if (length(dots) == 1 && is.list(dots[[1]])) {
-    # If is a list unlist the first level
+    # Unlist the first level.
     dots <- dots[[1]]
   }
 
   named_list <- as.character(seq_along(dots))
 
-  # Named lists
+  # Preserve names from named lists.
   if (!is.null(names(dots))) {
     maybe_names <- names(dots)
-    maybe_names <- maybe_names[maybe_names != ""]
+    maybe_names <- maybe_names[nzchar(maybe_names)]
     maybe_names <- maybe_names[!is.na(maybe_names)]
     if (length(maybe_names) == length(named_list)) {
       named_list <- as.character(maybe_names)
     }
   }
 
-  # Checks
-  # Ensure first is SpatVector
+  # Ensure the first input is a `SpatVector`.
   if (!inherits(dots[[1]], "SpatVector")) {
     cli::cli_abort(paste(
-      "Object {.field 1} in {.arg ...} is not a {.cls SpatVector}"
+      "Object {.val {1}} in {.arg ...} is not a {.cls SpatVector}."
     ))
   }
 
-  # Get templates
+  # Get the template.
   template <- dots[[1]]
 
-  # First get all as tibbles
+  # Convert all inputs to tibbles first.
   alltibbs <- lapply(seq_along(dots), function(i) {
     x <- dots[[i]]
 
-    # First is always a SpatVector
+    # The first input is always a `SpatVector`.
     if (i == 1) {
       frst <- as_tibble(x)
 
-      # Case when first is only geometry, need to add a mock var
+      # If first is only geometry, add a mock variable.
       if (nrow(frst) == 0) {
         frst <- tibble::tibble(first_empty = seq_len(nrow(x)))
       }
@@ -133,7 +134,7 @@ bind_spat_rows <- function(..., .id = NULL) {
       return(frst)
     }
 
-    # Rest of cases
+    # Remaining cases.
 
     if (inherits(x, "SpatVector")) {
       return(as_tibble(x))
@@ -146,8 +147,8 @@ bind_spat_rows <- function(..., .id = NULL) {
     x
   })
 
-  # Now get all geoms
-  # Ensure all are SpatVectors and add ids if required
+  # Get all geometries.
+  # Ensure all are SpatVectors and add ids if required.
   allspatvect <- lapply(seq_along(dots), function(i) {
     x <- dots[[i]]
 
@@ -156,18 +157,18 @@ bind_spat_rows <- function(..., .id = NULL) {
       return(x[, 0])
     }
 
-    # If tibble convert (internally) to SpatVector
-    # Rest as tibble
+    # Convert tibbles internally to SpatVector.
+    # Keep the rest as tibble.
     if (!inherits(x, "data.frame")) {
       cli::cli_abort(paste(
         "In {.fun tidyterra::bind_spat_rows}:",
-        "object {.field {i}} in {.arg ...} is not a {.cls data.frame}"
+        "object {.val {i}} in {.arg ...} is not a {.cls data.frame}."
       ))
     }
 
     cli::cli_alert_warning(paste(
-      "Object {.field {i}} in {.arg ...} is {.cls {class(x)}}",
-      cli::col_grey("\nThe result would present empty geoms")
+      "Object {.val {i}} in {.arg ...} is {.cls {class(x)}}",
+      cli::col_grey("\nThe result includes empty geometries.")
     ))
 
     x <- as_tibble(x)
@@ -180,10 +181,10 @@ bind_spat_rows <- function(..., .id = NULL) {
     as_spat_internal(x)[, 0]
   })
 
-  # Get geoms
+  # Get geometries.
   vend <- do.call("rbind", allspatvect)
 
-  # Get binded rows
+  # Bind rows.
   if (length(named_list) == length(alltibbs)) {
     names(alltibbs) <- named_list
   }
@@ -191,7 +192,7 @@ bind_spat_rows <- function(..., .id = NULL) {
   binded <- dplyr::bind_rows(alltibbs, .id = .id)
   vend <- cbind(vend[, 0], binded)
 
-  # Regen groups
+  # Regenerate groups.
   vend <- group_prepare_spat(vend, binded)
 
   vend
@@ -199,12 +200,10 @@ bind_spat_rows <- function(..., .id = NULL) {
 
 crs_compare <- function(a, b, index) {
   if (!identical(pull_crs(a), pull_crs(b))) {
-    cli::cli_alert_warning(
-      paste0(
-        "Reprojecting object {.field {index}} in {.arg ...} since it",
-        " doesn't have the same CRS than object {.field 1}"
-      )
-    )
+    cli::cli_alert_warning(paste0(
+      "Reprojecting object {.val {index}} in {.arg ...} because it",
+      " does not have the same CRS as object {.val {1}}."
+    ))
   }
 
   if (inherits(a, c("sf", "sfc"))) {

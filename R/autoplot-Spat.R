@@ -1,33 +1,39 @@
 #' Create a complete ggplot for `Spat*` objects
 #'
-#' `autoplot()` uses \CRANpkg{ggplot2} to draw plots as the ones produced by
-#' [terra::plot()]/[terra::plotRGB()] in a single command.
+#' `autoplot()` uses \CRANpkg{ggplot2} to draw plots like those
+#' produced by [terra::plot()]/[terra::plotRGB()] in a single command.
 #'
 #' Implementation of [ggplot2::autoplot()] method.
 #'
-#' @return A \CRANpkg{ggplot2} layer
+#' @export
+#' @encoding UTF-8
+#' @rdname autoplot.Spat
+#' @name autoplot.Spat
+#'
+#' @seealso [ggplot2::autoplot()]
+#'
 #' @family ggplot2.utils
 #' @family ggplot2.methods
+#'
+#' @importFrom ggplot2 autoplot
 #'
 #' @param object A `SpatRaster` created with [terra::rast()], a `SpatVector`
 #'   created with [terra::vect()], a `SpatGraticule` (see [terra::graticule()])
 #'   or a `SpatExtent` (see [terra::ext()]).
 #'
-#' @rdname autoplot.Spat
-#' @name autoplot.Spat
+#' @param rgb Logical. If `TRUE`, plot as an RGB image. If `NULL` (the default),
+#'   [autoplot.SpatRaster()] tries to guess.
+#' @param use_coltab Logical. If `TRUE`, plot with the corresponding
+#'   color table from [terra::coltab()]. If `NULL` (the default),
+#'   [autoplot.SpatRaster()] tries to guess. See also [scale_fill_coltab()].
+#' @param facets Logical. If `TRUE`, display facets. If `NULL` (the default),
+#'   [autoplot.SpatRaster()] tries to guess.
 #'
-#' @param rgb Logical. Should be plotted as a RGB image? If `NULL` (the default)
-#'   [autoplot.SpatRaster()] would try to guess.
-#' @param use_coltab Logical. Should be plotted with the corresponding
-#'   [terra::coltab()]? If `NULL` (the default) [autoplot.SpatRaster()] would
-#'   try to guess. See also [scale_fill_coltab()].
-#' @param facets Logical. Should facets be displayed? If `NULL` (the default)
-#'   [autoplot.SpatRaster()] would try to guess.
-#'
-#' @param nrow,ncol Number of rows and columns on the facet.
-#' @param ... other arguments passed to [geom_spatraster()],
+#' @param nrow,ncol Number of rows and columns in the facet.
+#' @param ... Other arguments passed to [geom_spatraster()],
 #'   [geom_spatraster_rgb()] or [geom_spatvector()].
 #'
+#' @returns A \CRANpkg{ggplot2} layer.
 #' @section Methods:
 #'
 #' Implementation of the **generic** [ggplot2::autoplot()] method.
@@ -40,11 +46,6 @@
 #'
 #' Uses [geom_spatvector()]. Labels can be placed with [geom_spatvector_text()]
 #' or [geom_spatvector_label()].
-#'
-#' @export
-#' @importFrom ggplot2 autoplot
-#'
-#' @seealso [ggplot2::autoplot()]
 #'
 #' @examples
 #' \donttest{
@@ -64,14 +65,14 @@
 #'
 #' autoplot(tile)
 #'
-#' # With coltabs
+#' # With color tables
 #'
 #' ctab <- system.file("extdata/cyl_era.tif", package = "tidyterra") |>
 #'   rast()
 #'
 #' autoplot(ctab)
 #'
-#' #  With vectors
+#' # With vectors
 #' v <- vect(system.file("extdata/cyl.gpkg", package = "tidyterra"))
 #' autoplot(v)
 #'
@@ -95,11 +96,7 @@ autoplot.SpatRaster <- function(
   }
 
   if (rgb) {
-    gg <- gg +
-      geom_spatraster_rgb(
-        data = object,
-        ...
-      )
+    gg <- gg + geom_spatraster_rgb(data = object, ...)
     # Done, no facets or scales on RGB
     return(gg)
   }
@@ -108,12 +105,7 @@ autoplot.SpatRaster <- function(
   if (is.null(use_coltab)) {
     use_coltab <- any(terra::has.colors(object))
   }
-  gg <- gg +
-    geom_spatraster(
-      data = object,
-      use_coltab = use_coltab,
-      ...
-    )
+  gg <- gg + geom_spatraster(data = object, use_coltab = use_coltab, ...)
 
   if (!use_coltab) {
     todf <- terra::as.data.frame(object[1, ], na.rm = TRUE, xy = FALSE)
@@ -131,12 +123,7 @@ autoplot.SpatRaster <- function(
     facets <- terra::nlyr(object) > 1
   }
 
-  if (
-    all(
-      facets,
-      isFALSE(rgb)
-    )
-  ) {
+  if (all(facets, isFALSE(rgb))) {
     gg <- gg + ggplot2::facet_wrap(~lyr, nrow = nrow, ncol = ncol)
   }
 
@@ -144,6 +131,7 @@ autoplot.SpatRaster <- function(
 }
 
 #' @export
+#' @encoding UTF-8
 #' @name autoplot.Spat
 autoplot.SpatVector <- function(object, ...) {
   ggplot2::ggplot(data = object) +
@@ -151,6 +139,7 @@ autoplot.SpatVector <- function(object, ...) {
 }
 
 #' @export
+#' @encoding UTF-8
 #' @name autoplot.Spat
 autoplot.SpatGraticule <- function(object, ...) {
   ggplot2::ggplot(data = object) +
@@ -158,6 +147,7 @@ autoplot.SpatGraticule <- function(object, ...) {
 }
 
 #' @export
+#' @encoding UTF-8
 #' @name autoplot.Spat
 autoplot.SpatExtent <- function(object, ...) {
   ggplot2::ggplot(data = object) +

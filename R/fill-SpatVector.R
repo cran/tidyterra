@@ -7,20 +7,21 @@
 #' and are only recorded when they change.
 #'
 #' @export
-#' @importFrom tidyr fill
+#' @encoding UTF-8
+#' @rdname fill.SpatVector
+#' @name fill.SpatVector
+#'
+#' @seealso [tidyr::fill()]
 #'
 #' @family tidyr.missing
 #' @family tidyr.methods
 #'
-#' @rdname fill.SpatVector
-#' @name fill.SpatVector
+#' @importFrom tidyr fill
 #'
-#' @param data A `SpatVector`.
 #' @inheritParams tidyr::fill
 #'
-#' @seealso [tidyr::fill()]
-#'
-#' @return A `SpatVector` object.
+#' @param data A `SpatVector`.
+#' @returns A `SpatVector` object.
 #'
 #' @section Methods:
 #'
@@ -37,7 +38,7 @@
 #'
 #' lux <- terra::vect(system.file("ex/lux.shp", package = "terra"))
 #'
-#' # Leave some blanks for demo purporses
+#' # Leave some blanks for demo purposes
 #'
 #' lux_blnk <- lux |>
 #'   mutate(NAME_1 = if_else(NAME_1 != NAME_2, NA, NAME_2))

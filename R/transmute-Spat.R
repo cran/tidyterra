@@ -1,4 +1,4 @@
-#' Create, modify, and delete cell values/layers/attributes of `Spat*` objects
+#' Create, modify and delete cell values/layers/attributes of `Spat*` objects
 #'
 #' @description
 #' `r lifecycle::badge("superseded")`
@@ -7,6 +7,9 @@
 #' computations. It's superseded because you can perform the same job
 #' with `mutate(.keep = "none")`.
 #'
+#' @export
+#' @encoding UTF-8
+#'
 #' @rdname transmute.Spat
 #' @name transmute.Spat
 #' @keywords internal
@@ -14,12 +17,10 @@
 #' @seealso
 #' [`mutate.Spat`], [dplyr::transmute()] methods.
 #'
-#' @inheritParams mutate.Spat
-#'
-#' @export
-#'
 #' @importFrom dplyr transmute
 #' @inherit mutate.Spat return
+#'
+#' @inheritParams mutate.Spat
 #'
 #' @section Methods:
 #' Implementation of the **generic** [dplyr::transmute()] method.
@@ -48,10 +49,10 @@ transmute.SpatRaster <- function(.data, ...) {
 
   final_df <- dplyr::bind_cols(xy, values_transm)
 
-  # To data.table and rearrange attrs
+  # Convert to data.table and rearrange attributes.
   final_df <- data.table::as.data.table(final_df)
 
-  # Spatial attrs
+  # Spatial attributes.
   init_att <- attributes(df)
   final_att <- attributes(final_df)
 
@@ -76,7 +77,7 @@ transmute.SpatRaster <- function(.data, ...) {
 
     ctab_list <- ctab_list_init[namesend %in% names(.data)]
 
-    # Assign coltab by layer
+    # Assign color tables by layer.
     l2 <- lapply(seq_len(terra::nlyr(final_rast)), function(x) {
       rr <- terra::subset(final_rast, x)
       if (names(rr) %in% names(ctab_list)) {
@@ -94,6 +95,7 @@ transmute.SpatRaster <- function(.data, ...) {
   final_rast
 }
 #' @export
+#' @encoding UTF-8
 #' @rdname transmute.Spat
 transmute.SpatVector <- function(.data, ...) {
   # Use own method

@@ -22,10 +22,7 @@ test_that("Back and fort", {
   # Reorder names
   nc_unpivot <- nc_unpivot[names(nc)]
 
-  expect_identical(
-    as_tbl_internal(nc),
-    as_tbl_internal(nc_unpivot)
-  )
+  expect_identical(as_tbl_internal(nc), as_tbl_internal(nc_unpivot))
 })
 
 
@@ -55,10 +52,7 @@ test_that("Remove geometry from values", {
   # Reorder names
   nc_unpivot <- nc_unpivot[names(nc)]
 
-  expect_identical(
-    as_tbl_internal(nc),
-    as_tbl_internal(nc_unpivot)
-  )
+  expect_identical(as_tbl_internal(nc), as_tbl_internal(nc_unpivot))
 })
 
 test_that("Remove geometry from names", {
@@ -87,10 +81,7 @@ test_that("Remove geometry from names", {
   # Reorder names
   nc_unpivot <- nc_unpivot[names(nc)]
 
-  expect_identical(
-    as_tbl_internal(nc),
-    as_tbl_internal(nc_unpivot)
-  )
+  expect_identical(as_tbl_internal(nc), as_tbl_internal(nc_unpivot))
 })
 
 test_that("can pivot all cols to wide", {
@@ -154,11 +145,7 @@ test_that("implicit missings turn into explicit missings", {
 test_that("error when overwriting existing column", {
   skip_on_cran()
 
-  df <- tibble::tibble(
-    a = c(1, 1),
-    key = c("a", "b"),
-    val = c(1, 2)
-  )
+  df <- tibble::tibble(a = c(1, 1), key = c("a", "b"), val = c(1, 2))
   df$lat <- 1
   df$lon <- 1
 
@@ -291,7 +278,7 @@ test_that("can override default keys, geometry sticky", {
     ~row, ~name, ~var, ~value,
     1, "Sam", "age", 10,
     2, "Sam", "height", 1.5,
-    3, "Bob", "age", 20,
+    3, "Bob", "age", 20
   )
 
   df$lat <- 1
@@ -318,10 +305,7 @@ test_that("`id_cols = everything()` excludes `names_from` and `values_from`", {
   res_tbl <- as_tibble(res)
   attr(res_tbl, "crs") <- NULL
 
-  expect_identical(
-    res_tbl,
-    tibble::tibble(key = "x", a = 1L)
-  )
+  expect_identical(res_tbl, tibble::tibble(key = "x", a = 1L))
 })
 
 
@@ -364,5 +348,25 @@ test_that("`id_expand` does a cartesian expansion of `id_cols`", {
       a = c(1, NA, NA, NA),
       b = c(NA, NA, NA, 2),
     )
+  )
+})
+test_that("Errors", {
+  local_mocked_bindings(tt_sel_wider_id_cols = function(...) {
+    "s"
+  })
+
+  df <- tibble::tibble(key = c("x", "y", "z"), val = 1:3)
+
+  df$lat <- 1
+  df$lon <- 1
+  df$s <- letters[1:3]
+
+  df <- terra::vect(df, crs = "EPSG:3857")
+
+  expect_s4_class(df, "SpatVector")
+
+  expect_snapshot(
+    error = TRUE,
+    pv <- pivot_wider(df, names_from = key, values_from = val)
   )
 })

@@ -5,13 +5,14 @@
 #' `df |> count(a, b)` is roughly equivalent to
 #' `df |> group_by(a, b) |> summarise(n = n())`. `count()` is paired with
 #' `tally()`, a lower-level helper that is equivalent to
-#' `df |> summarise(n = n())`.  Supply `wt` to perform weighted counts,
+#' `df |> summarise(n = n())`. Supply `wt` to perform weighted counts,
 #' switching the summary from `n = n()` to `n = sum(wt)`.
 #'
 #' `add_count()` is equivalent to `count()` but use [mutate()] instead of
 #' [summarise()] so that it adds a new column with group-wise counts.
 #'
 #' @export
+#' @encoding UTF-8
 #' @rdname count.SpatVector
 #' @name count.SpatVector
 #'
@@ -22,14 +23,15 @@
 #'
 #' @importFrom dplyr count
 #'
-#' @param x A `SpatVector`.
-#' @param .drop `r lifecycle::badge("deprecated")` Argument not longer
-#'   supported; empty groups are always removed (see [dplyr::count()],
-#'   `.drop = TRUE` argument).
+#' @inheritParams as_sf x
 #' @inheritParams dplyr::count
 #' @inheritParams summarise.SpatVector
 #'
-#' @return A `SpatVector` object with an additional attribute.
+#' @param .drop `r lifecycle::badge("deprecated")` Argument no longer
+#'   supported, empty groups are always removed (see [dplyr::count()],
+#'   `.drop = TRUE` argument).
+#'
+#' @returns A `SpatVector` object with updated grouping metadata.
 #'
 #' @section \CRANpkg{terra} equivalent:
 #'
@@ -54,7 +56,7 @@
 #'
 #' p |> count(pop = ifelse(POP < 20000, "A", "B"))
 #'
-#' # tally() is a lower-level function that assumes you've done the grouping
+#' # tally() is a lower-level function that assumes grouping is already done.
 #' p |> tally()
 #'
 #' p |>
@@ -89,7 +91,7 @@ count.SpatVector <- function(
       when = "1.1.0",
       what = "tidyterra::count.SpatVector(.drop)",
       details = paste0(
-        "Argument not longer supported; empty groups are always removed",
+        "Argument no longer supported. Empty groups are always removed",
         "(see `dplyr::count()`, `.drop = TRUE` argument)."
       )
     )
@@ -138,9 +140,9 @@ count.SpatVector <- function(
 #' @export
 dplyr::count
 
-#' @importFrom dplyr tally
 #' @export
 #' @name count.SpatVector
+#' @importFrom dplyr tally
 tally.SpatVector <- function(x, wt = NULL, sort = FALSE, name = NULL) {
   # Use terra method on ungrouped
   if (!is_grouped_spatvector(x)) {
@@ -191,9 +193,10 @@ tally.SpatVector <- function(x, wt = NULL, sort = FALSE, name = NULL) {
 #' @export
 dplyr::tally
 
-#' @importFrom dplyr add_count
 #' @export
+#' @encoding UTF-8
 #' @name count.SpatVector
+#' @importFrom dplyr add_count
 add_count.SpatVector <- function(
   x,
   ...,
@@ -227,12 +230,7 @@ add_count.SpatVector <- function(
   }
 
   # Prepare a template for groups
-  template <- dplyr::add_count(
-    as_tibble(x),
-    ...,
-    sort = sort,
-    name = name
-  )
+  template <- dplyr::add_count(as_tibble(x), ..., sort = sort, name = name)
   # Ensure groups
   vend <- ungroup(vend)
 

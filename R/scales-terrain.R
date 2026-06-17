@@ -1,40 +1,41 @@
-#' Terrain colour scales from \pkg{grDevices}
+#' Terrain color scales from \pkg{grDevices}
 #'
 #' @description
 #'
 #' Implementation of the classic color palette [terrain.colors()]:
 #'
-#' * `scale_*_terrain_d()`: For discrete values.
-#' * `scale_*_terrain_c()`: For continuous values.
-#' * `scale_*_terrain_b()`: For binning continuous values.
+#' - `scale_*_terrain_d()`: For discrete values.
+#' - `scale_*_terrain_c()`: For continuous values.
+#' - `scale_*_terrain_b()`: For binning continuous values.
 #'
-#' Additional arguments `...` would be passed on to:
-#' * Discrete values: [ggplot2::discrete_scale()].
-#' * Continuous values: [ggplot2::continuous_scale()].
-#' * Binned continuous values: [ggplot2::binned_scale()].
+#' Additional arguments `...` are passed to:
+#' - Discrete values: [ggplot2::discrete_scale()].
+#' - Continuous values: [ggplot2::continuous_scale()].
+#' - Binned continuous values: [ggplot2::binned_scale()].
 #'
-#' **Note that** \CRANpkg{tidyterra} just documents a selection of these
-#' additional arguments, check the \CRANpkg{ggplot2} functions listed above to
-#' see the full range of arguments accepted by these scales.
+#' \CRANpkg{tidyterra} documents only a selection of these additional
+#' arguments, so check the \CRANpkg{ggplot2} functions listed above to see the
+#' full range of arguments accepted by these scales.
 #'
 #' @export
+#' @encoding UTF-8
 #'
 #' @name scale_terrain
-#'
-#' @inheritDotParams ggplot2::discrete_scale breaks:drop
-#' @inheritDotParams ggplot2::continuous_scale breaks:labels
-#' @inheritDotParams ggplot2::binned_scale breaks:limits nice.breaks
-#' @inheritParams scale_cross_blended
 #'
 #' @seealso
 #' [terra::plot()], [ggplot2::scale_fill_viridis_c()] and \CRANpkg{ggplot2} docs
 #' on additional `...` arguments.
 #'
-#' @return
+#' @family gradients
+#'
+#' @inheritParams scale_cross_blended
+#'
+#' @inheritDotParams ggplot2::discrete_scale breaks:drop
+#' @inheritDotParams ggplot2::continuous_scale breaks:labels
+#' @inheritDotParams ggplot2::binned_scale breaks:limits nice.breaks
+#' @returns
 #' The corresponding \CRANpkg{ggplot2} layer with the values applied to the
 #' `fill/colour` aesthetics.
-#'
-#' @family gradients
 #'
 #' @examples
 #' \donttest{
@@ -73,20 +74,11 @@ scale_fill_terrain_d <- function(
   na.translate = FALSE,
   drop = TRUE
 ) {
-  if (alpha < 0 || alpha > 1) {
-    cli::cli_abort("{.arg alpha} {.field {alpha}} not in {.field [0,1]}")
-  }
-
-  if (!direction %in% c(-1, 1)) {
-    cli::cli_abort("{.arg direction} must be {.field 1} or {.field -1}")
-  }
-
-  ggplot2::discrete_scale(
-    aesthetics = "fill",
-    palette = terrain_pal(
-      alpha = alpha,
-      direction = direction
-    ),
+  pal_discrete_scale(
+    "fill",
+    terrain_pal(alpha = alpha, direction = direction),
+    alpha = alpha,
+    direction = direction,
     na.translate = na.translate,
     drop = drop,
     ...
@@ -94,6 +86,7 @@ scale_fill_terrain_d <- function(
 }
 
 #' @export
+#' @encoding UTF-8
 #' @rdname scale_terrain
 scale_colour_terrain_d <- function(
   ...,
@@ -102,20 +95,11 @@ scale_colour_terrain_d <- function(
   na.translate = FALSE,
   drop = TRUE
 ) {
-  if (alpha < 0 || alpha > 1) {
-    cli::cli_abort("{.arg alpha} {.field {alpha}} not in {.field [0,1]}")
-  }
-
-  if (!direction %in% c(-1, 1)) {
-    cli::cli_abort("{.arg direction} must be {.field 1} or {.field -1}")
-  }
-
-  ggplot2::discrete_scale(
-    aesthetics = "colour",
-    palette = terrain_pal(
-      alpha = alpha,
-      direction = direction
-    ),
+  pal_discrete_scale(
+    "colour",
+    terrain_pal(alpha = alpha, direction = direction),
+    alpha = alpha,
+    direction = direction,
     na.translate = na.translate,
     drop = drop,
     ...
@@ -123,6 +107,7 @@ scale_colour_terrain_d <- function(
 }
 
 #' @export
+#' @encoding UTF-8
 #' @rdname scale_terrain
 scale_fill_terrain_c <- function(
   ...,
@@ -131,20 +116,13 @@ scale_fill_terrain_c <- function(
   na.value = "transparent",
   guide = "colourbar"
 ) {
-  if (alpha < 0 || alpha > 1) {
-    cli::cli_abort("{.arg alpha} {.field {alpha}} not in {.field [0,1]}")
-  }
-
-  if (!direction %in% c(-1, 1)) {
-    cli::cli_abort("{.arg direction} must be {.field 1} or {.field -1}")
-  }
-
-  ggplot2::continuous_scale(
-    aesthetics = "fill",
-    palette = scales::gradient_n_pal(terrain_pal(
-      alpha = alpha,
-      direction = direction
-    )(100)),
+  pal_gradient_scale(
+    ggplot2::continuous_scale,
+    "fill",
+    terrain_pal(alpha = alpha, direction = direction),
+    n = 100,
+    alpha = alpha,
+    direction = direction,
     na.value = na.value,
     guide = guide,
     ...
@@ -152,6 +130,7 @@ scale_fill_terrain_c <- function(
 }
 
 #' @export
+#' @encoding UTF-8
 #' @rdname scale_terrain
 scale_colour_terrain_c <- function(
   ...,
@@ -160,28 +139,21 @@ scale_colour_terrain_c <- function(
   na.value = "transparent",
   guide = "colourbar"
 ) {
-  if (alpha < 0 || alpha > 1) {
-    cli::cli_abort("{.arg alpha} {.field {alpha}} not in {.field [0,1]}")
-  }
-
-  if (!direction %in% c(-1, 1)) {
-    cli::cli_abort("{.arg direction} must be {.field 1} or {.field -1}")
-  }
-
-  ggplot2::continuous_scale(
-    aesthetics = "colour",
-    palette = scales::gradient_n_pal(terrain_pal(
-      alpha = alpha,
-      direction = direction
-    )(100)),
+  pal_gradient_scale(
+    ggplot2::continuous_scale,
+    "colour",
+    terrain_pal(alpha = alpha, direction = direction),
+    n = 100,
+    alpha = alpha,
+    direction = direction,
     na.value = na.value,
     guide = guide,
     ...
   )
 }
 
-
 #' @export
+#' @encoding UTF-8
 #' @rdname scale_terrain
 scale_fill_terrain_b <- function(
   ...,
@@ -190,20 +162,13 @@ scale_fill_terrain_b <- function(
   na.value = "transparent",
   guide = "coloursteps"
 ) {
-  if (alpha < 0 || alpha > 1) {
-    cli::cli_abort("{.arg alpha} {.field {alpha}} not in {.field [0,1]}")
-  }
-
-  if (!direction %in% c(-1, 1)) {
-    cli::cli_abort("{.arg direction} must be {.field 1} or {.field -1}")
-  }
-
-  ggplot2::binned_scale(
-    aesthetics = "fill",
-    palette = scales::gradient_n_pal(terrain_pal(
-      alpha = alpha,
-      direction = direction
-    )(100)),
+  pal_gradient_scale(
+    ggplot2::binned_scale,
+    "fill",
+    terrain_pal(alpha = alpha, direction = direction),
+    n = 100,
+    alpha = alpha,
+    direction = direction,
     na.value = na.value,
     guide = guide,
     ...
@@ -211,6 +176,7 @@ scale_fill_terrain_b <- function(
 }
 
 #' @export
+#' @encoding UTF-8
 #' @rdname scale_terrain
 scale_colour_terrain_b <- function(
   ...,
@@ -219,20 +185,13 @@ scale_colour_terrain_b <- function(
   na.value = "transparent",
   guide = "coloursteps"
 ) {
-  if (alpha < 0 || alpha > 1) {
-    cli::cli_abort("{.arg alpha} {.field {alpha}} not in {.field [0,1]}")
-  }
-
-  if (!direction %in% c(-1, 1)) {
-    cli::cli_abort("{.arg direction} must be {.field 1} or {.field -1}")
-  }
-
-  ggplot2::binned_scale(
-    aesthetics = "colour",
-    palette = scales::gradient_n_pal(terrain_pal(
-      alpha = alpha,
-      direction = direction
-    )(100)),
+  pal_gradient_scale(
+    ggplot2::binned_scale,
+    "colour",
+    terrain_pal(alpha = alpha, direction = direction),
+    n = 100,
+    alpha = alpha,
+    direction = direction,
     na.value = na.value,
     guide = guide,
     ...
@@ -248,18 +207,19 @@ terrain_pal <- function(alpha = 1, direction = 1) {
 }
 
 #' @export
+#' @encoding UTF-8
 #' @rdname scale_terrain
 #' @usage NULL
 scale_color_terrain_d <- scale_colour_terrain_d
 
-
 #' @export
+#' @encoding UTF-8
 #' @rdname scale_terrain
 #' @usage NULL
 scale_color_terrain_c <- scale_colour_terrain_c
 
-
 #' @export
+#' @encoding UTF-8
 #' @rdname scale_terrain
 #' @usage NULL
 scale_color_terrain_b <- scale_colour_terrain_b

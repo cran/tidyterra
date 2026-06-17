@@ -5,24 +5,25 @@
 #' decreasing the number of columns. The inverse transformation is
 #' [pivot_wider.SpatVector()]
 #'
-#' Learn more in [tidyr::pivot_wider()].
+#' Learn more in [tidyr::pivot_longer()].
 #'
 #' @export
-#' @importFrom tidyr pivot_longer
+#' @encoding UTF-8
+#' @rdname pivot_longer.SpatVector
+#' @name pivot_longer.SpatVector
+#'
+#' @seealso [tidyr::pivot_longer()]
 #'
 #' @family tidyr.pivot
 #' @family tidyr.methods
 #'
-#' @rdname pivot_longer.SpatVector
-#' @name pivot_longer.SpatVector
-#'
-#' @param data A `SpatVector` to pivot.
+#' @importFrom tidyr pivot_longer
 #'
 #' @inheritParams tidyr::pivot_longer
 #'
-#' @return A `SpatVector` object.
+#' @param data A `SpatVector` to pivot.
 #'
-#' @seealso [tidyr::pivot_longer()]
+#' @returns A `SpatVector` object.
 #'
 #' @section Methods:
 #'
@@ -30,8 +31,8 @@
 #'
 #' ## `SpatVector`
 #'
-#' The geometry column has a sticky behaviour. This means that the result would
-#' have always the geometry of `data`.
+#' The geometry column has sticky behavior. This means that the result always
+#' has the geometry of `data`.
 #'
 #' @examples
 #' \donttest{
@@ -80,12 +81,12 @@ pivot_longer.SpatVector <- function(
   values_ptypes = NULL,
   values_transform = NULL
 ) {
-  # as tibble with attrbs
+  # Convert to a tibble with attributes.
   tbl <- as_tbl_internal(data)
 
   att <- attributes(tbl)
 
-  # Intercept cols using a template
+  # Resolve columns from a template.
   tmpl <- dplyr::ungroup(tbl[1, ])
   cols_char <- remove_geom_col(tmpl, {{ cols }}, "cols")
 
@@ -106,19 +107,11 @@ pivot_longer.SpatVector <- function(
     values_ptypes = values_ptypes,
     values_transform = values_transform
   )
-
-  # nocov start
   if (!"geometry" %in% names(pivoted)) {
-    cli::cli_abort(
-      paste0(
-        "Can't rebuild the {.cls SpatVector}, ",
-        "{.val geometry} column lost after pivoting"
-      )
-    )
+    abort_lost_geometry_after_pivot()
   }
-  # nocov end
 
-  # Reconstruct table
+  # Reconstruct the table.
   attr(pivoted, "source") <- att$source
   attr(pivoted, "crs") <- att$crs
   attr(pivoted, "geomtype") <- att$geomtype
@@ -131,15 +124,15 @@ pivot_longer.SpatVector <- function(
 #' @export
 tidyr::pivot_longer
 
-# Helper for removing safely the "geometry" argument from tidyselect expression
-# Returns a vector of characters
+# Safely remove `geometry` from a tidyselect expression.
+# Return a character vector.
 remove_geom_col <- function(data, exp, var_name = "any") {
   nm <- dplyr::select(data, {{ exp }})
 
   sel_names <- names(nm)
   if ("geometry" %in% sel_names) {
     cli::cli_alert_warning(
-      "Ommiting {.val geometry} column from {.arg {var_name}} argument."
+      "Omitting {.val geometry} column from {.arg {var_name}} argument."
     )
 
     sel_names <- setdiff(sel_names, "geometry")

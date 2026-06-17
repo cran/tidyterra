@@ -89,7 +89,7 @@ test_that("grouping variables preserved with a msg, unless already selected", {
   expect_snapshot({
     res <- select(df, x)
   })
-  expect_identical(names(res), c("g", "x"))
+  expect_named(res, c("g", "x"))
 
   df <- data.frame(a = 1, b = 2, c = 3)
   df <- terra::vect(df, geom = c("a", "b"), keepgeom = TRUE)
@@ -99,10 +99,7 @@ test_that("grouping variables preserved with a msg, unless already selected", {
     select(a = b) |>
     as_tibble()
   attr(result, "crs") <- NULL
-  expect_equal(
-    result,
-    tibble::tibble(a = 2)
-  )
+  expect_equal(result, tibble::tibble(a = 2))
 
   df <- data.frame(a = 1, b = 2, c = 3) |>
     terra::vect(geom = c("a", "b"), keepgeom = TRUE) |>
@@ -111,15 +108,11 @@ test_that("grouping variables preserved with a msg, unless already selected", {
   expect_snapshot({
     expect_equal(
       df |> select(a = c) |> group_keys(),
-      tibble::tibble(b = 2, a = 3) |>
-        group_by(b) |>
-        group_keys()
+      tibble::tibble(b = 2, a = 3) |> group_by(b) |> group_keys()
     )
     expect_equal(
       df |> select(b = c) |> group_keys(),
-      tibble::tibble(a = 1, b = 3) |>
-        group_by(a) |>
-        group_keys()
+      tibble::tibble(a = 1, b = 3) |> group_by(a) |> group_keys()
     )
   })
 })

@@ -6,31 +6,31 @@
 \title{Cross-blended hypsometric tints}
 \format{
 A tibble of 41 rows and
-6 columns. with the following
+6 columns with the following
 fields:
 
 \describe{
-\item{pal}{ Name of the palette.}
+\item{pal}{Name of the palette.}
 \item{limit}{Recommended elevation limit (in meters) for each color.}
 \item{r}{Value of the red channel (RGB color mode).}
 \item{g}{Value of the green channel (RGB color mode).}
 \item{b}{Value of the blue channel (RGB color mode).}
-\item{hex}{ Hex code of the color.}
+\item{hex}{Hex code of the color.}
 }
 }
 \source{
 Derived from:
 \itemize{
 \item Patterson, T., & Jenny, B. (2011). The Development and Rationale of
-Cross-blended Hypsometric Tints. \emph{Cartographic Perspectives,} (69),
-31 - 46. \doi{10.14714/CP69.20}.
+Cross-blended Hypsometric Tints. \emph{Cartographic Perspectives,} (69), 31-46.
+\doi{10.14714/CP69.20}.
 }
 }
 \description{
-A \link[tibble:tbl_df-class]{tibble} including the color map of
+A \link[tibble:tbl_df]{tibble} including the color map of
 4 gradient palettes.
-All the palettes includes also a definition of colors limits in terms of
-elevation (meters), that can be used with \code{\link[ggplot2:scale_gradient]{ggplot2::scale_fill_gradientn()}}.
+All palettes also include a definition of color limits in terms of elevation
+(meters) that can be used with \code{\link[ggplot2:scale_fill_gradientn]{ggplot2::scale_fill_gradientn()}}.
 }
 \details{
 From Patterson & Jenny (2011):
@@ -79,7 +79,7 @@ p +
 \seealso{
 \code{\link[=scale_fill_cross_blended_c]{scale_fill_cross_blended_c()}}
 
-Other datasets: 
+Other datasets:
 \code{\link{grass_db}},
 \code{\link{hypsometric_tints_db}},
 \code{\link{princess_db}},

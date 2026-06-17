@@ -1,6 +1,6 @@
 ---
 title: "Welcome to tidyterra"
-description: "First steps with the tidyterra package"
+description: "First steps with tidyterra"
 vignette: >
   %\VignetteIndexEntry{Welcome to tidyterra}
   %\VignetteEngine{quarto::html}
@@ -11,31 +11,34 @@ vignette: >
 
 
 
-## The tidyterra package
+## tidyterra
 
-**tidyterra** adds common tidyverse methods for `SpatRaster` and `SpatVector`
-objects from the [**terra**](https://CRAN.R-project.org/package=terra) package,
-and provides `geom_spat*()` geoms for plotting these objects with
+**tidyterra** provides methods from **tidyverse** packages for `SpatRaster` and
+`SpatVector` objects created with
+[**terra**](https://CRAN.R-project.org/package=terra). It also provides
+`geom_spat*()` geoms and scales for plotting those objects with
 [**ggplot2**](https://ggplot2.tidyverse.org/).
 
 ### Why tidyterra?
 
 `Spat*` objects differ from regular data frames: they are S4 objects with their
 own syntax and computational methods (implemented in **terra**). By providing
-tidyverse verbs—especially `dplyr` and `tidyr` methods—**tidyterra** lets users
-manipulate `Spat*` objects in a style similar to working with tabular data.
+**tidyverse** verbs, especially **dplyr** and **tidyr** methods, **tidyterra**
+lets users manipulate `Spat*` objects in a style familiar from tabular data
+workflows.
 
-Note: **terra** is generally more performant. Learning some **terra** syntax is
-recommended because **tidyterra** functions call, where possible, the
-corresponding **terra** equivalents.
+**terra** is generally faster. Learning some **terra** syntax is recommended
+because **tidyterra** functions call the corresponding **terra** equivalents
+when possible.
 
-## A note for advanced terra users
+## A note for advanced **terra** users
 
 **tidyterra** is not optimized for performance. Operations such as `filter()`
 and `mutate()` can be slower than their **terra** counterparts.
 
 As a rule of thumb, **tidyterra** is most suitable for objects with fewer than
-1e7 "slots" (i.e., `terra::ncell(a_rast) * terra::nlyr(a_rast) < 1e7`).
+10,000,000 data slots, for example
+`terra::ncell(a_rast) * terra::nlyr(a_rast) < 1e7`.
 
 ## Get started with tidyterra
 
@@ -48,15 +51,15 @@ library(dplyr)
 library(tidyr)
 ```
 
-Currently, the following methods are available:
+The following methods are available:
 
 | tidyverse method | `SpatVector` | `SpatRaster` |
-|---------------------|---------------------|--------------------------------------|
+|----|----|----|
 | `tibble::as_tibble()` | ✔️ | ✔️ |
 | `dplyr::select()` | ✔️ | ✔️ Select layers |
-| `dplyr::mutate()` | ✔️ | ✔️ Create/modify layers |
+| `dplyr::mutate()` | ✔️ | ✔️ Create or modify layers |
 | `dplyr::transmute()` | ✔️ | ✔️ |
-| `dplyr::filter()` | ✔️ | ✔️ Modify cell values and (optionally) remove outer cells. |
+| `dplyr::filter()` | ✔️ | ✔️ Modify cell values and optionally remove outer cells. |
 | `dplyr::filter_out()` | ✔️ |  |
 | `dplyr::slice()` | ✔️ | ✔️ Additional methods for slicing by row and column. |
 | `dplyr::pull()` | ✔️ | ✔️ |
@@ -66,29 +69,38 @@ Currently, the following methods are available:
 | `dplyr::arrange()` | ✔️ |  |
 | `dplyr::glimpse()` | ✔️ | ✔️ |
 | `dplyr::inner_join()` family | ✔️ |  |
+| `dplyr::nest_join()` | ✔️ |  |
+| `dplyr::cross_join()` | ✔️ |  |
 | `dplyr::summarise()` | ✔️ |  |
+| `dplyr::reframe()` | ✔️ |  |
 | `dplyr::group_by()` family | ✔️ |  |
 | `dplyr::rowwise()` | ✔️ |  |
 | `dplyr::count()`, `tally()` | ✔️ |  |
 | `dplyr::add_count()` | ✔️ |  |
+| `dplyr::rows_*()` | ✔️ |  |
 | `dplyr::bind_cols()` / `dplyr::bind_rows()` | ✔️ as `bind_spat_cols()` / `bind_spat_rows()` |  |
-| `tidyr::drop_na()` | ✔️ | ✔️ Remove cell values with `NA` on any layer. Additionally, outer cells with `NA` are removed. |
+| `tidyr::drop_na()` | ✔️ | ✔️ Remove cell values with `NA` on any layer and outer cells with `NA`. |
+| `tidyr::complete()` | ✔️ |  |
+| `tidyr::expand()` | ✔️ |  |
 | `tidyr::replace_na()` | ✔️ | ✔️ |
 | `tidyr::fill()` | ✔️ |  |
+| `tidyr::nest()` | ✔️ |  |
 | `tidyr::pivot_longer()` | ✔️ |  |
 | `tidyr::pivot_wider()` | ✔️ |  |
+| `tidyr::uncount()` | ✔️ |  |
+| `tidyr::unite()` | ✔️ | ✔️ Create a categorical layer. |
 | `ggplot2::autoplot()` | ✔️ | ✔️ |
-| `ggplot2::fortify()` | ✔️ to **sf** via `sf::st_as_sf()` | To a **tibble** with coordinates. |
+| `ggplot2::fortify()` | ✔️ to **sf** through `sf::st_as_sf()` | To a **tibble** with coordinates. |
 | `ggplot2::geom_*()` | ✔️ `geom_spatvector()` | ✔️ `geom_spatraster()` and `geom_spatraster_rgb()`. |
 | `generics::tidy()` | ✔️ | ✔️ |
 | `generics::glance()` | ✔️ | ✔️ |
 | `generics::required_pkgs()` | ✔️ | ✔️ |
 
-Let's see some of these methods in action.
+The following sections show some of these methods in action.
 
-### `SpatRasters`
+### `SpatRaster` objects
 
-Example using a `SpatRaster`:
+This example uses a `SpatRaster`:
 
 
 ``` r
@@ -98,15 +110,15 @@ f <- system.file("extdata/cyl_temp.tif", package = "tidyterra")
 temp <- rast(f)
 
 temp
-#> class       : SpatRaster 
+#> class       : SpatRaster
 #> size        : 87, 118, 3  (nrow, ncol, nlyr)
 #> resolution  : 3881.255, 3881.255  (x, y)
 #> extent      : -612335.4, -154347.3, 4283018, 4620687  (xmin, xmax, ymin, ymax)
-#> coord. ref. : World_Robinson 
-#> source      : cyl_temp.tif 
-#> names       :   tavg_04,   tavg_05,  tavg_06 
-#> min values  :  1.885463,  5.817587, 10.46338 
-#> max values  : 13.283829, 16.740898, 21.11378
+#> coord. ref. : World_Robinson (ESRI:54030)
+#> source      : cyl_temp.tif
+#> names       :   tavg_04,   tavg_05,   tavg_06
+#> min values  :  1.885463,  5.817587, 10.463377
+#> max values  : 13.283829, 16.740898, 21.113781
 
 mod <- temp |>
   select(-1) |>
@@ -116,35 +128,35 @@ mod <- temp |>
   rename(difference = newcol)
 
 mod
-#> class       : SpatRaster 
+#> class       : SpatRaster
 #> size        : 87, 118, 3  (nrow, ncol, nlyr)
 #> resolution  : 3881.255, 3881.255  (x, y)
 #> extent      : -612335.4, -154347.3, 4283018, 4620687  (xmin, xmax, ymin, ymax)
-#> coord. ref. : World_Robinson 
+#> coord. ref. : World_Robinson (ESRI:54030)
 #> source(s)   : memory
-#> names       : difference,   tavg_05,  tavg_06 
-#> min values  :   2.817647,  5.817587, 10.46338 
-#> max values  :   5.307511, 16.740898, 21.11378
+#> names       : difference,   tavg_05,   tavg_06
+#> min values  :   2.817647,  5.817587, 10.463377
+#> max values  :   5.307511, 16.740898, 21.113781
 ```
 
 In this example we:
 
--   Removed the first layer (`tavg_04`).
--   Created a new layer `newcol` as the difference between `tavg_06` and
-    `tavg_05`.
--   Relocated `newcol` to be the first layer.
--   Replaced `NA` values in `newcol` with `3`.
--   Renamed `newcol` to `difference`.
+- Removed the first layer (`tavg_04`).
+- Created a new layer `newcol` as the difference between `tavg_06` and
+  `tavg_05`.
+- Relocated `newcol` to be the first layer.
+- Replaced `NA` values in `newcol` with `3`.
+- Renamed `newcol` to `difference`.
 
-Throughout these steps, core properties of the `SpatRaster` (number of cells,
-rows and columns, extent, resolution, and CRS) remain unchanged. Other verbs
-such as `filter()`, `slice()`, or `drop_na()` may alter these properties in a
-manner analogous to how row operations affect data frames.
+Throughout these steps, core properties of the `SpatRaster`, including number of
+cells, rows, columns, extent, resolution and CRS, remain unchanged. Other verbs
+such as `filter()`, `slice()` or `drop_na()` may alter these properties in a
+manner analogous to row operations on data frames.
 
-### `SpatVectors`
+### `SpatVector` objects
 
-Since **tidyterra** 0.4.0, most `dplyr` and `tidyr` verbs work with `SpatVector`
-objects, so you can arrange, group, and summarise their attributes.
+Most **dplyr** and **tidyr** verbs work with `SpatVector` objects, so you can
+arrange, group and summarize their attributes.
 
 
 ``` r
@@ -153,27 +165,27 @@ lux <- system.file("ex/lux.shp", package = "terra")
 v_lux <- vect(lux)
 
 v_lux |>
-  # Create categories
+  # Create categories.
   mutate(gr = cut(POP / 1000, 5)) |>
   group_by(gr) |>
-  # Summary
+  # Summarize by group.
   summarise(
     n = n(),
     tot_pop = sum(POP),
     mean_area = mean(AREA)
   ) |>
-  # Arrange
+  # Arrange groups.
   arrange(desc(gr))
-#>  class       : SpatVector 
-#>  geometry    : polygons 
-#>  dimensions  : 3, 4  (geometries, attributes)
-#>  extent      : 5.74414, 6.528252, 49.44781, 50.18162  (xmin, xmax, ymin, ymax)
-#>  coord. ref. : lon/lat WGS 84 (EPSG:4326) 
-#>  names       :          gr     n   tot_pop mean_area
-#>  type        :      <fact> <int>     <num>     <num>
-#>  values      :   (147,183]     2 3.594e+05       244
-#>                (40.7,76.1]     1 4.819e+04       185
-#>                (4.99,40.7]     9 1.944e+05     209.8
+#> class       : SpatVector
+#> geometry    : polygons
+#> dimensions  : 3, 4  (geometries, attributes)
+#> extent      : 5.74414, 6.528252, 49.44781, 50.18162  (xmin, xmax, ymin, ymax)
+#> coord. ref. : lon/lat WGS 84 (EPSG:4326)
+#> names       :          gr     n tot_pop mean_area
+#> type        :      <fact> <int>   <num>     <num>
+#> values      :   (147,183]     2  359427       244
+#>               (40.7,76.1]     1   48187       185
+#>               (4.99,40.7]     9  194391   209.778
 ```
 
 As with `SpatRaster`, essential properties such as geometry and CRS are
@@ -181,16 +193,17 @@ preserved during these operations.
 
 ## Plotting with ggplot2
 
-### `SpatRasters`
+### `SpatRaster` objects
 
 When a `SpatRaster` has a CRS defined (`terra::crs(a_rast) != ""`), the geom
-uses `ggplot2::coord_sf()` and can be reprojected to match other spatial layers.
+uses `ggplot2::coord_sf()` and can reproject the raster to match other spatial
+layers.
 
 
 ``` r
 library(ggplot2)
 
-# A faceted SpatRaster
+# Facet a SpatRaster object.
 
 ggplot() +
   geom_spatraster(data = temp) +
@@ -202,13 +215,13 @@ ggplot() +
 ```
 
 <div class="figure">
-<img src="./fig-faceted-1.png" alt="A faceted map using SpatRaster" width="100%" />
-<p class="caption">A faceted map using SpatRaster</p>
+<img src="./fig-faceted-1.png" alt="Faceted map using a SpatRaster object." width="100%" />
+<p class="caption">Faceted map using a SpatRaster object.</p>
 </div>
 
 
 ``` r
-# Contour lines for a specific layer
+# Contour lines for a specific layer.
 
 f_volcano <- system.file("extdata/volcano2.tif", package = "tidyterra")
 volcano2 <- rast(f_volcano)
@@ -222,13 +235,13 @@ ggplot() +
 ```
 
 <div class="figure">
-<img src="./fig-contourlines-1.png" alt="Contour lines plot for a SpatRaster" width="100%" />
-<p class="caption">Contour lines plot for a SpatRaster</p>
+<img src="./fig-contourlines-1.png" alt="Contour line plot for a SpatRaster object." width="100%" />
+<p class="caption">Contour line plot for a SpatRaster object.</p>
 </div>
 
 
 ``` r
-# Contour filled
+# Filled contours.
 
 ggplot() +
   geom_spatraster_contour_filled(data = volcano2) +
@@ -237,20 +250,20 @@ ggplot() +
 ```
 
 <div class="figure">
-<img src="./fig-contourfilled-1.png" alt="Contour filled plot for a SpatRaster" width="100%" />
-<p class="caption">Contour filled plot for a SpatRaster</p>
+<img src="./fig-contourfilled-1.png" alt="Filled contour plot for a SpatRaster object." width="100%" />
+<p class="caption">Filled contour plot for a SpatRaster object.</p>
 </div>
 
-tidyterra also supports RGB `SpatRasters` for imagery:
+**tidyterra** also supports RGB `SpatRaster` objects for imagery:
 
 
 ``` r
-# Read a vector
+# Read a vector.
 
 f_v <- system.file("extdata/cyl.gpkg", package = "tidyterra")
 v <- vect(f_v)
 
-# Read a tile
+# Read a tile.
 f_rgb <- system.file("extdata/cyl_tile.tif", package = "tidyterra")
 
 r_rgb <- rast(f_rgb)
@@ -263,27 +276,27 @@ rgb_plot
 ```
 
 <div class="figure">
-<img src="./fig-rgb-1.png" alt="A map combining a RGB SpatRaster and a SpatVector" width="100%" />
-<p class="caption">A map combining a RGB SpatRaster and a SpatVector</p>
+<img src="./fig-rgb-1.png" alt="Map combining an RGB SpatRaster object and a SpatVector object." width="100%" />
+<p class="caption">Map combining an RGB SpatRaster object and a SpatVector object.</p>
 </div>
 
-**tidyterra** includes color scales suitable for hypsometric and bathymetric
-maps:
+**tidyterra** includes color scales and hypsometric tints suitable for
+topographic and bathymetric maps:
 
 
 ``` r
 asia <- rast(system.file("extdata/asia.tif", package = "tidyterra"))
 
 asia
-#> class       : SpatRaster 
+#> class       : SpatRaster
 #> size        : 164, 306, 1  (nrow, ncol, nlyr)
 #> resolution  : 31836.23, 31847.57  (x, y)
-#> extent      : 7619120, 17361007, -1304745, 3918256  (xmin, xmax, ymin, ymax)
-#> coord. ref. : WGS 84 / Pseudo-Mercator (EPSG:3857) 
-#> source      : asia.tif 
-#> name        : file44bc291153f2 
-#> min value   :        -9558.468 
-#> max value   :         5801.927
+#> extent      : 7619120, 1.736101e+07, -1304745, 3918256  (xmin, xmax, ymin, ymax)
+#> coord. ref. : WGS 84 / Pseudo-Mercator (EPSG:3857)
+#> source      : asia.tif
+#> name        : file44bc291153f2
+#> min value   :     -9558.467773
+#> max value   :      5801.927246
 
 ggplot() +
   geom_spatraster(data = asia) +
@@ -308,13 +321,13 @@ ggplot() +
 ```
 
 <div class="figure">
-<img src="./fig-hypso-1.png" alt="Map of Asia including hypsometric tints" width="100%" />
-<p class="caption">Map of Asia including hypsometric tints</p>
+<img src="./fig-hypso-1.png" alt="Map of Asia including hypsometric tints." width="100%" />
+<p class="caption">Map of Asia including hypsometric tints.</p>
 </div>
 
-### `SpatVectors`
+### `SpatVector` objects
 
-Plot `SpatVectors` with `geom_spatvector()`:
+Plot `SpatVector` objects with `geom_spatvector()`:
 
 
 ``` r
@@ -330,23 +343,23 @@ ggplot(v_lux) +
 ```
 
 <div class="figure">
-<img src="./fig-lux_ggplot-1.png" alt="Choropleth map with a SpatVector object" width="100%" />
-<p class="caption">Choropleth map with a SpatVector object</p>
+<img src="./fig-lux_ggplot-1.png" alt="Choropleth map with a SpatVector object." width="100%" />
+<p class="caption">Choropleth map with a SpatVector object.</p>
 </div>
 
-Implementation-wise, **tidyterra** converts `terra::vect()` output to **sf** via
+Internally, **tidyterra** converts `terra::vect()` output to **sf** with
 `sf::st_as_sf()` and then uses `ggplot2::geom_sf()` to render the layer.
 
-You can also aggregate `SpatVectors` easily:
+You can also aggregate `SpatVector` objects easily:
 
 
 ``` r
-# Dissolving
+# Dissolve by group.
 v_lux |>
-  # Create categories
+  # Create categories.
   mutate(gr = cut(POP / 1000, 5)) |>
   group_by(gr) |>
-  # Summary
+  # Summarize by group.
   summarise(
     n = n(),
     tot_pop = sum(POP),
@@ -359,18 +372,18 @@ v_lux |>
 ```
 
 <div class="figure">
-<img src="./fig-aggregate-1.png" alt="Dissolving SpatVectors by group" width="100%" />
-<p class="caption">Dissolving SpatVectors by group</p>
+<img src="./fig-aggregate-1.png" alt="Dissolving SpatVector objects by group." width="100%" />
+<p class="caption">Dissolving SpatVector objects by group.</p>
 </div>
 
 ``` r
 
-# Same but keeping internal boundaries
+# Repeat while keeping internal boundaries.
 v_lux |>
-  # Create categories
+  # Create categories.
   mutate(gr = cut(POP / 1000, 5)) |>
   group_by(gr) |>
-  # Summary without dissolving
+  # Summarize by group without dissolving.
   summarise(
     n = n(),
     tot_pop = sum(POP),
@@ -384,6 +397,6 @@ v_lux |>
 ```
 
 <div class="figure">
-<img src="./fig-aggregate-2.png" alt="Dissolving SpatVectors by group (keeping internal boundaries)" width="100%" />
-<p class="caption">Dissolving SpatVectors by group (keeping internal boundaries)</p>
+<img src="./fig-aggregate-2.png" alt="Dissolving SpatVector objects by group, keeping internal boundaries." width="100%" />
+<p class="caption">Dissolving SpatVector objects by group, keeping internal boundaries.</p>
 </div>

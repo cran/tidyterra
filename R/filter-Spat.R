@@ -1,49 +1,50 @@
 #' Subset cells/geometries of `Spat*` objects
 #'
 #' @description
-#' These functions are used to subset a data frame, applying the expressions in
-#' `...` to determine which rows should be kept (for `filter()`) or dropped (
-#' for `filter_out()`).
+#' These functions subset a data frame by applying the expressions in `...`
+#' to determine which rows should be kept (for `filter()`) or dropped (for
+#' `filter_out()`).
 #'
 #' Multiple conditions can be supplied separated by a comma. These will be
 #' combined with the `&` operator. To combine comma separated conditions using
 #' `|` instead, wrap them in [dplyr::when_any()].
 #'
 #' Both `filter()` and `filter_out()` treat `NA` like `FALSE`. This subtle
-#' behaviour can impact how you write your conditions when missing values are
+#' behavior can affect how you write your conditions when missing values are
 #' involved. See [dplyr::filter()].
 #'
-#' **It is possible to filter a `SpatRaster` by its geographic coordinates**.
-#' You need to use `filter(.data, x > 42)`. Note that `x` and `y` are reserved
-#' names on \CRANpkg{terra}, since they refer to the geographic coordinates of
-#' the layer.
+#' **You can filter a `SpatRaster` by its geographic coordinates**.
+#' Use `filter(.data, x > 42)`. The names `x` and `y` are reserved in
+#' \CRANpkg{terra} because they refer to the geographic coordinates of the
+#' layer.
 #'
 #' See **Examples** and section **About layer names** on [as_tibble.Spat()].
 #'
 #' @export
+#' @encoding UTF-8
 #' @rdname filter.Spat
 #' @name filter.Spat
 #'
 #' @seealso [dplyr::filter()]
 #'
-#' @family single table verbs
+#' @family dplyr.single_table
 #' @family dplyr.rows
 #' @family dplyr.methods
 #'
 #' @importFrom dplyr filter
+#' @inherit select.Spat return
+#'
 #' @inheritParams select.Spat
 #' @inheritParams dplyr::filter
 #'
 #' @param ... <[`data-masking`][rlang::args_data_masking]> Expressions that
-#'   return a logical value, and are defined in terms of the layers/attributes
+#'   return a logical value and are defined in terms of the layers/attributes
 #'   in `.data`. If multiple expressions are included, they are combined with
 #'   the `&` operator. Only cells/geometries for which all conditions evaluate
 #'   to `TRUE` are kept. See **Methods**.
-#' @param .keep_extent Should the extent of the resulting `SpatRaster` be kept?
-#'   On `FALSE`, [terra::trim()] is called so the extent of the result may be
-#'   different of the extent of the output. See also [drop_na.SpatRaster()].
-#'
-#' @inherit select.Spat return
+#' @param .keep_extent Logical. If `TRUE`, keep the extent of the resulting
+#'   `SpatRaster`. On `FALSE`, [terra::trim()] is called so the extent may
+#'   differ from the extent of the output. See also [drop_na.SpatRaster()].
 #'
 #' @section Methods:
 #'
@@ -51,17 +52,17 @@
 #'
 #' ## `SpatRaster`
 #'
-#' Cells that do not fulfill the conditions on `...` are returned with value
+#' Cells that do not meet the conditions on `...` are returned with value
 #' `NA`. On a multi-layer `SpatRaster` the `NA` is propagated across all the
 #' layers.
 #'
-#' If `.keep_extent = TRUE` the returning `SpatRaster` has the same CRS, extent,
-#' resolution and hence the same number of cells than `.data`. If
+#' If `.keep_extent = TRUE` the returned `SpatRaster` has the same CRS, extent,
+#' resolution and number of cells as `.data`. If
 #' `.keep_extent = FALSE` the outer `NA` cells are trimmed with [terra::trim()],
-#' so the extent and number of cells may differ. The output would present in
-#' any case the same CRS and resolution than `.data`.
+#' so the extent and number of cells may differ. The output will still have
+#' the same CRS and resolution as `.data`.
 #'
-#' `x` and `y` variables (i.e. the longitude and latitude of the `SpatRaster`)
+#' `x` and `y` variables, the longitude and latitude of the `SpatRaster`,
 #' are also available internally for filtering. See **Examples**.
 #'
 #' ## `SpatVector`
@@ -135,6 +136,7 @@ filter.SpatRaster <- function(
 }
 
 #' @export
+#' @encoding UTF-8
 #' @rdname filter.Spat
 #' @examples
 #' v <- terra::vect(system.file("extdata/cyl.gpkg", package = "tidyterra"))
@@ -162,9 +164,10 @@ filter.SpatVector <- function(.data, ..., .by = NULL, .preserve = FALSE) {
 #' @export
 dplyr::filter
 
-#' @importFrom dplyr filter_out
 #' @export
+#' @encoding UTF-8
 #' @rdname filter.Spat
+#' @importFrom dplyr filter_out
 filter_out.SpatVector <- function(.data, ..., .by = NULL, .preserve = FALSE) {
   # Use own method
   tbl <- as_tibble(.data)

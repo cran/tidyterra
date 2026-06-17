@@ -2,21 +2,20 @@
 #'
 #' @description
 #'
-#' `slice()` methods lets you index cells/rows/columns/geometries by their
-#' (integer) locations. It allows you to select, remove, and duplicate those
+#' `slice()` methods let you index cells/rows/columns/geometries by their
+#' (integer) locations. They allow you to select, remove or duplicate those
 #' dimensions of a `Spat*` object.
 #'
-#' **If you want to slice your `SpatRaster` by geographic coordinates** use
-#' [filter.SpatRaster()] method.
+#' If you want to slice by geographic coordinates, use [filter.SpatRaster()].
 #'
-#' It is accompanied by a number of helpers for common use cases:
+#' It includes helpers for common use cases:
 #'
-#' * `slice_head()` and `slice_tail()` select the first or last
+#' - `slice_head()` and `slice_tail()` select the first or last
 #'   cells/geometries.
-#' * `slice_sample()` randomly selects cells/geometries.
-#' * `slice_rows()` and `slice_cols()` allow to subset entire rows or columns,
-#'   of a `SpatRaster`.
-#' * `slice_colrows()` subsets regions of the `SpatRaster` by row and column
+#' - `slice_sample()` randomly selects cells/geometries.
+#' - `slice_rows()` and `slice_cols()` subset entire rows or columns of a
+#'   `SpatRaster`.
+#' - `slice_colrows()` subsets regions of the `SpatRaster` by row and column
 #'   position of a `SpatRaster`.
 #'
 #' You can get a skeleton of your `SpatRaster` with the cell, column and row
@@ -25,42 +24,39 @@
 #' See **Methods** for details.
 #'
 #' @export
+#' @encoding UTF-8
 #' @rdname slice.Spat
 #' @name slice.Spat
 #'
 #' @seealso
-#' [dplyr::slice()], [terra::spatSample()].
+#' [dplyr::slice()], [terra::spatSample()], [as_coordinates()],
+#' [filter.SpatRaster()].
 #'
-#' You can get a skeleton of your `SpatRaster` with the cell, column and row
-#' index with [as_coordinates()].
-#'
-#' If you want to slice by geographic coordinates use [filter.SpatRaster()].
-#'
-#' @family single table verbs
+#' @family dplyr.single_table
 #' @family dplyr.rows
 #' @family dplyr.methods
 #'
-#' @inherit select.Spat return
 #' @importFrom dplyr slice
 #'
-#' @param .data A `SpatRaster` created with [terra::rast()] or a `SpatVector`
-#'   created with [terra::vect()].
+#' @inherit select.Spat return
+#' @inheritParams mutate.Spat
+#' @inheritParams dplyr::slice
+#'
 #' @param .preserve Ignored for `Spat*` objects.
-#' @param .keep_extent Should the extent of the resulting `SpatRaster` be kept?
-#'   See also [terra::trim()], [terra::extend()].
+#' @param .keep_extent Logical. If `TRUE`, keep the extent of the resulting
+#'   `SpatRaster`. See also [terra::trim()], [terra::extend()].
 #' @param ... <[`data-masking`][rlang::args_data_masking]> Integer row values.
-#'   Provide either positive values to keep, or negative values to drop.
+#'   Provide either positive values to keep or negative values to drop.
 #'
 #'   The values provided must be either all positive or all negative. Indices
 #'   beyond the number of rows in the input are silently ignored. See
 #'   **Methods**.
 #'
-#' @param cols,rows Integer col/row values of the `SpatRaster`
+#' @param cols,rows Integer column and row values of the `SpatRaster`.
 #' @param inverse If `TRUE`, `.data` is inverse-masked to the given selection.
 #'   See [terra::mask()].
-#' @param na.rm Logical, should cells that present a value of `NA` removed when
-#'   computing `slice_min()/slice_max()`?. The default is `TRUE`.
-#' @inheritParams dplyr::slice
+#' @param na.rm Logical. If `TRUE`, remove cells with `NA` values when computing
+#'   `slice_min()/slice_max()`. The default is `TRUE`.
 #'
 #' @section \CRANpkg{terra} equivalent:
 #'
@@ -76,7 +72,7 @@
 #' where cell values of the selected cells/columns/rows are preserved.
 #'
 #' Use `.keep_extent = TRUE` to preserve the extent of `.data` on the output.
-#' The non-selected cells would present a value of `NA`.
+#' The non-selected cells have a value of `NA`.
 #'
 #' ## `SpatVector`
 #'
@@ -181,6 +177,7 @@ slice.SpatRaster <- function(
   newrast
 }
 #' @export
+#' @encoding UTF-8
 #' @rdname slice.Spat
 slice.SpatVector <- function(.data, ..., .by = NULL, .preserve = FALSE) {
   # Use own method
@@ -197,6 +194,7 @@ slice.SpatVector <- function(.data, ..., .by = NULL, .preserve = FALSE) {
   vend
 }
 #' @export
+#' @encoding UTF-8
 #' @rdname slice.Spat
 #' @importFrom dplyr slice_head
 slice_head.SpatRaster <- function(.data, ..., n, prop, .keep_extent = FALSE) {
@@ -226,6 +224,7 @@ slice_head.SpatRaster <- function(.data, ..., n, prop, .keep_extent = FALSE) {
 }
 
 #' @export
+#' @encoding UTF-8
 #' @rdname slice.Spat
 slice_head.SpatVector <- function(.data, ..., n, prop, by = NULL) {
   # Use own method
@@ -244,6 +243,7 @@ slice_head.SpatVector <- function(.data, ..., n, prop, by = NULL) {
 }
 
 #' @export
+#' @encoding UTF-8
 #' @rdname slice.Spat
 #' @importFrom dplyr slice_tail
 slice_tail.SpatRaster <- function(.data, ..., n, prop, .keep_extent = FALSE) {
@@ -273,6 +273,7 @@ slice_tail.SpatRaster <- function(.data, ..., n, prop, .keep_extent = FALSE) {
 }
 
 #' @export
+#' @encoding UTF-8
 #' @rdname slice.Spat
 slice_tail.SpatVector <- function(.data, ..., n, prop, by = NULL) {
   # Use own method
@@ -291,6 +292,7 @@ slice_tail.SpatVector <- function(.data, ..., n, prop, by = NULL) {
 }
 
 #' @export
+#' @encoding UTF-8
 #' @rdname slice.Spat
 #' @importFrom dplyr slice_min
 slice_min.SpatRaster <- function(
@@ -351,6 +353,7 @@ slice_min.SpatRaster <- function(
 }
 
 #' @export
+#' @encoding UTF-8
 #' @rdname slice.Spat
 slice_min.SpatVector <- function(
   .data,
@@ -387,6 +390,7 @@ slice_min.SpatVector <- function(
 }
 
 #' @export
+#' @encoding UTF-8
 #' @rdname slice.Spat
 #' @importFrom dplyr slice_max
 slice_max.SpatRaster <- function(
@@ -447,6 +451,7 @@ slice_max.SpatRaster <- function(
 }
 
 #' @export
+#' @encoding UTF-8
 #' @rdname slice.Spat
 slice_max.SpatVector <- function(
   .data,
@@ -484,6 +489,7 @@ slice_max.SpatVector <- function(
 }
 
 #' @export
+#' @encoding UTF-8
 #' @rdname slice.Spat
 #' @importFrom dplyr slice_sample
 slice_sample.SpatRaster <- function(
@@ -538,6 +544,7 @@ slice_sample.SpatRaster <- function(
 }
 
 #' @export
+#' @encoding UTF-8
 #' @rdname slice.Spat
 slice_sample.SpatVector <- function(
   .data,
@@ -571,12 +578,14 @@ slice_sample.SpatVector <- function(
   vend
 }
 #' @export
+#' @encoding UTF-8
 #' @rdname slice.Spat
 slice_rows <- function(.data, ...) {
   UseMethod("slice_rows")
 }
 
 #' @export
+#' @encoding UTF-8
 #' @rdname slice.Spat
 slice_rows.SpatRaster <- function(.data, ..., .keep_extent = FALSE) {
   # Create skeleton
@@ -615,12 +624,14 @@ slice_rows.SpatRaster <- function(.data, ..., .keep_extent = FALSE) {
 }
 
 #' @export
+#' @encoding UTF-8
 #' @rdname slice.Spat
 slice_cols <- function(.data, ...) {
   UseMethod("slice_cols")
 }
 
 #' @export
+#' @encoding UTF-8
 #' @rdname slice.Spat
 slice_cols.SpatRaster <- function(.data, ..., .keep_extent = FALSE) {
   # Create skeleton
@@ -659,12 +670,14 @@ slice_cols.SpatRaster <- function(.data, ..., .keep_extent = FALSE) {
 }
 
 #' @export
+#' @encoding UTF-8
 #' @rdname slice.Spat
 slice_colrows <- function(.data, ...) {
   UseMethod("slice_colrows")
 }
 
 #' @export
+#' @encoding UTF-8
 #' @rdname slice.Spat
 slice_colrows.SpatRaster <- function(
   .data,
@@ -716,7 +729,7 @@ slice_colrows.SpatRaster <- function(
   }
 
   # Crop to selected range
-  # cols
+  # Columns.
   range_col <- range(sliced$colindex)
   keepindex_col <- seq(range_col[1], range_col[2], by = 1)
 

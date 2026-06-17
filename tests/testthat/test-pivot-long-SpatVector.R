@@ -22,11 +22,7 @@ test_that("can pivot all cols to long", {
 test_that("values interleaved correctly", {
   skip_on_cran()
 
-  df <- tibble::tibble(
-    x = c(1, 2),
-    y = c(10, 20),
-    z = c(100, 200),
-  )
+  df <- tibble::tibble(x = c(1, 2), y = c(10, 20), z = c(100, 200), )
   df$lat <- 1
   df$lon <- 1
   df <- terra::vect(df, crs = "EPSG:3857")
@@ -80,19 +76,14 @@ test_that("can handle missing combinations", {
   df <- tibble::tribble(
     ~id, ~x_1, ~x_2, ~y_2,
     "A",    1,    2, "a",
-    "B",    3,    4, "b",
+    "B",    3,    4, "b"
   )
   df$lat <- 1
   df$lon <- 1
   df <- terra::vect(df, crs = "EPSG:3857")
   expect_s4_class(df, "SpatVector")
   expect_snapshot(
-    pv <- pivot_longer(
-      df,
-      -id,
-      names_to = c(".value", "n"),
-      names_sep = "_"
-    )
+    pv <- pivot_longer(df, -id, names_to = c(".value", "n"), names_sep = "_")
   )
 
   expect_named(pv, c("id", "n", "x", "y"))
@@ -123,7 +114,7 @@ test_that("original col order is preserved", {
   df <- tibble::tribble(
     ~id, ~z_1, ~y_1, ~x_1, ~z_2, ~y_2, ~x_2,
     "A",    1,    2,    3,    4,    5,    6,
-    "B",    7,    8,    9,   10,   11,   12,
+    "B",    7,    8,    9,   10,   11,   12
   )
   df$lat <- 1
   df$lon <- 1
@@ -254,6 +245,25 @@ test_that("adjusting `cols_vary` works fine with `values_drop_na`", {
   )
 })
 
+test_that("Errors", {
+  local_mocked_bindings(remove_geom_col = function(tmpl, ...) {
+    "geometry"
+  })
+  df <- tibble::tibble(id = c("a", "b"), x = c(1, NA), y = c(3, 4))
+  df$lat <- 1
+  df$lon <- 1
+  df <- terra::vect(df, crs = "EPSG:3857")
+
+  expect_snapshot(
+    error = TRUE,
+    out <- pivot_longer(
+      df,
+      c(x, y),
+      cols_vary = "slowest",
+      values_drop_na = TRUE
+    )
+  )
+})
 
 # Helpers ----
 test_that("Check tidyselect: var1:var10", {
@@ -297,11 +307,7 @@ test_that("Check tidyselect: start_with", {
 
   ## No message
   expect_silent(
-    out <- remove_geom_col(
-      tbl,
-      dplyr::starts_with("a"),
-      "test_that"
-    )
+    out <- remove_geom_col(tbl, dplyr::starts_with("a"), "test_that")
   )
   expect_type(out, "character")
   expect_length(out, 2)
@@ -309,11 +315,7 @@ test_that("Check tidyselect: start_with", {
 
   ## Message
   expect_snapshot(
-    out <- remove_geom_col(
-      tbl,
-      dplyr::starts_with("g"),
-      "test_that"
-    )
+    out <- remove_geom_col(tbl, dplyr::starts_with("g"), "test_that")
   )
 
   expect_type(out, "character")
@@ -335,24 +337,14 @@ test_that("Check tidyselect: ends_with", {
   )
 
   ## No message
-  expect_silent(
-    out <- remove_geom_col(
-      tbl,
-      dplyr::ends_with("m"),
-      "test_that"
-    )
-  )
+  expect_silent(out <- remove_geom_col(tbl, dplyr::ends_with("m"), "test_that"))
   expect_type(out, "character")
   expect_length(out, 1)
   expect_identical(out, c("eom"))
 
   ## Message
   expect_snapshot(
-    out <- remove_geom_col(
-      tbl,
-      dplyr::ends_with("y"),
-      "test_that"
-    )
+    out <- remove_geom_col(tbl, dplyr::ends_with("y"), "test_that")
   )
 
   expect_type(out, "character")
@@ -374,24 +366,14 @@ test_that("Check tidyselect: ends_with", {
   )
 
   ## No message
-  expect_silent(
-    out <- remove_geom_col(
-      tbl,
-      dplyr::ends_with("m"),
-      "test_that"
-    )
-  )
+  expect_silent(out <- remove_geom_col(tbl, dplyr::ends_with("m"), "test_that"))
   expect_type(out, "character")
   expect_length(out, 1)
   expect_identical(out, c("eom"))
 
   ## Message
   expect_snapshot(
-    out <- remove_geom_col(
-      tbl,
-      dplyr::ends_with("y"),
-      "test_that"
-    )
+    out <- remove_geom_col(tbl, dplyr::ends_with("y"), "test_that")
   )
 
   expect_type(out, "character")
@@ -414,11 +396,7 @@ test_that("Check tidyselect: whereis", {
 
   ## No message
   expect_silent(
-    out <- remove_geom_col(
-      tbl,
-      dplyr::where(is.numeric),
-      "test_that"
-    )
+    out <- remove_geom_col(tbl, dplyr::where(is.numeric), "test_that")
   )
   expect_type(out, "character")
   expect_length(out, 3)
@@ -426,11 +404,7 @@ test_that("Check tidyselect: whereis", {
 
   ## Message
   expect_snapshot(
-    out <- remove_geom_col(
-      tbl,
-      dplyr::where(is.character),
-      "test_that"
-    )
+    out <- remove_geom_col(tbl, dplyr::where(is.character), "test_that")
   )
 
   expect_type(out, "character")

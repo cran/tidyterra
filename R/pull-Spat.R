@@ -1,16 +1,17 @@
 #' Extract a single layer/attribute
 #'
 #' @description
-#' `pull()` is similar to `$` on a data frame. It's mostly useful because it
-#' looks a little nicer in pipes and it can optionally name the output.
+#' `pull()` is similar to `$` on a data frame. It is mostly useful because it
+#' looks nicer in pipes and can optionally name the output.
 #'
-#' **It is possible to extract the geographic coordinates of a `SpatRaster`**.
-#' You need to use `pull(.data, x, xy = TRUE)`. `x` and `y` are reserved
+#' **You can extract the geographic coordinates of a `SpatRaster`**.
+#' Use `pull(.data, x, xy = TRUE)`. `x` and `y` are reserved
 #' names on terra, since they refer to the geographic coordinates of the layer.
 #'
 #' See **Examples** and section **About layer names** on [as_tibble.Spat()].
 #'
 #' @export
+#' @encoding UTF-8
 #' @rdname pull.Spat
 #' @name pull.Spat
 #'
@@ -25,9 +26,9 @@
 #' @inheritParams dplyr::pull
 #'
 #' @param var A variable specified as:
-#'   * a literal layer/attribute name.
-#'   * a positive integer, giving the position counting from the left.
-#'   * a negative integer, giving the position counting from the right.
+#'   - a literal layer/attribute name.
+#'   - a positive integer, giving the position counting from the left.
+#'   - a negative integer, giving the position counting from the right.
 #'
 #'   The default returns the last layer/attribute (on the assumption that's the
 #'   column you've created most recently).
@@ -36,11 +37,11 @@
 #'   [quasiquotation][rlang::topic-inject] (you can unquote column names and
 #'   column locations).
 #'
-#' @param ...  Arguments passed on to [`as_tibble.Spat()`][as_tibble.Spat]
+#' @param ... Arguments passed on to [`as_tibble.Spat()`][as_tibble.Spat].
 #'
-#' @return A vector the same number of cells/geometries as `.data`.
+#' @returns A vector the same number of cells/geometries as `.data`.
 #'
-#' On `SpatRaster` objects, note that the default (`na.rm = FALSE`) would remove
+#' On `SpatRaster` objects, note that the default (`na.rm = FALSE`) removes
 #' empty cells, so you may need to pass (`na.rm = FALSE`) to `...`. See
 #' [terra::as.data.frame()].
 #'
@@ -66,10 +67,10 @@
 #'
 #' ## `SpatVector`
 #'
-#' When passing `geom = "WKT"/geom = "HEX"` to `...`,  the geometry of the
+#' When passing `geom = "WKT"/geom = "HEX"` to `...`, the geometry of the
 #' `SpatVector` can be pulled passing `var = geometry`. Similarly to
 #' `SpatRaster` method, when using `geom = "XY"` the `x,y` coordinates can be
-#' pulled with `var = x/var = y`. See  [terra::as.data.frame()] options.
+#' pulled with `var = x/var = y`. See [terra::as.data.frame()] options.
 #'
 #' @examples
 #'
@@ -102,6 +103,7 @@ pull.SpatRaster <- function(.data, var = -1, name = NULL, ...) {
 }
 
 #' @export
+#' @encoding UTF-8
 #' @rdname pull.Spat
 pull.SpatVector <- function(.data, var = -1, name = NULL, ...) {
   var <- rlang::enquo(var)

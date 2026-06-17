@@ -1,3 +1,32 @@
+test_that("grass_scale_params prepares colors and scale values", {
+  params <- grass_scale_params(
+    palette = "srtm_plus",
+    alpha = 1,
+    direction = -1,
+    values = NULL,
+    limits = NULL,
+    use_grass_range = TRUE
+  )
+  pal_cols <- grass_db[grass_db$pal == "srtm_plus", ]
+
+  expect_identical(params$colors, rev(as.character(pal_cols$hex)))
+  expect_equal(params$limits, range(pal_cols$limit))
+  expect_equal(params$values, scales::rescale(pal_cols$limit))
+
+  params_no_range <- grass_scale_params(
+    palette = "srtm_plus",
+    alpha = 0.5,
+    direction = 1,
+    values = c(10, 20, 30),
+    limits = c(0, 40),
+    use_grass_range = FALSE
+  )
+
+  expect_equal(params_no_range$colors, ggplot2::alpha(pal_cols$hex, 0.5))
+  expect_equal(params_no_range$values, scales::rescale(c(10, 20, 30)))
+  expect_equal(params_no_range$limits, c(0, 40))
+})
+
 test_that("Discrete scale", {
   d <- data.frame(x = 1:5, y = 1:5, z = 21:25, l = letters[1:5])
 
@@ -8,7 +37,7 @@ test_that("Discrete scale", {
   p2 <- p + scale_colour_grass_d()
 
   mod <- ggplot2::layer_data(p2)$colour
-  expect_true(!any(init %in% mod))
+  expect_false(any(init %in% mod))
 
   # Alpha
   expect_snapshot(p + scale_colour_grass_d(alpha = -1), error = TRUE)
@@ -22,17 +51,11 @@ test_that("Discrete scale", {
   # Reverse also with alpha
   expect_snapshot(p + scale_colour_grass_d(direction = 0.5), error = TRUE)
 
-  p4 <- p +
-    scale_colour_grass_d(
-      direction = -1,
-      alpha = 0.7
-    )
+  p4 <- p + scale_colour_grass_d(direction = -1, alpha = 0.7)
 
   mod_alpha_rev <- ggplot2::layer_data(p4)$colour
 
-  expect_true(
-    all(rev(alpha(mod, alpha = 0.7)) == mod_alpha_rev)
-  )
+  expect_true(all(rev(alpha(mod, alpha = 0.7)) == mod_alpha_rev))
 
   # Change pal
   # Create ggplot for each pal, extract colors and check
@@ -42,10 +65,7 @@ test_that("Discrete scale", {
 
   # Get pals
   allpals_end <- lapply(allpals, function(x) {
-    palplot <- p +
-      scale_color_grass_d(
-        palette = x
-      )
+    palplot <- p + scale_color_grass_d(palette = x)
     mod_pal <- ggplot2::layer_data(palplot)$colour
     mod_pal
   })
@@ -71,7 +91,7 @@ test_that("Continous scale", {
   p2 <- p + scale_colour_grass_c()
 
   mod <- ggplot2::layer_data(p2)$colour
-  expect_true(!any(init %in% mod))
+  expect_false(any(init %in% mod))
 
   # Alpha
   expect_snapshot(p + scale_colour_grass_c(alpha = -1), error = TRUE)
@@ -85,17 +105,11 @@ test_that("Continous scale", {
   # Reverse also with alpha
   expect_snapshot(p + scale_colour_grass_c(direction = 0.5), error = TRUE)
 
-  p4 <- p +
-    scale_color_grass_c(
-      direction = -1,
-      alpha = 0.7
-    )
+  p4 <- p + scale_color_grass_c(direction = -1, alpha = 0.7)
 
   mod_alpha_rev <- ggplot2::layer_data(p4)$colour
 
-  expect_true(
-    all(rev(alpha(mod, alpha = 0.7)) == mod_alpha_rev)
-  )
+  expect_true(all(rev(alpha(mod, alpha = 0.7)) == mod_alpha_rev))
 
   # Change pal
   # Create ggplot for each pal, extract colors and check
@@ -105,10 +119,7 @@ test_that("Continous scale", {
 
   # Get pals
   allpals_end <- lapply(allpals, function(x) {
-    palplot <- p +
-      scale_colour_grass_c(
-        palette = x
-      )
+    palplot <- p + scale_colour_grass_c(palette = x)
     mod_pal <- ggplot2::layer_data(palplot)$colour
     mod_pal
   })
@@ -135,11 +146,7 @@ test_that("Continous scale no range", {
 
   # Use tint option
   expect_snapshot(
-    p +
-      scale_colour_grass_c(
-        palette = "x",
-        use_grass_range = FALSE
-      ),
+    p + scale_colour_grass_c(palette = "x", use_grass_range = FALSE),
     error = TRUE
   )
   expect_snapshot(p + scale_colour_grass_c(alpha = -1), error = TRUE)
@@ -149,16 +156,12 @@ test_that("Continous scale no range", {
 
   mod <- ggplot2::layer_data(p2)$colour
 
-  expect_true(!any(init %in% mod))
+  expect_false(any(init %in% mod))
 
   # Reverse
-  p2_rev <- p +
-    scale_colour_grass_c(
-      direction = -1,
-      palette = "etopo2"
-    )
+  p2_rev <- p + scale_colour_grass_c(direction = -1, palette = "etopo2")
   mod_rev <- ggplot2::layer_data(p2_rev)$colour
-  expect_true(!any(mod_rev %in% mod))
+  expect_false(any(mod_rev %in% mod))
 
   # Alpha
   p2_alpha <- p +
@@ -173,7 +176,7 @@ test_that("Continous scale no range", {
   # Modify limits
   p3 <- p + scale_color_grass_c(limits = c(20, 26), palette = "etopo2")
   mod_lims <- ggplot2::layer_data(p3)$colour
-  expect_true(!any(mod_lims %in% mod))
+  expect_false(any(mod_lims %in% mod))
   expect_identical(mod_lims, init)
 
   # Modify also with values
@@ -185,17 +188,13 @@ test_that("Continous scale no range", {
       use_grass_range = FALSE
     )
   mod_values <- ggplot2::layer_data(p4)$colour
-  expect_true(!any(mod_values %in% mod_lims))
-  expect_true(!any(mod_values %in% mod))
-  expect_true(!any(mod_values %in% init))
+  expect_false(any(mod_values %in% mod_lims))
+  expect_false(any(mod_values %in% mod))
+  expect_false(any(mod_values %in% init))
 })
 
 test_that("Breaking scale", {
-  d <- data.frame(
-    x = 1:10,
-    y = 1:10,
-    z = 31:40
-  )
+  d <- data.frame(x = 1:10, y = 1:10, z = 31:40)
 
   # Three cuts
   br <- c(32, 37)
@@ -203,28 +202,22 @@ test_that("Breaking scale", {
   p_init <- ggplot2::ggplot(d) +
     ggplot2::geom_point(aes(x, y, colour = z))
 
-  p <- p_init +
-    ggplot2::scale_colour_viridis_b(breaks = br)
+  p <- p_init + ggplot2::scale_colour_viridis_b(breaks = br)
 
   init <- ggplot2::layer_data(p)$colour
   expect_true(length(unique(init)) == 3)
 
-  p2 <- p_init +
-    scale_colour_grass_b(breaks = br)
+  p2 <- p_init + scale_colour_grass_b(breaks = br)
 
   mod <- ggplot2::layer_data(p2)$colour
-  expect_true(!any(init %in% mod))
+  expect_false(any(init %in% mod))
 
   expect_true(length(unique(mod)) == 3)
 
   # Alpha
   expect_snapshot(p_init + scale_color_grass_b(alpha = -1), error = TRUE)
 
-  p3 <- p_init +
-    scale_colour_grass_b(
-      alpha = 0.9,
-      breaks = br
-    )
+  p3 <- p_init + scale_colour_grass_b(alpha = 0.9, breaks = br)
 
   mod_alpha <- ggplot2::layer_data(p3)$colour
 
@@ -234,12 +227,7 @@ test_that("Breaking scale", {
   # Reverse also with alpha
   expect_snapshot(p + scale_colour_grass_b(direction = 0.5), error = TRUE)
 
-  p4 <- p_init +
-    scale_colour_grass_b(
-      direction = -1,
-      alpha = 0.7,
-      breaks = br
-    )
+  p4 <- p_init + scale_colour_grass_b(direction = -1, alpha = 0.7, breaks = br)
 
   mod_alpha_rev <- ggplot2::layer_data(p4)$colour
   expect_true(length(unique(mod_alpha_rev)) == 3)
@@ -252,10 +240,7 @@ test_that("Breaking scale", {
 
   # Get pals
   allpals_end <- lapply(allpals, function(x) {
-    palplot <- p_init +
-      scale_colour_grass_b(
-        palette = x
-      )
+    palplot <- p_init + scale_colour_grass_b(palette = x)
     mod_pal <- ggplot2::layer_data(palplot)$colour
     mod_pal
   })
@@ -282,23 +267,18 @@ test_that("Breaking scale no range", {
 
   # Use tint option
   expect_snapshot(p + scale_colour_grass_b(palette = "x"), error = TRUE)
-  expect_snapshot(p + scale_colour_grass_b(palette = "x"), error = TRUE)
   expect_snapshot(p + scale_colour_grass_b(alpha = -1), error = TRUE)
   expect_snapshot(p + scale_colour_grass_b(direction = -12), error = TRUE)
-  p2 <- p +
-    scale_colour_grass_b(
-      palette = "etopo2",
-      use_grass_range = FALSE
-    )
+  p2 <- p + scale_colour_grass_b(palette = "etopo2", use_grass_range = FALSE)
 
   mod <- ggplot2::layer_data(p2)$colour
 
-  expect_true(!any(init %in% mod))
+  expect_false(any(init %in% mod))
 
   # Reverse
   p2_rev <- p + scale_color_grass_b(direction = -1, palette = "etopo2")
   mod_rev <- ggplot2::layer_data(p2_rev)$colour
-  expect_true(!any(mod_rev %in% mod))
+  expect_false(any(mod_rev %in% mod))
 
   # Alpha
   p2_alpha <- p +
@@ -319,7 +299,7 @@ test_that("Breaking scale no range", {
       use_grass_range = FALSE
     )
   mod_lims <- ggplot2::layer_data(p3)$colour
-  expect_true(!any(mod_lims %in% mod))
+  expect_false(any(mod_lims %in% mod))
   expect_false(all(mod_lims %in% init))
 
   # Modify also with values
@@ -331,9 +311,9 @@ test_that("Breaking scale no range", {
       use_grass_range = FALSE
     )
   mod_values <- ggplot2::layer_data(p4)$colour
-  expect_true(!any(mod_values %in% mod_lims))
-  expect_true(!any(mod_values %in% mod))
-  expect_true(!any(mod_values %in% init))
+  expect_false(any(mod_values %in% mod_lims))
+  expect_false(any(mod_values %in% mod))
+  expect_false(any(mod_values %in% init))
 })
 
 test_that("Discrete scale fill", {
@@ -346,7 +326,7 @@ test_that("Discrete scale fill", {
   p2 <- p + scale_fill_grass_d()
 
   mod <- ggplot2::layer_data(p2)$fill
-  expect_true(!any(init %in% mod))
+  expect_false(any(init %in% mod))
 
   # Alpha
   expect_snapshot(p + scale_fill_grass_d(alpha = -1), error = TRUE)
@@ -360,17 +340,11 @@ test_that("Discrete scale fill", {
   # Reverse also with alpha
   expect_snapshot(p + scale_fill_grass_d(direction = 0.5), error = TRUE)
 
-  p4 <- p +
-    scale_fill_grass_d(
-      direction = -1,
-      alpha = 0.7
-    )
+  p4 <- p + scale_fill_grass_d(direction = -1, alpha = 0.7)
 
   mod_alpha_rev <- ggplot2::layer_data(p4)$fill
 
-  expect_true(
-    all(rev(alpha(mod, alpha = 0.7)) == mod_alpha_rev)
-  )
+  expect_true(all(rev(alpha(mod, alpha = 0.7)) == mod_alpha_rev))
 
   # Change pal
   # Create ggplot for each pal, extract colors and check
@@ -380,10 +354,7 @@ test_that("Discrete scale fill", {
 
   # Get pals
   allpals_end <- lapply(allpals, function(x) {
-    palplot <- p +
-      scale_fill_grass_d(
-        palette = x
-      )
+    palplot <- p + scale_fill_grass_d(palette = x)
     mod_pal <- ggplot2::layer_data(palplot)$fill
     mod_pal
   })
@@ -408,7 +379,7 @@ test_that("Continous scale fill", {
   p2 <- p + scale_fill_grass_c()
 
   mod <- ggplot2::layer_data(p2)$fill
-  expect_true(!any(init %in% mod))
+  expect_false(any(init %in% mod))
 
   # Alpha
   expect_snapshot(p + scale_fill_grass_c(alpha = -1), error = TRUE)
@@ -422,17 +393,11 @@ test_that("Continous scale fill", {
   # Reverse also with alpha
   expect_snapshot(p + scale_fill_grass_c(direction = 0.5), error = TRUE)
 
-  p4 <- p +
-    scale_fill_grass_c(
-      direction = -1,
-      alpha = 0.7
-    )
+  p4 <- p + scale_fill_grass_c(direction = -1, alpha = 0.7)
 
   mod_alpha_rev <- ggplot2::layer_data(p4)$fill
 
-  expect_true(
-    all(rev(alpha(mod, alpha = 0.7)) == mod_alpha_rev)
-  )
+  expect_true(all(rev(alpha(mod, alpha = 0.7)) == mod_alpha_rev))
 
   # Change pal
   # Create ggplot for each pal, extract colors and check
@@ -442,10 +407,7 @@ test_that("Continous scale fill", {
 
   # Get pals
   allpals_end <- lapply(allpals, function(x) {
-    palplot <- p +
-      scale_fill_grass_c(
-        palette = x
-      )
+    palplot <- p + scale_fill_grass_c(palette = x)
     mod_pal <- ggplot2::layer_data(palplot)$fill
     mod_pal
   })
@@ -479,27 +441,23 @@ test_that("Continous scale fill no range", {
 
   mod <- ggplot2::layer_data(p2)$fill
 
-  expect_true(!any(init %in% mod))
+  expect_false(any(init %in% mod))
 
   # Reverse
   p2_rev <- p + scale_fill_grass_c(direction = -1, palette = "etopo2")
   mod_rev <- ggplot2::layer_data(p2_rev)$fill
-  expect_true(!any(mod_rev %in% mod))
+  expect_false(any(mod_rev %in% mod))
 
   # Alpha
   p2_alpha <- p +
-    scale_fill_grass_c(
-      alpha = 0.5,
-      palette = "etopo2",
-      use_grass_range = FALSE
-    )
+    scale_fill_grass_c(alpha = 0.5, palette = "etopo2", use_grass_range = FALSE)
   mod_alpha <- ggplot2::layer_data(p2_alpha)$fill
   expect_true(all(ggplot2::alpha(mod, 0.5) == mod_alpha))
 
   # Modify limits
   p3 <- p + scale_fill_grass_c(limits = c(20, 26), palette = "etopo2")
   mod_lims <- ggplot2::layer_data(p3)$fill
-  expect_true(!any(mod_lims %in% mod))
+  expect_false(any(mod_lims %in% mod))
   expect_identical(mod_lims, init)
 
   # Modify also with values
@@ -511,17 +469,13 @@ test_that("Continous scale fill no range", {
       use_grass_range = FALSE
     )
   mod_values <- ggplot2::layer_data(p4)$fill
-  expect_true(!any(mod_values %in% mod_lims))
-  expect_true(!any(mod_values %in% mod))
-  expect_true(!any(mod_values %in% init))
+  expect_false(any(mod_values %in% mod_lims))
+  expect_false(any(mod_values %in% mod))
+  expect_false(any(mod_values %in% init))
 })
 
 test_that("Breaking scale fill", {
-  d <- data.frame(
-    x = 1:10,
-    y = 1:10,
-    z = 31:40
-  )
+  d <- data.frame(x = 1:10, y = 1:10, z = 31:40)
 
   # Three cuts
   br <- c(32, 37)
@@ -529,28 +483,22 @@ test_that("Breaking scale fill", {
   p_init <- ggplot2::ggplot(d) +
     ggplot2::geom_col(aes(x, y, fill = z))
 
-  p <- p_init +
-    ggplot2::scale_fill_viridis_b(breaks = br)
+  p <- p_init + ggplot2::scale_fill_viridis_b(breaks = br)
 
   init <- ggplot2::layer_data(p)$fill
   expect_true(length(unique(init)) == 3)
 
-  p2 <- p_init +
-    scale_fill_grass_b(breaks = br)
+  p2 <- p_init + scale_fill_grass_b(breaks = br)
 
   mod <- ggplot2::layer_data(p2)$fill
-  expect_true(!any(init %in% mod))
+  expect_false(any(init %in% mod))
 
   expect_true(length(unique(mod)) == 3)
 
   # Alpha
   expect_snapshot(p_init + scale_fill_grass_b(alpha = -1), error = TRUE)
 
-  p3 <- p_init +
-    scale_fill_grass_b(
-      alpha = 0.9,
-      breaks = br
-    )
+  p3 <- p_init + scale_fill_grass_b(alpha = 0.9, breaks = br)
 
   mod_alpha <- ggplot2::layer_data(p3)$fill
 
@@ -560,12 +508,7 @@ test_that("Breaking scale fill", {
   # Reverse also with alpha
   expect_snapshot(p + scale_fill_grass_b(direction = 0.5), error = TRUE)
 
-  p4 <- p_init +
-    scale_fill_grass_b(
-      direction = -1,
-      alpha = 0.7,
-      breaks = br
-    )
+  p4 <- p_init + scale_fill_grass_b(direction = -1, alpha = 0.7, breaks = br)
 
   mod_alpha_rev <- ggplot2::layer_data(p4)$fill
   expect_true(length(unique(mod_alpha_rev)) == 3)
@@ -578,10 +521,7 @@ test_that("Breaking scale fill", {
 
   # Get pals
   allpals_end <- lapply(allpals, function(x) {
-    palplot <- p_init +
-      scale_fill_grass_b(
-        palette = x
-      )
+    palplot <- p_init + scale_fill_grass_b(palette = x)
     mod_pal <- ggplot2::layer_data(palplot)$fill
     mod_pal
   })
@@ -608,31 +548,22 @@ test_that("Breaking scale fill no range", {
 
   # Use tint option
   expect_snapshot(p + scale_fill_grass_b(palette = "x"), error = TRUE)
-  expect_snapshot(p + scale_fill_grass_b(palette = "x"), error = TRUE)
   expect_snapshot(p + scale_fill_grass_b(alpha = -1), error = TRUE)
   expect_snapshot(p + scale_fill_grass_b(direction = -12), error = TRUE)
-  p2 <- p +
-    scale_fill_grass_b(
-      palette = "etopo2",
-      use_grass_range = FALSE
-    )
+  p2 <- p + scale_fill_grass_b(palette = "etopo2", use_grass_range = FALSE)
 
   mod <- ggplot2::layer_data(p2)$fill
 
-  expect_true(!any(init %in% mod))
+  expect_false(any(init %in% mod))
 
   # Reverse
   p2_rev <- p + scale_fill_grass_b(direction = -1, palette = "etopo2")
   mod_rev <- ggplot2::layer_data(p2_rev)$fill
-  expect_true(!any(mod_rev %in% mod))
+  expect_false(any(mod_rev %in% mod))
 
   # Alpha
   p2_alpha <- p +
-    scale_fill_grass_b(
-      alpha = 0.5,
-      palette = "etopo2",
-      use_grass_range = FALSE
-    )
+    scale_fill_grass_b(alpha = 0.5, palette = "etopo2", use_grass_range = FALSE)
   mod_alpha <- ggplot2::layer_data(p2_alpha)$fill
   expect_true(all(ggplot2::alpha(mod, 0.5) == mod_alpha))
 
@@ -645,7 +576,7 @@ test_that("Breaking scale fill no range", {
       use_grass_range = FALSE
     )
   mod_lims <- ggplot2::layer_data(p3)$fill
-  expect_true(!any(mod_lims %in% mod))
+  expect_false(any(mod_lims %in% mod))
   expect_false(all(mod_lims %in% init))
 
   # Modify also with values
@@ -657,9 +588,9 @@ test_that("Breaking scale fill no range", {
       use_grass_range = FALSE
     )
   mod_values <- ggplot2::layer_data(p4)$fill
-  expect_true(!any(mod_values %in% mod_lims))
-  expect_true(!any(mod_values %in% mod))
-  expect_true(!any(mod_values %in% init))
+  expect_false(any(mod_values %in% mod_lims))
+  expect_false(any(mod_values %in% mod))
+  expect_false(any(mod_values %in% init))
 })
 
 test_that("Palettes", {
@@ -675,10 +606,7 @@ test_that("Palettes", {
     pal <- allpals[i]
     colors <- grass.colors(20, pal)
 
-    expect_identical(
-      class(colors),
-      "character"
-    )
+    expect_identical(class(colors), "character")
     expect_length(colors, 20)
   }
 })

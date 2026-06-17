@@ -1,25 +1,26 @@
 #' Extract coordinates from `SpatVector` objects
 #'
 #' `stat_spat_coordinates()` extracts the coordinates from `SpatVector` objects
-#' and summarises them to one pair of coordinates (x and y) per geometry.
+#' and summarizes them to one pair of coordinates (x and y) per geometry.
 #'
 #' Wrapper of [ggplot2::stat_sf_coordinates()].
-#'
-#' @rdname stat_spat_coordinates
-#'
-#' @export
-#' @family ggplot2.utils
-#' @return A \CRANpkg{ggplot2} layer
-#' @keywords internal
-#'
-#' @inheritParams ggspatvector
-#' @inheritParams ggplot2::stat_sf_coordinates
-#' @param ... Other arguments passed on to [ggplot2::stat_sf_coordinates()].
 #'
 #' @details
 #'
 #' See [ggplot2::stat_sf_coordinates()] for details.
 #'
+#' @export
+#' @encoding UTF-8
+#' @rdname stat_spat_coordinates
+#'
+#' @keywords internal
+#'
+#' @family ggplot2.utils
+#' @inheritParams ggspatvector
+#' @inheritParams ggplot2::stat_sf_coordinates
+#' @param ... Other arguments passed on to [ggplot2::stat_sf_coordinates()].
+#'
+#' @returns A \CRANpkg{ggplot2} layer.
 #' @examples
 #' \donttest{
 #' cyl <- terra::vect(system.file("extdata/cyl.gpkg", package = "tidyterra"))

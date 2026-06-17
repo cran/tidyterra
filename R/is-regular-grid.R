@@ -1,24 +1,25 @@
-#' Check if x and y positions conforms a regular grid
+#' Check whether x and y positions form a regular grid
 #'
 #' @description
 #'
-#' Assess if the coordinates x,y of an object conforms a regular grid. This
-#' function is called by its side effects.
+#' Assess whether the `x` and `y` coordinates of an object form a regular grid.
+#' This function is called for its side effects.
 #'
 #' This function is internally called by [as_spatraster()].
 #'
 #' @export
-#'
-#' @return
-#' `invisible()` if is regular or an error message otherwise
-#'
-#' @param xy A matrix, data frame or tibble of at least two columns representing
-#'   x and y coordinates.
-#' @inheritParams as_spatraster
+#' @encoding UTF-8
 #'
 #' @seealso [as_spatraster()]
 #'
 #' @family helpers
+#'
+#' @inheritParams as_spatraster
+#'
+#' @param xy A matrix, data frame or tibble of at least two columns representing
+#'   x and y coordinates.
+#' @returns
+#' `invisible()` if the coordinates form a regular grid. Otherwise, an error.
 #'
 #' @examples
 #'
@@ -26,25 +27,21 @@
 #'
 #' is_regular_grid(p)
 #'
-#' # Jitter location
+#' # Jitter locations.
 #' set.seed(1234)
 #' jitter <- runif(length(p)) / 10e4
 #' p_jitter <- p + jitter
 #'
-#' # Need to adjust digits
+#' # Adjust digits.
 #' is_regular_grid(p_jitter, digits = 4)
 #'
 is_regular_grid <- function(xy, digits = 6) {
   # From https://github.com/rspatial/terra/blob/master/R/rast.R
 
-  # Need to work out with tibbles
-
+  # Work with tibbles.
   xy_df <- as.data.frame(xy)
 
-  newdf <- data.frame(
-    x = as.double(xy_df[, 1]),
-    y = as.double(xy_df[, 2])
-  )
+  newdf <- data.frame(x = as.double(xy_df[, 1]), y = as.double(xy_df[, 2]))
 
   xyz <- as.matrix(newdf)
   xyz <- matrix(as.numeric(xyz), ncol = ncol(xyz), nrow = nrow(xyz))
@@ -63,8 +60,7 @@ is_regular_grid <- function(xy, digits = 6) {
   if (q > 0) {
     cli::cli_abort(paste(
       "{.arg x} cell sizes are not regular.",
-      "
-      Try with a lower {.arg digit} value."
+      "Try with a lower {.arg digits} value."
     ))
   }
 
@@ -81,7 +77,7 @@ is_regular_grid <- function(xy, digits = 6) {
   if (q > 0) {
     cli::cli_abort(paste(
       "{.arg y} cell sizes are not regular. Try with a lower",
-      "{.arg digit}",
+      "{.arg digits}",
       "value."
     ))
   }

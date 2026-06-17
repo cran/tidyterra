@@ -23,10 +23,7 @@ test_that("group_by(<grouped df>, add add groups", {
 
   v1 <- terra::vect(system.file("extdata/cyl.gpkg", package = "tidyterra"))
   v <- v1[1:4, ]
-  thedf <- data.frame(
-    x = 1:4,
-    g = rep(1:2, each = 2)
-  )
+  thedf <- data.frame(x = 1:4, g = rep(1:2, each = 2))
 
   df <- cbind(v[, 0], thedf)
 
@@ -49,10 +46,7 @@ test_that("joins preserve grouping", {
 
   v1 <- terra::vect(system.file("extdata/cyl.gpkg", package = "tidyterra"))
   v <- v1[1:4, ]
-  thedf <- data.frame(
-    x = 1:4,
-    g = rep(1:2, each = 2)
-  )
+  thedf <- data.frame(x = 1:4, g = rep(1:2, each = 2))
 
   v <- cbind(v[, 0], thedf)
 
@@ -70,7 +64,7 @@ test_that("grouping by constant adds column", {
 
   v1 <- terra::vect(system.file("extdata/cyl.gpkg", package = "tidyterra"))
   grouped <- group_by(v1, "cyl") |> summarise(foo = dplyr::n())
-  expect_equal(names(grouped), c('"cyl"', "foo"))
+  expect_named(grouped, c('"cyl"', "foo"))
   expect_equal(nrow(grouped), 1L)
 })
 
@@ -80,14 +74,8 @@ test_that("can partially `ungroup()`", {
   v1 <- terra::vect(system.file("extdata/cyl.gpkg", package = "tidyterra"))
   gdf <- group_by(v1, cpro, iso2)
 
-  expect_identical(
-    as_tibble(ungroup(gdf, cpro)),
-    as_tibble(group_by(v1, iso2))
-  )
-  expect_identical(
-    as_tibble(ungroup(gdf, cpro, iso2)),
-    as_tibble(v1)
-  )
+  expect_identical(as_tibble(ungroup(gdf, cpro)), as_tibble(group_by(v1, iso2)))
+  expect_identical(as_tibble(ungroup(gdf, cpro, iso2)), as_tibble(v1))
 })
 
 test_that("can fully `ungroup()`", {
@@ -95,17 +83,11 @@ test_that("can fully `ungroup()`", {
 
   v1 <- terra::vect(system.file("extdata/cyl.gpkg", package = "tidyterra"))
 
-  expect_identical(
-    as_tibble(ungroup(v1)),
-    as_tibble(v1)
-  )
+  expect_identical(as_tibble(ungroup(v1)), as_tibble(v1))
 
   gdf <- group_by(v1, cpro, iso2)
 
-  expect_identical(
-    as_tibble(ungroup(gdf)),
-    as_tibble(v1)
-  )
+  expect_identical(as_tibble(ungroup(gdf)), as_tibble(v1))
 })
 
 test_that("mutate does not lose variables", {
@@ -121,7 +103,7 @@ test_that("mutate does not lose variables", {
   by_a <- summarise(by_ab, x = sum(x), .groups = "drop_last")
   by_a_quartile <- group_by(by_a, quartile = dplyr::ntile(x, 4))
 
-  expect_equal(names(by_a_quartile), c("a", "b", "x", "quartile"))
+  expect_named(by_a_quartile, c("a", "b", "x", "quartile"))
 })
 
 
@@ -147,12 +129,8 @@ test_that("group_by orders by groups", {
 
   expect_equal(group_data(df)$a, letters[1:4])
 
-  df <- cbind(
-    df[, 0],
-    data.frame(a = sample(sqrt(1:3), 30, replace = TRUE))
-  )
-  df <- df |>
-    group_by(a)
+  df <- cbind(df[, 0], data.frame(a = sample(sqrt(1:3), 30, replace = TRUE)))
+  df <- df |> group_by(a)
 
   expect_equal(group_data(df)$a, sqrt(1:3))
 })
@@ -167,7 +145,7 @@ test_that("distinct keep groups", {
     lat = c(0, 0, 0, 0, 1)
   )
 
-  v <- terra::vect(df)
+  v <- terra::vect(df, crs = "EPSG:4326")
   v <- group_by(v, y)
 
   # Keep group with callings
@@ -202,4 +180,11 @@ test_that("ungroup.rowwise_df gives a ungrouped SpatVector", {
     ungroup()
   expect_false(is_grouped_spatvector(res))
   expect_false(is_rowwise_spatvector(res))
+})
+
+test_that("Internal errors", {
+  expect_identical(group_prepare_spat("a_nothing"), "a_nothing")
+
+  v1 <- terra::vect(system.file("extdata/cyl.gpkg", package = "tidyterra"))
+  expect_snapshot(error = TRUE, group_prepare_spat(v1, "a"))
 })

@@ -2,22 +2,23 @@
 #'
 #' Determine packages required by `Spat*` objects.
 #'
-#' @return A character string of packages that are required.
-#' @family generics.methods
-#'
-#' @inheritParams tidy.Spat
-#'
+#' @export
+#' @encoding UTF-8
 #' @rdname required_pkgs.Spat
 #' @name required_pkgs.Spat
 #'
+#' @seealso [generics::required_pkgs()].
+#'
+#' @family generics.methods
+#'
+#' @importFrom generics required_pkgs
+#'
+#' @inheritParams tidy.Spat
+#'
+#' @returns A character string of packages that are required.
 #' @section Methods:
 #'
 #' Implementation of [generics::required_pkgs()] method.
-#'
-#' @export
-#' @importFrom generics required_pkgs
-#'
-#' @seealso [generics::required_pkgs()].
 #'
 #' @examples
 #' file_path <- system.file("extdata/cyl_temp.tif", package = "tidyterra")
@@ -30,7 +31,7 @@
 #' r
 #' required_pkgs(r)
 #'
-#' #  With vectors
+#' # With vectors
 #' v <- vect(system.file("extdata/cyl.gpkg", package = "tidyterra"))
 #' v
 #' required_pkgs(v)
@@ -40,18 +41,21 @@ required_pkgs.SpatRaster <- function(x, ...) {
 }
 
 #' @export
+#' @encoding UTF-8
 #' @name required_pkgs.Spat
 required_pkgs.SpatVector <- function(x, ...) {
   c("terra")
 }
 
 #' @export
+#' @encoding UTF-8
 #' @name required_pkgs.Spat
 required_pkgs.SpatGraticule <- function(x, ...) {
   c("terra")
 }
 
 #' @export
+#' @encoding UTF-8
 #' @name required_pkgs.Spat
 required_pkgs.SpatExtent <- function(x, ...) {
   c("terra")

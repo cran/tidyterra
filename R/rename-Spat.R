@@ -2,14 +2,23 @@
 #'
 #' @description
 #' `rename()` changes the names of individual layers/attributes using
-#' `new_name = old_name` syntax; `rename_with()` renames layers/attributes
+#' `new_name = old_name` syntax. `rename_with()` renames layers/attributes
 #' using a function.
 #'
 #' @export
+#' @encoding UTF-8
 #' @rdname rename.Spat
 #' @name rename.Spat
 #'
+#' @seealso [dplyr::rename()]
+#'
+#' @family dplyr.single_table
+#' @family dplyr.cols
+#' @family dplyr.methods
+#'
 #' @importFrom dplyr rename
+#'
+#' @inherit select.Spat return
 #'
 #' @inheritParams select.Spat
 #' @inheritParams dplyr::rename
@@ -17,14 +26,6 @@
 #'   Use `new_name = old_name` to rename selected variables.
 #'
 #'   For `rename_with.Spat*()`: additional arguments passed onto `.fn`.
-#'
-#' @inherit select.Spat return
-#'
-#' @seealso [dplyr::rename()]
-#'
-#' @family single table verbs
-#' @family dplyr.cols
-#' @family dplyr.methods
 #'
 #' @section \CRANpkg{terra} equivalent:
 #'
@@ -71,22 +72,18 @@ rename.SpatRaster <- function(.data, ...) {
   final_rast
 }
 
+#' @export
+#' @encoding UTF-8
 #' @rdname rename.Spat
 #' @importFrom dplyr rename_with
 #' @importFrom dplyr everything
-#' @export
 rename_with.SpatRaster <- function(.data, .fn, .cols = everything(), ...) {
   # Use template
   df <- .data[1]
   .fn <- rlang::as_function(.fn)
   .cols <- rlang::enquo(.cols)
 
-  df_rename <- dplyr::rename_with(
-    df,
-    .fn,
-    !!.cols,
-    ...
-  )
+  df_rename <- dplyr::rename_with(df, .fn, !!.cols, ...)
 
   final_rast <- .data
   names(final_rast) <- names(df_rename)
@@ -94,8 +91,9 @@ rename_with.SpatRaster <- function(.data, .fn, .cols = everything(), ...) {
   final_rast
 }
 
-#' @rdname rename.Spat
 #' @export
+#' @encoding UTF-8
+#' @rdname rename.Spat
 rename.SpatVector <- function(.data, ...) {
   # Use template
   df <- as_tibble(.data[1, ])
@@ -109,8 +107,9 @@ rename.SpatVector <- function(.data, ...) {
   vend
 }
 
-#' @rdname rename.Spat
 #' @export
+#' @encoding UTF-8
+#' @rdname rename.Spat
 rename_with.SpatVector <- function(.data, .fn, .cols = everything(), ...) {
   # Use template
   df <- as_tibble(.data[1, ])

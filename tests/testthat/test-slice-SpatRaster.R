@@ -359,10 +359,7 @@ test_that("Slice sample", {
 
   expect_true(nrow(df) == 1)
 
-  expect_equal(
-    unique(df$cell_index),
-    df$cell_index
-  )
+  expect_equal(unique(df$cell_index), df$cell_index)
 
   # W/0 replacement, keep extent
   sliced <- slice_sample(r, n = 1, replace = FALSE, .keep_extent = TRUE)
@@ -373,10 +370,7 @@ test_that("Slice sample", {
 
   expect_true(nrow(df) == 1)
 
-  expect_equal(
-    unique(df$cell_index),
-    df$cell_index
-  )
+  expect_equal(unique(df$cell_index), df$cell_index)
 })
 
 
@@ -597,7 +591,7 @@ test_that("Slice RowCols", {
 
   df <- terra::as.data.frame(sliced, na.rm = TRUE)
 
-  expect_true(!any(sort(unique(df$colindex)) %in% -cls))
+  expect_false(any(sort(unique(df$colindex)) %in% -cls))
   expect_true(all(sort(unique(df$rowindex)) == rws))
 
   # Mixed index: Keeps
@@ -612,6 +606,6 @@ test_that("Slice RowCols", {
 
   df <- terra::as.data.frame(sliced, na.rm = TRUE)
 
-  expect_true(!any(sort(unique(df$colindex)) %in% -cls))
+  expect_false(any(sort(unique(df$colindex)) %in% -cls))
   expect_true(all(sort(unique(df$rowindex)) == rws))
 })

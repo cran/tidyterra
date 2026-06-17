@@ -2,16 +2,21 @@
 #'
 #' @description
 #'
-#' `rowwise()` allows you to compute on a `SpatVector` a row-at-a-time.
-#' This is most useful when a vectorised function doesn't exist.
+#' `rowwise()` lets you compute on a `SpatVector` one row at a time.
+#' This is most useful when a vectorised function does not exist.
 #'
-#' Most \CRANpkg{dplyr} verbs implementation in \CRANpkg{tidyterra} preserve
-#' row-wise grouping. The exception is [summarise.SpatVector()], which return a
-#' [grouped SpatVector][group_by.SpatVector]. You can explicitly ungroup with
-#' [ungroup.SpatVector()] or [as_tibble()], or convert to a grouped `SpatVector`
+#' Most \CRANpkg{dplyr} verb implementations in \CRANpkg{tidyterra} preserve
+#' row-wise grouping. The exception is [summarise.SpatVector()], which returns
+#' a [grouped SpatVector][group_by.SpatVector]. You can explicitly ungroup with
+#' [ungroup.SpatVector()] or [as_tibble()] or convert to a grouped `SpatVector`
 #' with [group_by.SpatVector()].
 #'
+#' @details
+#'
+#' See **Details** on [dplyr::rowwise()].
+#'
 #' @export
+#' @encoding UTF-8
 #' @rdname rowwise.SpatVector
 #' @name rowwise.SpatVector
 #'
@@ -23,15 +28,15 @@
 #' @importFrom dplyr rowwise
 #' @param data A `SpatVector` object. See **Methods**.
 #' @param ... <[`tidy-select`][dplyr::dplyr_tidy_select]> Variables to be
-#'   preserved when calling [summarise.SpatVector()]. This is typically a set
-#'   of variables whose combination uniquely identify each row. See
+#'   preserved when calling [summarise.SpatVector()]. This is typically a set of
+#'   variables whose combination uniquely identifies each row. See
 #'   [dplyr::rowwise()].
 #'
-#'   **NB**: unlike [group_by.SpatVector()] you can not create new variables
-#'   here but instead you can select multiple variables with (e.g.)
+#'   Unlike [group_by.SpatVector()], you cannot create new variables here.
+#'   Instead, you can select multiple variables, for example with
 #'   [everything()].
 #'
-#' @return The same `SpatVector` object with an additional attribute.
+#' @returns The same `SpatVector` object with updated grouping metadata.
 #'
 #' @section Methods:
 #'
@@ -39,18 +44,15 @@
 #' `SpatVector` objects.
 #'
 #' **When mixing** \CRANpkg{terra} **and** \CRANpkg{dplyr} **syntax** on a
-#' row-wise `SpatVector` (i.e, subsetting a `SpatVector` like `v[1:3,1:2]`) the
-#' `groups` attribute can be corrupted. \CRANpkg{tidyterra} would try to
-#' re-generate the `SpatVector`. This would be triggered the next time you use
-#' a \CRANpkg{dplyr} verb on your `SpatVector`.
+#' row-wise `SpatVector`, for example subsetting a `SpatVector` like
+#' `v[1:3,1:2]`, the `groups` attribute can be corrupted.
+#' \CRANpkg{tidyterra} tries to
+#' regenerate the `SpatVector`. This is triggered the next time you use a
+#' \CRANpkg{dplyr} verb on your `SpatVector`.
 #'
-#' Note also that some operations (as `terra::spatSample()`) would create a new
-#' `SpatVector`. In these cases, the result won't preserve the `groups`
-#' attribute. Use [rowwise.SpatVector()] to re-group.
-#'
-#' @details
-#'
-#' See **Details** on [dplyr::rowwise()].
+#' Some operations, such as `terra::spatSample()`, create a new `SpatVector`.
+#' In these cases, the result does not preserve the `groups` attribute. Use
+#' [rowwise.SpatVector()] to re-group.
 #'
 #' @examples
 #' library(terra)
@@ -70,7 +72,7 @@
 #'
 #' # Additional examples
 #' \donttest{
-#' # use c_across() to more easily select many variables
+#' # Use c_across() to select many variables more easily.
 #' nb |>
 #'   rowwise() |>
 #'   mutate(m = mean(c_across(NWBIR74:NWBIR79)))
@@ -81,7 +83,7 @@
 #'   rowwise() |>
 #'   mutate(min = min(c_across(NWBIR74:NWBIR79)))
 #'
-#' # Summarising
+#' # Summarize.
 #' v |>
 #'   rowwise() |>
 #'   summarise(mean_bir = mean(BIR74, BIR79)) |>

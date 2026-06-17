@@ -1,70 +1,70 @@
-#' Extract CRS on WKT format
+#' Extract CRS in WKT format
 #'
 #' @description
 #'
-#' Extract the WKT version of the CRS associated to a string, number of
-#' sf/Spat* object.
-#'
-#' The
+#' Extract the WKT version of the CRS associated with a string, number or
+#' `sf/Spat*` object.
 #'
 #' ```{r, echo=FALSE, results='asis'}
-#' full_url <- paste0("[Well-known text (WKT)](",
-#'                    "https://en.wikipedia.org/wiki/Well-known_text_",
-#'                    "representation_of_coordinate_reference_systems)")
+#' full_url <- paste0(
+#'   "[Well-known text (WKT)](",
+#'   "https://en.wikipedia.org/wiki/Well-known_text_",
+#'   "representation_of_coordinate_reference_systems)"
+#' )
 #'
 #' cat(full_url)
-#'
 #' ```
-#' representation of coordinate reference systems (CRS) is a character string
-#' that identifies precisely the arguments of each CRS. This is the current
-#' standard used on \CRANpkg{sf} and \CRANpkg{terra} packages.
+#' is a character string representation of coordinate reference systems (CRS).
+#' It identifies the parameters of each CRS precisely and is the standard used
+#' by \CRANpkg{sf} and \CRANpkg{terra}.
+#'
+#' @details
+#'
+#' Although the WKT representation is the same, the \CRANpkg{sf} and
+#' \CRANpkg{terra} APIs differ slightly. For example, \CRANpkg{sf} can do:
+#'
+#' `sf::st_transform(x, 25830)`
+#'
+#' While the \CRANpkg{terra} equivalent is:
+#'
+#' `terra::project(bb, "epsg:25830")`
+#'
+#' Knowing the WKT helps smooth workflows when working with different
+#' packages and object types.
+#'
+#' @export
+#' @encoding UTF-8
 #'
 #' @seealso
 #'
-#' [terra::crs()], [sf::st_crs()] for knowing how these packages handle
+#' [terra::crs()] and [sf::st_crs()] to learn how these packages handle
 #' CRS definitions.
 #'
 #' @family helpers
-#' @export
-#'
-#' @return A WKT representation of the corresponding CRS.
-#'
 #' @param .data Input potentially including or representing a CRS. It could be
 #'   a `sf/sfc` object, a `SpatRaster/SpatVector` object, a `crs` object from
 #'   [sf::st_crs()], a character (for example a [proj4
 #'   string](https://proj.org/en/9.3/operations/projections/index.html)) or a
 #'   integer (representing an [EPSG](https://epsg.io/) code).
 #'
-#' @param ... ignored
+#' @param ... Ignored.
 #'
-#' @details
-#'
-#' Although the WKT representation is the same, \CRANpkg{sf} and \CRANpkg{terra}
-#' API slightly differs. For example, \CRANpkg{sf} can do:
-#'
-#' `sf::st_transform(x, 25830)`
-#'
-#' While \CRANpkg{sf} equivalent is:
-#'
-#' `terra::project(bb, "epsg:25830")`
-#'
-#' Knowing the WKT would help to smooth workflows when working with different
-#' packages and object types.
+#' @returns A WKT representation of the corresponding CRS.
 #'
 #' @section Internals:
 #'
-#' This is a thin wrapper of [sf::st_crs()] and [terra::crs()].
+#' A thin wrapper around [sf::st_crs()] and [terra::crs()].
 #'
 #' @examples
 #'
-#' # sf objects
+#' # sf objects.
 #'
 #' sfobj <- sf::st_as_sfc("MULTIPOINT ((0 0), (1 1))", crs = 4326)
 #'
 #' fromsf1 <- pull_crs(sfobj)
 #' fromsf2 <- pull_crs(sf::st_crs(sfobj))
 #'
-#' # terra
+#' # terra objects.
 #'
 #' v <- terra::vect(sfobj)
 #' r <- terra::rast(v)
@@ -72,10 +72,10 @@
 #' fromterra1 <- pull_crs(v)
 #' fromterra2 <- pull_crs(r)
 #'
-#' # integers
+#' # Integers.
 #' fromint <- pull_crs(4326)
 #'
-#' # Characters
+#' # Characters.
 #' fromchar <- pull_crs("epsg:4326")
 #'
 #' all(
@@ -88,22 +88,13 @@
 #'
 #' cat(fromsf1)
 pull_crs <- function(.data, ...) {
-  # Spat* objects handled by crs
-  if (
-    any(
-      inherits(.data, "SpatRaster"),
-      inherits(.data, "SpatVector")
-    )
-  ) {
+  # Spat* objects are handled by CRS.
+  if (any(inherits(.data, "SpatRaster"), inherits(.data, "SpatVector"))) {
     .data <- terra::crs(.data)
   }
 
   if (
-    any(
-      inherits(.data, "sf"),
-      inherits(.data, "sfc"),
-      inherits(.data, "crs")
-    )
+    any(inherits(.data, "sf"), inherits(.data, "sfc"), inherits(.data, "crs"))
   ) {
     return(sf::st_crs(.data)$wkt)
   }
@@ -116,26 +107,19 @@ pull_crs <- function(.data, ...) {
     return(NA)
   }
 
-  if (inherits(.data, "character")) {
-    if (.data == "") {
-      return(NA)
-    }
+  if ((inherits(.data, "character")) && (!nzchar(.data))) {
+    return(NA)
   }
 
-  # Characters and numerics are handled by sf
-  if (
-    any(
-      inherits(.data, "character"),
-      inherits(.data, "numeric")
-    )
-  ) {
+  # Characters and numerics are handled by sf.
+  if (any(inherits(.data, "character"), inherits(.data, "numeric"))) {
     return(sf::st_crs(.data)$wkt)
   }
 
-  # All the rest, return empty with an alert
+  # Return `NA` with an alert for all other inputs.
   cli::cli_alert_warning(paste(
-    "On {.fun tidyterra::pull_crs}\nNo wkt equivalent found.",
-    "Returning {.val {NA}}"
+    "{.fun tidyterra::pull_crs} could not find a WKT equivalent.",
+    "Returning {.val {NA}}."
   ))
   NA
 }

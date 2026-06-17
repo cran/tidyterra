@@ -5,32 +5,42 @@
 #' Implementation of the gradient palettes presented in
 #' <https://leahsmyth.github.io/Princess-Colour-Schemes/index.html>. Three
 #' scales are provided:
-#' * `scale_*_princess_d()`: For discrete values.
-#' * `scale_*_princess_c()`: For continuous values.
-#' * `scale_*_princess_b()`: For binning continuous values.
+#' - `scale_*_princess_d()`: For discrete values.
+#' - `scale_*_princess_c()`: For continuous values.
+#' - `scale_*_princess_b()`: For binning continuous values.
 #'
 #' Additionally, a color palette `princess.colors()` is provided. See also
 #' [grDevices::terrain.colors()] for details.
 #'
-#' Additional arguments `...` would be passed on to:
-#' * Discrete values: [ggplot2::discrete_scale()].
-#' * Continuous values: [ggplot2::continuous_scale()].
-#' * Binned continuous values: [ggplot2::binned_scale()].
+#' Additional arguments `...` are passed to:
+#' - Discrete values: [ggplot2::discrete_scale()].
+#' - Continuous values: [ggplot2::continuous_scale()].
+#' - Binned continuous values: [ggplot2::binned_scale()].
 #'
-#' **Note that** \CRANpkg{tidyterra} just documents a selection of these
-#' additional arguments, check the \CRANpkg{ggplot2} functions listed above to
-#' see the full range of arguments accepted by these scales.
+#' \CRANpkg{tidyterra} documents only a selection of these additional
+#' arguments, so check the \CRANpkg{ggplot2} functions listed above to see the
+#' full range of arguments accepted by these scales.
+#'
+#' @source <https://github.com/LeahSmyth/Princess-Colour-Schemes>.
 #'
 #' @export
+#' @encoding UTF-8
 #'
 #' @name scale_princess
 #'
+#' @seealso [terra::plot()], [ggplot2::scale_fill_viridis_c()]
+#'
+#' See also \CRANpkg{ggplot2} docs on additional `...` arguments.
+#'
+#' @family gradients
+#'
+#' @inheritParams scale_cross_blended
 #' @inheritDotParams ggplot2::discrete_scale breaks:drop
 #' @inheritDotParams ggplot2::continuous_scale breaks:labels
 #' @inheritDotParams ggplot2::binned_scale breaks:limits nice.breaks
-#' @inheritParams scale_cross_blended
 #' @param palette A valid palette name. The name is matched to the list of
-#'   available palettes, ignoring upper vs. lower case. Values available are:
+#'   available palettes, ignoring upper vs. lower case. The available values
+#'   are listed below.
 #'
 #' ```{r, echo=FALSE, results="asis", message = FALSE, warning = FALSE}
 #'
@@ -44,17 +54,9 @@
 #'
 #' ```
 #'
-#' @seealso [terra::plot()], [ggplot2::scale_fill_viridis_c()]
-#'
-#' See also \CRANpkg{ggplot2} docs on additional `...` arguments.
-#'
-#' @return
+#' @returns
 #' The corresponding \CRANpkg{ggplot2} layer with the values applied to the
 #' `fill/colour` aesthetics.
-#'
-#' @family gradients
-#'
-#' @source <https://github.com/LeahSmyth/Princess-Colour-Schemes>.
 #'
 #' @examples
 #' \donttest{
@@ -97,27 +99,22 @@ scale_fill_princess_d <- function(
   na.translate = FALSE,
   drop = TRUE
 ) {
-  if (alpha < 0 || alpha > 1) {
-    cli::cli_abort("{.arg alpha} {.field {alpha}} not in {.field [0,1]}")
-  }
-
-  if (!direction %in% c(-1, 1)) {
-    cli::cli_abort("{.arg direction} must be {.field 1} or {.field -1}")
-  }
-
-  ggplot2::discrete_scale(
-    aesthetics = "fill",
-    palette = princess_pal(
+  pal_discrete_scale(
+    "fill",
+    princess_pal(
       alpha = alpha,
       direction = direction,
       palette = palette
     ),
+    alpha = alpha,
+    direction = direction,
     na.translate = na.translate,
     drop = drop,
     ...
   )
 }
 #' @export
+#' @encoding UTF-8
 #' @rdname scale_princess
 scale_colour_princess_d <- function(
   palette = "snow",
@@ -127,21 +124,15 @@ scale_colour_princess_d <- function(
   na.translate = FALSE,
   drop = TRUE
 ) {
-  if (alpha < 0 || alpha > 1) {
-    cli::cli_abort("{.arg alpha} {.field {alpha}} not in {.field [0,1]}")
-  }
-
-  if (!direction %in% c(-1, 1)) {
-    cli::cli_abort("{.arg direction} must be {.field 1} or {.field -1}")
-  }
-
-  ggplot2::discrete_scale(
-    aesthetics = "colour",
-    palette = princess_pal(
+  pal_discrete_scale(
+    "colour",
+    princess_pal(
       alpha = alpha,
       direction = direction,
       palette = palette
     ),
+    alpha = alpha,
+    direction = direction,
     na.translate = na.translate,
     drop = drop,
     ...
@@ -149,6 +140,7 @@ scale_colour_princess_d <- function(
 }
 
 #' @export
+#' @encoding UTF-8
 #' @rdname scale_princess
 scale_fill_princess_c <- function(
   palette = "snow",
@@ -158,23 +150,17 @@ scale_fill_princess_c <- function(
   na.value = "transparent",
   guide = "colourbar"
 ) {
-  if (alpha < 0 || alpha > 1) {
-    cli::cli_abort("{.arg alpha} {.field {alpha}} not in {.field [0,1]}")
-  }
-
-  if (!direction %in% c(-1, 1)) {
-    cli::cli_abort("{.arg direction} must be {.field 1} or {.field -1}")
-  }
-
-  length_pal <- nrow(extract_pal(tidyterra::princess_db, palette = palette))
-
-  ggplot2::continuous_scale(
-    aesthetics = "fill",
-    palette = scales::gradient_n_pal(princess_pal(
+  pal_gradient_scale(
+    ggplot2::continuous_scale,
+    "fill",
+    princess_pal(
       alpha = alpha,
       direction = direction,
       palette = palette
-    )(length_pal)),
+    ),
+    n = function() nrow(extract_pal(tidyterra::princess_db, palette = palette)),
+    alpha = alpha,
+    direction = direction,
     na.value = na.value,
     guide = guide,
     ...
@@ -182,6 +168,7 @@ scale_fill_princess_c <- function(
 }
 
 #' @export
+#' @encoding UTF-8
 #' @rdname scale_princess
 scale_colour_princess_c <- function(
   palette = "snow",
@@ -191,23 +178,17 @@ scale_colour_princess_c <- function(
   na.value = "transparent",
   guide = "colourbar"
 ) {
-  if (alpha < 0 || alpha > 1) {
-    cli::cli_abort("{.arg alpha} {.field {alpha}} not in {.field [0,1]}")
-  }
-
-  if (!direction %in% c(-1, 1)) {
-    cli::cli_abort("{.arg direction} must be {.field 1} or {.field -1}")
-  }
-
-  length_pal <- nrow(extract_pal(tidyterra::princess_db, palette = palette))
-
-  ggplot2::continuous_scale(
-    aesthetics = "colour",
-    palette = scales::gradient_n_pal(princess_pal(
+  pal_gradient_scale(
+    ggplot2::continuous_scale,
+    "colour",
+    princess_pal(
       alpha = alpha,
       direction = direction,
       palette = palette
-    )(length_pal)),
+    ),
+    n = function() nrow(extract_pal(tidyterra::princess_db, palette = palette)),
+    alpha = alpha,
+    direction = direction,
     na.value = na.value,
     guide = guide,
     ...
@@ -215,6 +196,7 @@ scale_colour_princess_c <- function(
 }
 
 #' @export
+#' @encoding UTF-8
 #' @rdname scale_princess
 scale_fill_princess_b <- function(
   palette = "snow",
@@ -224,23 +206,17 @@ scale_fill_princess_b <- function(
   na.value = "transparent",
   guide = "coloursteps"
 ) {
-  if (alpha < 0 || alpha > 1) {
-    cli::cli_abort("{.arg alpha} {.field {alpha}} not in {.field [0,1]}")
-  }
-
-  if (!direction %in% c(-1, 1)) {
-    cli::cli_abort("{.arg direction} must be {.field 1} or {.field -1}")
-  }
-
-  length_pal <- nrow(extract_pal(tidyterra::princess_db, palette = palette))
-
-  ggplot2::binned_scale(
-    aesthetics = "fill",
-    palette = scales::gradient_n_pal(princess_pal(
+  pal_gradient_scale(
+    ggplot2::binned_scale,
+    "fill",
+    princess_pal(
       alpha = alpha,
       direction = direction,
       palette = palette
-    )(length_pal)),
+    ),
+    n = function() nrow(extract_pal(tidyterra::princess_db, palette = palette)),
+    alpha = alpha,
+    direction = direction,
     na.value = na.value,
     guide = guide,
     ...
@@ -248,6 +224,7 @@ scale_fill_princess_b <- function(
 }
 
 #' @export
+#' @encoding UTF-8
 #' @rdname scale_princess
 scale_colour_princess_b <- function(
   palette = "snow",
@@ -257,23 +234,17 @@ scale_colour_princess_b <- function(
   na.value = "transparent",
   guide = "coloursteps"
 ) {
-  if (alpha < 0 || alpha > 1) {
-    cli::cli_abort("{.arg alpha} {.field {alpha}} not in {.field [0,1]}")
-  }
-
-  if (!direction %in% c(-1, 1)) {
-    cli::cli_abort("{.arg direction} must be {.field 1} or {.field -1}")
-  }
-
-  length_pal <- nrow(extract_pal(tidyterra::princess_db, palette = palette))
-
-  ggplot2::binned_scale(
-    aesthetics = "colour",
-    palette = scales::gradient_n_pal(princess_pal(
+  pal_gradient_scale(
+    ggplot2::binned_scale,
+    "colour",
+    princess_pal(
       alpha = alpha,
       direction = direction,
       palette = palette
-    )(length_pal)),
+    ),
+    n = function() nrow(extract_pal(tidyterra::princess_db, palette = palette)),
+    alpha = alpha,
+    direction = direction,
     na.value = na.value,
     guide = guide,
     ...
@@ -281,6 +252,7 @@ scale_colour_princess_b <- function(
 }
 
 #' @export
+#' @encoding UTF-8
 #' @rdname scale_princess
 #'
 #' @inheritParams wiki.colors
@@ -290,7 +262,7 @@ scale_colour_princess_b <- function(
 #'
 #' pals <- unique(princess_db$pal)
 #'
-#' # Helper fun for plotting
+#' # Helper function for plotting
 #'
 #' ncols <- 128
 #' rowcol <- grDevices::n2mfrow(length(pals))
@@ -317,7 +289,6 @@ princess.colors <- function(n, palette = "snow", alpha = 1, rev = FALSE) {
   }
 }
 
-
 princess_pal <- function(alpha = 1, direction = 1, palette) {
   function(n) {
     pal <- princess.colors(
@@ -331,20 +302,20 @@ princess_pal <- function(alpha = 1, direction = 1, palette) {
   }
 }
 
-
 #' @export
+#' @encoding UTF-8
 #' @rdname scale_princess
 #' @usage NULL
 scale_color_princess_d <- scale_colour_princess_d
 
-
 #' @export
+#' @encoding UTF-8
 #' @rdname scale_princess
 #' @usage NULL
 scale_color_princess_c <- scale_colour_princess_c
 
-
 #' @export
+#' @encoding UTF-8
 #' @rdname scale_princess
 #' @usage NULL
 scale_color_princess_b <- scale_colour_princess_b

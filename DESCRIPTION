@@ -1,6 +1,6 @@
 Package: tidyterra
 Title: 'tidyverse' Methods and 'ggplot2' Helpers for 'terra' Objects
-Version: 1.1.0
+Version: 1.2.0
 Authors@R: c(
     person("Diego", "Hernangómez", , "diego.hernangomezherrero@gmail.com", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0000-0001-8457-4658")),
@@ -11,10 +11,9 @@ Authors@R: c(
     person("Andrea", "Manica", role = "ctb",
            comment = c(ORCID = "0000-0003-1895-450X"))
   )
-Description: Extension of the 'tidyverse' for 'SpatRaster' and
-    'SpatVector' objects of the 'terra' package. It includes also new
-    'geom_' functions that provide a convenient way of visualizing 'terra'
-    objects with 'ggplot2'.
+Description: Provides methods from 'tidyverse' packages for 'SpatRaster'
+    and 'SpatVector' objects created with 'terra', plus 'ggplot2' 'geoms'
+    and scales for plotting those objects.
 License: MIT + file LICENSE
 URL: https://dieghernan.github.io/tidyterra/,
         https://github.com/dieghernan/tidyterra
@@ -29,16 +28,17 @@ Suggests: hexbin, knitr, maptiles, quarto, rmarkdown, s2, stringi,
 VignetteBuilder: quarto
 Config/Needs/coverage: covr
 Config/Needs/website: geodata, dieghernan/gitdevr, ragg, styler, metR,
-        ggspatial, cpp11, remotes, gganimate, gifski, tidyverse
+        ggspatial, cpp11, remotes, gganimate, gifski, tidyverse, bibtex
+Config/roxygen2/markdown: TRUE
+Config/roxygen2/version: 8.0.0
 Config/testthat/edition: 3
 Config/testthat/parallel: true
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.3.3
 X-schema.org-keywords: r, terra, ggplot-extension, r-spatial, rspatial,
         cran, cran-r, r-package, rstats, rstats-package
 NeedsCompilation: no
-Packaged: 2026-03-10 21:37:47 UTC; diego
+Packaged: 2026-06-16 18:23:52 UTC; diego
 Author: Diego Hernangómez [aut, cre, cph] (ORCID:
     <https://orcid.org/0000-0001-8457-4658>),
   Dewey Dunnington [ctb] (ORCID: <https://orcid.org/0000-0002-9415-4582>,
@@ -47,4 +47,4 @@ Author: Diego Hernangómez [aut, cre, cph] (ORCID:
   Andrea Manica [ctb] (ORCID: <https://orcid.org/0000-0003-1895-450X>)
 Maintainer: Diego Hernangómez <diego.hernangomezherrero@gmail.com>
 Repository: CRAN
-Date/Publication: 2026-03-11 06:30:13 UTC
+Date/Publication: 2026-06-17 05:10:02 UTC

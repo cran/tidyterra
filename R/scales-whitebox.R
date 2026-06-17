@@ -5,32 +5,43 @@
 #' Implementation of the gradient palettes provided by
 #' [WhiteboxTools](https://github.com/jblindsay/whitebox-tools). Three
 #' scales are provided:
-#' * `scale_*_whitebox_d()`: For discrete values.
-#' * `scale_*_whitebox_c()`: For continuous values.
-#' * `scale_*_whitebox_b()`: For binning continuous values.
+#' - `scale_*_whitebox_d()`: For discrete values.
+#' - `scale_*_whitebox_c()`: For continuous values.
+#' - `scale_*_whitebox_b()`: For binning continuous values.
 #'
 #' Additionally, a color palette `whitebox.colors()` is provided. See also
 #' [grDevices::terrain.colors()] for details.
 #'
-#' Additional arguments `...` would be passed on to:
-#' * Discrete values: [ggplot2::discrete_scale()].
-#' * Continuous values: [ggplot2::continuous_scale()].
-#' * Binned continuous values: [ggplot2::binned_scale()].
+#' Additional arguments `...` are passed to:
+#' - Discrete values: [ggplot2::discrete_scale()].
+#' - Continuous values: [ggplot2::continuous_scale()].
+#' - Binned continuous values: [ggplot2::binned_scale()].
 #'
-#' **Note that** \CRANpkg{tidyterra} just documents a selection of these
-#' additional arguments, check the \CRANpkg{ggplot2} functions listed above to
-#' see the full range of arguments accepted by these scales.
+#' \CRANpkg{tidyterra} documents only a selection of these additional
+#' arguments, so check the \CRANpkg{ggplot2} functions listed above to see the
+#' full range of arguments accepted by these scales.
+#'
+#' @source <https://github.com/jblindsay/whitebox-tools>, under
+#' MIT License. Copyright (c) 2017-2021 John Lindsay.
 #'
 #' @export
+#' @encoding UTF-8
 #'
 #' @name scale_whitebox
 #'
+#' @seealso [terra::plot()], [ggplot2::scale_fill_viridis_c()]
+#'
+#' See also \CRANpkg{ggplot2} docs on additional `...` arguments.
+#'
+#' @family gradients
+#'
+#' @inheritParams scale_cross_blended
 #' @inheritDotParams ggplot2::discrete_scale breaks:drop
 #' @inheritDotParams ggplot2::continuous_scale breaks:labels
 #' @inheritDotParams ggplot2::binned_scale breaks:limits nice.breaks
-#' @inheritParams scale_cross_blended
 #' @param palette A valid palette name. The name is matched to the list of
-#'   available palettes, ignoring upper vs. lower case. Values available are:
+#'   available palettes, ignoring upper vs. lower case. The available values
+#'   are listed below.
 #'
 #' ```{r, echo=FALSE, results="asis", message = FALSE, warning = FALSE}
 #'
@@ -44,18 +55,9 @@
 #'
 #' ```
 #'
-#' @seealso [terra::plot()], [ggplot2::scale_fill_viridis_c()]
-#'
-#' See also \CRANpkg{ggplot2} docs on additional `...` arguments.
-#'
-#' @return
+#' @returns
 #' The corresponding \CRANpkg{ggplot2} layer with the values applied to the
 #' `fill/colour` aesthetics.
-#'
-#' @family gradients
-#'
-#' @source <https://github.com/jblindsay/whitebox-tools>, under
-#' MIT License. Copyright (c) 2017-2021 John Lindsay.
 #'
 #' @examples
 #' \donttest{
@@ -98,27 +100,22 @@ scale_fill_whitebox_d <- function(
   na.translate = FALSE,
   drop = TRUE
 ) {
-  if (alpha < 0 || alpha > 1) {
-    cli::cli_abort("{.arg alpha} {.field {alpha}} not in {.field [0,1]}")
-  }
-
-  if (!direction %in% c(-1, 1)) {
-    cli::cli_abort("{.arg direction} must be {.field 1} or {.field -1}")
-  }
-
-  ggplot2::discrete_scale(
-    aesthetics = "fill",
-    palette = whitebox_pal(
+  pal_discrete_scale(
+    "fill",
+    whitebox_pal(
       alpha = alpha,
       direction = direction,
       palette = palette
     ),
+    alpha = alpha,
+    direction = direction,
     na.translate = na.translate,
     drop = drop,
     ...
   )
 }
 #' @export
+#' @encoding UTF-8
 #' @rdname scale_whitebox
 scale_colour_whitebox_d <- function(
   palette = "high_relief",
@@ -128,21 +125,15 @@ scale_colour_whitebox_d <- function(
   na.translate = FALSE,
   drop = TRUE
 ) {
-  if (alpha < 0 || alpha > 1) {
-    cli::cli_abort("{.arg alpha} {.field {alpha}} not in {.field [0,1]}")
-  }
-
-  if (!direction %in% c(-1, 1)) {
-    cli::cli_abort("{.arg direction} must be {.field 1} or {.field -1}")
-  }
-
-  ggplot2::discrete_scale(
-    aesthetics = "colour",
-    palette = whitebox_pal(
+  pal_discrete_scale(
+    "colour",
+    whitebox_pal(
       alpha = alpha,
       direction = direction,
       palette = palette
     ),
+    alpha = alpha,
+    direction = direction,
     na.translate = na.translate,
     drop = drop,
     ...
@@ -150,6 +141,7 @@ scale_colour_whitebox_d <- function(
 }
 
 #' @export
+#' @encoding UTF-8
 #' @rdname scale_whitebox
 scale_fill_whitebox_c <- function(
   palette = "high_relief",
@@ -159,23 +151,17 @@ scale_fill_whitebox_c <- function(
   na.value = "transparent",
   guide = "colourbar"
 ) {
-  if (alpha < 0 || alpha > 1) {
-    cli::cli_abort("{.arg alpha} {.field {alpha}} not in {.field [0,1]}")
-  }
-
-  if (!direction %in% c(-1, 1)) {
-    cli::cli_abort("{.arg direction} must be {.field 1} or {.field -1}")
-  }
-
-  length_pal <- nrow(extract_pal(whitebox_coltab, palette = palette))
-
-  ggplot2::continuous_scale(
-    aesthetics = "fill",
-    palette = scales::gradient_n_pal(whitebox_pal(
+  pal_gradient_scale(
+    ggplot2::continuous_scale,
+    "fill",
+    whitebox_pal(
       alpha = alpha,
       direction = direction,
       palette = palette
-    )(length_pal)),
+    ),
+    n = function() nrow(extract_pal(whitebox_coltab, palette = palette)),
+    alpha = alpha,
+    direction = direction,
     na.value = na.value,
     guide = guide,
     ...
@@ -183,6 +169,7 @@ scale_fill_whitebox_c <- function(
 }
 
 #' @export
+#' @encoding UTF-8
 #' @rdname scale_whitebox
 scale_colour_whitebox_c <- function(
   palette = "high_relief",
@@ -192,23 +179,17 @@ scale_colour_whitebox_c <- function(
   na.value = "transparent",
   guide = "colourbar"
 ) {
-  if (alpha < 0 || alpha > 1) {
-    cli::cli_abort("{.arg alpha} {.field {alpha}} not in {.field [0,1]}")
-  }
-
-  if (!direction %in% c(-1, 1)) {
-    cli::cli_abort("{.arg direction} must be {.field 1} or {.field -1}")
-  }
-
-  length_pal <- nrow(extract_pal(whitebox_coltab, palette = palette))
-
-  ggplot2::continuous_scale(
-    aesthetics = "colour",
-    palette = scales::gradient_n_pal(whitebox_pal(
+  pal_gradient_scale(
+    ggplot2::continuous_scale,
+    "colour",
+    whitebox_pal(
       alpha = alpha,
       direction = direction,
       palette = palette
-    )(length_pal)),
+    ),
+    n = function() nrow(extract_pal(whitebox_coltab, palette = palette)),
+    alpha = alpha,
+    direction = direction,
     na.value = na.value,
     guide = guide,
     ...
@@ -216,6 +197,7 @@ scale_colour_whitebox_c <- function(
 }
 
 #' @export
+#' @encoding UTF-8
 #' @rdname scale_whitebox
 scale_fill_whitebox_b <- function(
   palette = "high_relief",
@@ -225,23 +207,17 @@ scale_fill_whitebox_b <- function(
   na.value = "transparent",
   guide = "coloursteps"
 ) {
-  if (alpha < 0 || alpha > 1) {
-    cli::cli_abort("{.arg alpha} {.field {alpha}} not in {.field [0,1]}")
-  }
-
-  if (!direction %in% c(-1, 1)) {
-    cli::cli_abort("{.arg direction} must be {.field 1} or {.field -1}")
-  }
-
-  length_pal <- nrow(extract_pal(whitebox_coltab, palette = palette))
-
-  ggplot2::binned_scale(
-    aesthetics = "fill",
-    palette = scales::gradient_n_pal(whitebox_pal(
+  pal_gradient_scale(
+    ggplot2::binned_scale,
+    "fill",
+    whitebox_pal(
       alpha = alpha,
       direction = direction,
       palette = palette
-    )(length_pal)),
+    ),
+    n = function() nrow(extract_pal(whitebox_coltab, palette = palette)),
+    alpha = alpha,
+    direction = direction,
     na.value = na.value,
     guide = guide,
     ...
@@ -249,6 +225,7 @@ scale_fill_whitebox_b <- function(
 }
 
 #' @export
+#' @encoding UTF-8
 #' @rdname scale_whitebox
 scale_colour_whitebox_b <- function(
   palette = "high_relief",
@@ -258,31 +235,25 @@ scale_colour_whitebox_b <- function(
   na.value = "transparent",
   guide = "coloursteps"
 ) {
-  if (alpha < 0 || alpha > 1) {
-    cli::cli_abort("{.arg alpha} {.field {alpha}} not in {.field [0,1]}")
-  }
-
-  if (!direction %in% c(-1, 1)) {
-    cli::cli_abort("{.arg direction} must be {.field 1} or {.field -1}")
-  }
-
-  length_pal <- nrow(extract_pal(whitebox_coltab, palette = palette))
-
-  ggplot2::binned_scale(
-    aesthetics = "colour",
-    palette = scales::gradient_n_pal(whitebox_pal(
+  pal_gradient_scale(
+    ggplot2::binned_scale,
+    "colour",
+    whitebox_pal(
       alpha = alpha,
       direction = direction,
       palette = palette
-    )(length_pal)),
+    ),
+    n = function() nrow(extract_pal(whitebox_coltab, palette = palette)),
+    alpha = alpha,
+    direction = direction,
     na.value = na.value,
     guide = guide,
     ...
   )
 }
 
-
 #' @export
+#' @encoding UTF-8
 #' @rdname scale_whitebox
 #'
 #' @inheritParams wiki.colors
@@ -295,7 +266,7 @@ scale_colour_whitebox_b <- function(
 #'   "viridi", "gn_yl", "pi_y_g", "bl_yl_rd", "deep"
 #' )
 #'
-#' # Helper fun for plotting
+#' # Helper function for plotting
 #'
 #' ncols <- 128
 #' rowcol <- grDevices::n2mfrow(length(pals))
@@ -327,7 +298,6 @@ whitebox.colors <- function(
   }
 }
 
-
 whitebox_pal <- function(alpha = 1, direction = 1, palette) {
   function(n) {
     pal <- whitebox.colors(
@@ -344,28 +314,26 @@ whitebox_pal <- function(alpha = 1, direction = 1, palette) {
 extract_pal <- function(df, palette) {
   palette <- tolower(palette)
 
-  if (!palette %in% df$pal) {
-    cli::cli_abort("{.arg palette} does not match any given palette")
-  }
+  check_palette(palette, df$pal)
 
   df <- df[df$pal == palette, ]
   df
 }
 
-
 #' @export
+#' @encoding UTF-8
 #' @rdname scale_whitebox
 #' @usage NULL
 scale_color_whitebox_d <- scale_colour_whitebox_d
 
-
 #' @export
+#' @encoding UTF-8
 #' @rdname scale_whitebox
 #' @usage NULL
 scale_color_whitebox_c <- scale_colour_whitebox_c
 
-
 #' @export
+#' @encoding UTF-8
 #' @rdname scale_whitebox
 #' @usage NULL
 scale_color_whitebox_b <- scale_colour_whitebox_b

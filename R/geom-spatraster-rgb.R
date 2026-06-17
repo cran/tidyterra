@@ -1,53 +1,53 @@
-#' Visualise `SpatRaster` objects as images
+#' Plot `SpatRaster` objects as images
 #'
 #' @description
 #'
-#' This geom is used to visualise `SpatRaster` objects (see [terra::rast()]) as
-#' RGB images. The layers are combined such that they represent the red,
-#' green and blue channel.
+#' This geom plots `SpatRaster` objects (see [terra::rast()]) as RGB images.
+#' The layers are combined so they represent the red, green and blue channels.
 #'
 #' For plotting `SpatRaster` objects by layer values use [geom_spatraster()].
 #'
 #' The underlying implementation is based on [ggplot2::geom_raster()].
 #'
-#' @return A \CRANpkg{ggplot2} layer
-#' @family ggplot2.utils
-#'
 #' @source
-#' Based on the `layer_spatial()` implementation on \CRANpkg{ggspatial} package.
-#' Thanks to [Dewey Dunnington](https://github.com/paleolimbot) and [ggspatial
+#' Based on the `layer_spatial()` implementation in the \CRANpkg{ggspatial}
+#' package. Thanks to [Dewey Dunnington](https://github.com/paleolimbot) and to
+#' [ggspatial
 #' contributors](https://github.com/paleolimbot/ggspatial/graphs/contributors).
 #'
+#' @export
+#' @encoding UTF-8
+#' @seealso
+#' [ggplot2::geom_raster()], [ggplot2::coord_sf()], [grDevices::rgb()].
+#'
+#' You can also get RGB tiles from the \CRANpkg{maptiles} package. See
+#' [maptiles::get_tiles()].
+#'
+#' @family ggplot2.utils
+#'
+#' @inheritSection geom_spatraster Coords
 #' @inheritParams geom_spatraster
 #' @inheritParams scale_terrain
 #' @inheritParams terra::plotRGB
 #' @param mapping Ignored.
-#' @param r,g,b Integer representing the number of layer of `data` to be
-#'   considered as the red (`r`), green (`g`) and blue (`b`) channel.
-#' @param max_col_value Number giving the maximum of the color values range.
+#' @param r,g,b Integer giving the layer number in `data` used for the red
+#'   (`r`), green (`g`) and blue (`b`) channel.
+#' @param max_col_value Number giving the upper bound of the color value range.
 #'   When this is `255` (the default), the result is computed most efficiently.
 #'   See [grDevices::rgb()].
-#' @seealso
-#' [ggplot2::geom_raster()], [ggplot2::coord_sf()], [grDevices::rgb()].
-#'
-#' You can get also RGB tiles from the \CRANpkg{maptiles} package, see
-#' [maptiles::get_tiles()].
-#'
+#' @returns A \CRANpkg{ggplot2} layer.
 #' @section \CRANpkg{terra} equivalent:
 #'
 #' [terra::plotRGB()]
-#'
-#' @inheritSection geom_spatraster Coords
 #'
 #' @section Aesthetics:
 #'
 #' No `aes()` is required. In fact, `aes()` will be ignored.
 #'
-#' @export
 #' @examples
 #' \donttest{
 #'
-#' # Tile of Castille and Leon (Spain) from OpenStreetMap
+#' # Tile of Castile and Leon (Spain) from OpenStreetMap
 #' file_path <- system.file("extdata/cyl_tile.tif", package = "tidyterra")
 #'
 #' library(terra)
@@ -86,13 +86,7 @@ geom_spatraster_rgb <- function(
   zlim = NULL,
   mask_projection = FALSE
 ) {
-  if (!inherits(data, "SpatRaster")) {
-    cli::cli_abort(paste(
-      "{.fun tidyterra::geom_spatraster_rgb} only works with",
-      "{.cls SpatRaster} objects, not {.cls {class(data)}}.",
-      "See {.help terra::vect}"
-    ))
-  }
+  check_spatraster(data, "geom_spatraster_rgb")
 
   layers_order <- as.integer(c(r, g, b))
 
@@ -106,31 +100,37 @@ geom_spatraster_rgb <- function(
     )
   ) {
     cli::cli_abort(paste(
-      "Incorrect number of layers on {.arg {c('r','g','b')}}. data has",
+      "Incorrect layer selection in {.arg {c('r', 'g', 'b')}}.",
+      "{.arg data} has",
       "{terra::nlyr(data)}",
       "layer{?s}."
+    ))
+  }
+
+  if (terra::nlyr(data) > 3) {
+    cli::cli_alert_warning(paste(
+      "{.arg data} has {terra::nlyr(data)} layer{?s}.",
+      "Selecting layers {.val {c(r, g, b)}}."
     ))
   }
 
   # 1. Work with aes ----
   mapping <- override_aesthetics(
     mapping,
-    ggplot2::aes(
-      spatraster = .data$spatraster
-    )
+    ggplot2::aes(spatraster = .data$spatraster)
   )
 
-  # Select channels
+  # Select the RGB channels.
   data <- terra::subset(data, layers_order)
   names(data) <- c("r", "g", "b")
 
-  # Remove RGB settings, better plot without it
+  # Remove any existing RGB settings for plotting.
   terra::RGB(data) <- NULL
 
-  # 2. Check if resample is needed----
+  # 2. Resample if needed ----
   data <- resample_spat(data, maxcell)
 
-  # stretch and clamp
+  # Apply stretching and clamping.
 
   data <- zlim_strecth(
     data,
@@ -143,9 +143,7 @@ geom_spatraster_rgb <- function(
   crs_terra <- pull_crs(data)
 
   layer_spatrast <- ggplot2::layer(
-    data = tibble::tibble(
-      spatraster = list(data)
-    ),
+    data = tibble::tibble(spatraster = list(data)),
     mapping = mapping,
     stat = StatTerraSpatRasterRGB,
     geom = GeomTerraSpatRasterRGB,
@@ -164,10 +162,9 @@ geom_spatraster_rgb <- function(
     )
   )
 
-  # From ggspatial
-  # If the SpatRaster has crs add a geom_sf for training scales
-  # use an emtpy geom_sf() with same CRS as the raster to mimic behaviour of
-  # using the first layer's CRS as the base CRS for coord_sf().
+  # From `ggspatial`.
+  # If the `SpatRaster` has a CRS, add an empty `geom_sf()` to train the
+  # scales. Mimic using the first layer CRS as the base CRS for `coord_sf()`.
 
   if (!is.na(crs_terra)) {
     layer_spatrast <- c(
@@ -183,14 +180,15 @@ geom_spatraster_rgb <- function(
   layer_spatrast
 }
 
-# Stats----
+# Stats ----
 StatTerraSpatRasterRGB <- ggplot2::ggproto(
   "StatTerraSpatRasterRGB",
   ggplot2::Stat,
   required_aes = "spatraster",
   extra_params = c("maxcell", "max_col_value", "na.rm", "mask_projection"),
   compute_layer = function(self, data, params, layout) {
-    # add coord to the params, so it can be forwarded to compute_group()
+    # Add the coordinate CRS to `params` so it can be forwarded to
+    # `compute_group()`.
     params$coord_crs <- pull_crs(layout$coord_params$crs)
 
     ggplot2::ggproto_parent(ggplot2::Stat, self)$compute_layer(
@@ -208,17 +206,17 @@ StatTerraSpatRasterRGB <- ggplot2::ggproto(
     max_col_value = 255,
     mask_projection = FALSE
   ) {
-    # Extract raster from group
+    # Extract the raster from the current group.
     rast <- data$spatraster[[1]]
 
-    # Reproject if needed
+    # Reproject if needed.
     rast <- reproject_raster_on_stat(rast, coord_crs, mask = mask_projection)
 
-    # To data and prepare
+    # Convert to a data frame and prepare output.
     data_end <- make_hexcol(rast, max_col_value)
     data_rest <- data
 
-    # Add data
+    # Add the temporary join key.
     data_end$a <- 1
     data_rest$a <- 1
 
@@ -230,9 +228,9 @@ StatTerraSpatRasterRGB <- ggplot2::ggproto(
   }
 )
 
-# Geom----
+# Geom ----
 
-# Based on geom_raster ggplot2
+# Based on `ggplot2::geom_raster()`.
 GeomTerraSpatRasterRGB <- ggplot2::ggproto(
   "GeomTerraSpatRasterRGB",
   ggplot2::GeomRaster,
@@ -242,20 +240,12 @@ GeomTerraSpatRasterRGB <- ggplot2::ggproto(
   draw_panel = function(data, panel_params, coord, interpolate = FALSE) {
     data <- coord$transform(data, panel_params)
 
-    # Convert vector of data to raster
+    # Convert the data vector to a raster matrix.
     x_pos <- as.integer(
-      (data$x - min(data$x)) /
-        ggplot2::resolution(
-          data$x,
-          FALSE
-        )
+      (data$x - min(data$x)) / ggplot2::resolution(data$x, FALSE)
     )
     y_pos <- as.integer(
-      (data$y - min(data$y)) /
-        ggplot2::resolution(
-          data$y,
-          FALSE
-        )
+      (data$y - min(data$y)) / ggplot2::resolution(data$y, FALSE)
     )
 
     nrow <- max(y_pos) + 1
@@ -263,14 +253,14 @@ GeomTerraSpatRasterRGB <- ggplot2::ggproto(
 
     raster <- matrix(NA_character_, nrow = nrow, ncol = ncol)
 
-    # Setup hexcol from data$hexcol
+    # Fill the raster matrix with `hexcol` values.
 
     raster[cbind(nrow - y_pos, x_pos + 1)] <- ggplot2::alpha(
       data$hexcol,
       data$alpha
     )
 
-    # Figure out dimensions of raster on plot
+    # Compute the raster dimensions in plot coordinates.
     x_rng <- c(min(data$xmin, na.rm = TRUE), max(data$xmax, na.rm = TRUE))
     y_rng <- c(min(data$ymin, na.rm = TRUE), max(data$ymax, na.rm = TRUE))
 
@@ -286,12 +276,12 @@ GeomTerraSpatRasterRGB <- ggplot2::ggproto(
   }
 )
 
-# Helper ------
+# Helper ----
 
-# Create a table with the hex color of each row (hexcol)
-# On any NA then hexcol is returned as NA
+# Create a table with one hex color per row.
+# If any channel is `NA`, `hexcol` is also `NA`.
 make_hexcol <- function(data, max_col_value = 255) {
-  # Clamp values
+  # Clamp values to the valid color range.
   data[data > max_col_value] <- max_col_value
   data[data < 0] <- 0
 
@@ -300,20 +290,20 @@ make_hexcol <- function(data, max_col_value = 255) {
 
   todf$index <- seq_len(nrow(todf))
 
-  # Split dataset for making color table
+  # Split the data for color table creation.
   xy <- todf[c("x", "y", "index")]
   values <- todf[c("index", "r", "g", "b")]
 
-  # Drop nas on color table
+  # Drop missing values before creating the color table.
   full <- tidyr::drop_na(values)
   full$hexcol <- rgb(full$r, full$g, full$b, maxColorValue = max_col_value)
 
-  # Prepare output
+  # Prepare the output.
   df <- dplyr::left_join(xy, full[c("hexcol", "index")], by = "index")
   df[c("x", "y", "hexcol")]
 }
 
-# Strecth and clamp
+# Stretch and clamp raster values.
 zlim_strecth <- function(x, zlim = NULL, stretch = NULL, max_col_value = 255) {
   if (all(is.null(zlim), is.null(stretch))) {
     return(x)

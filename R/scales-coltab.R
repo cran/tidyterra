@@ -1,30 +1,33 @@
-#' Discrete scales based in the color table of a `SpatRaster`
+#' Discrete scales based on `SpatRaster` color tables
 #'
 #' @description
 #'
 #' Some categorical `SpatRaster` objects may have an associated color table.
-#' This function extract those values. These functions generates scales and
-#' vector of colors based on the color table [terra::coltab()] associated to a
-#' `SpatRaster`.
+#' These functions generate scales and color vectors based on the color table
+#' from [terra::coltab()] associated with a `SpatRaster`.
 #'
-#' You can also get a vector of colors named with the corresponding
-#' factor with [get_coltab_pal()].
+#' You can also get a vector of colors named with the corresponding factor with
+#' [get_coltab_pal()].
 #'
-#' Additional arguments `...` would be passed on to
+#' Additional arguments `...` are passed to
 #' [ggplot2::discrete_scale()].
 #'
-#' **Note that** \CRANpkg{tidyterra} just documents a selection of these
-#' additional arguments, check [ggplot2::discrete_scale()] to see the full
-#' range of arguments accepted.
+#' \CRANpkg{tidyterra} documents only a selection of these additional
+#' arguments, so check [ggplot2::discrete_scale()] to see the full range of
+#' arguments accepted.
 #'
 #' @export
+#' @encoding UTF-8
 #'
-#' @name scale_coltab
 #' @rdname scale_coltab
 #'
-#' @inheritDotParams ggplot2::discrete_scale breaks:drop
+#' @name scale_coltab
+#' @seealso [terra::coltab()], [ggplot2::discrete_scale()],
+#'   [ggplot2::scale_fill_manual()],
 #'
 #' @inheritParams scale_cross_blended
+#'
+#' @inheritDotParams ggplot2::discrete_scale breaks:drop
 #'
 #' @param data,x A `SpatRaster` with one or several color tables.
 #'   See [terra::has.colors()].
@@ -32,10 +35,7 @@
 #' @param alpha The alpha transparency: could be `NA` or a number in \[0,1\].
 #'   See argument `alpha` in [scale_fill_terrain_d()].
 #'
-#' @seealso [terra::coltab()], [ggplot2::discrete_scale()],
-#'   [ggplot2::scale_fill_manual()],
-#'
-#' @return
+#' @returns
 #' The corresponding \CRANpkg{ggplot2} layer with the values applied to the
 #' `fill/colour` aesthetics.
 #'
@@ -48,7 +48,7 @@
 #'
 #' plot(r)
 #'
-#' # Get coltab
+#' # Get the color table palette.
 #' coltab_pal <- get_coltab_pal(r)
 #'
 #' coltab_pal
@@ -63,7 +63,7 @@
 #' # Default plot
 #' gg
 #'
-#' # With coltabs
+#' # With color tables
 #' gg +
 #'   scale_fill_coltab(data = r)
 #' }
@@ -79,18 +79,13 @@ scale_fill_coltab <- function(
   if (is.null(getcols)) {
     return(ggplot2::geom_blank())
   }
-  if (is.na(alpha)) {
-    # In alpha NA use the alpha of the coltab
-    getcols <- getcols
-  } else {
-    if (alpha < 0 || alpha > 1) {
-      cli::cli_abort("{.arg alpha} {.field {alpha}} not in {.field [0,1]}")
-    }
+  if (!is.na(alpha)) {
+    check_alpha(alpha)
     getcols <- ggplot2::alpha(getcols, alpha = alpha)
   }
 
   if (isTRUE(na.translate)) {
-    # Unname
+    # Drop names so `NA` handling follows ggplot2's manual scale behavior.
     getcols <- unname(getcols)
   }
 
@@ -103,8 +98,9 @@ scale_fill_coltab <- function(
   )
 }
 
-#' @rdname scale_coltab
 #' @export
+#' @encoding UTF-8
+#' @rdname scale_coltab
 scale_colour_coltab <- function(
   data,
   ...,
@@ -118,18 +114,13 @@ scale_colour_coltab <- function(
     return(ggplot2::geom_blank())
   }
 
-  if (is.na(alpha)) {
-    # In alpha NA use the alpha of the coltab
-    getcols <- getcols
-  } else {
-    if (alpha < 0 || alpha > 1) {
-      cli::cli_abort("{.arg alpha} {.field {alpha}} not in {.field [0,1]}")
-    }
+  if (!is.na(alpha)) {
+    check_alpha(alpha)
     getcols <- ggplot2::alpha(getcols, alpha = alpha)
   }
 
   if (isTRUE(na.translate)) {
-    # Unname
+    # Drop names so `NA` handling follows ggplot2's manual scale behavior.
     getcols <- unname(getcols)
   }
 
@@ -143,59 +134,58 @@ scale_colour_coltab <- function(
 }
 
 #' @export
+#' @encoding UTF-8
 #' @rdname scale_wiki
 #' @usage NULL
 scale_color_coltab <- scale_colour_coltab
 
-#' @rdname scale_coltab
 #' @export
+#' @encoding UTF-8
+#' @rdname scale_coltab
 get_coltab_pal <- function(x) {
   if (!inherits(x, "SpatRaster")) {
-    cli::cli_alert_info(
-      paste(
-        "{.fun tidyterra::get_coltab_pal} only works with",
-        "{.cls SpatRaster} objects, not {.cls {class(x)}}.",
-        "Returning {.field NULL}"
-      )
-    )
+    cli::cli_alert_info(paste(
+      "{.fun tidyterra::get_coltab_pal} only works with",
+      "{.cls SpatRaster} objects, not {.cls {class(x)}}.",
+      "Returning {.val NULL}."
+    ))
     return(NULL)
   }
 
   if (!any(terra::has.colors(x))) {
     cli::cli_alert_info(
-      "{.arg x} does not have a color table. Returning {.field NULL}",
+      "{.arg x} does not have a color table. Returning {.val NULL}."
     )
     return(NULL)
   }
-  # Complete layers with no coltabs
+  # Fill missing color tables before extracting labels.
   iter <- seq_len(terra::nlyr(x))[!terra::has.colors(x)]
   if (length(iter) > 0 && min(iter) > 0) {
     for (h in iter) {
-      # Assign coltab
+      # Assign a generated color table.
       tmpr <- terra::subset(x, h)
       vals <- as.factor(pull(tmpr))
       terra::values(tmpr) <- vals
       df <- as_tibble(terra::cats(tmpr)[[1]])
 
-      coltb <- data.frame(
-        t(
-          col2rgb(terrain.colors(nrow(df), rev = TRUE), alpha = TRUE)
-        )
-      )
+      coltb <- data.frame(t(col2rgb(
+        terrain.colors(nrow(df), rev = TRUE),
+        alpha = TRUE
+      )))
       coltbend <- cbind(df[, 1], coltb)
       terra::coltab(tmpr) <- coltbend
-      # Substitute layer
+      # Replace the layer with its color-table version.
       x[[h]] <- tmpr
     }
   }
 
   lcats <- terra::cats(x)
-  # Get active cats by layer
+  # Get active categories by layer.
   actcats <- lapply(seq_len(terra::nlyr(x)), function(p) {
     terra::activeCat(x[[p]])
   })
 
-  # Prepare data frame with categories
+  # Prepare category data frames.
   lcats <- lapply(seq_len(terra::nlyr(x)), function(i) {
     i_df <- lcats[[i]]
     if (is.null(i_df)) {
@@ -208,7 +198,7 @@ get_coltab_pal <- function(x) {
     df
   })
 
-  # Add seq to names
+  # Add a sequence suffix to layer names.
   nm <- paste0(names(x), "_", seq_len(terra::nlyr(x)))
 
   names(lcats) <- nm
@@ -253,7 +243,7 @@ get_coltab_pal <- function(x) {
   } else {
     namedpal <- rgb(colfields, maxColorValue = 255)
   }
-  # Same length than names
+  # Same length as names
   nms <- unique(finaltab[["label"]])
 
   # Complete NAs with terrain.cols

@@ -2,16 +2,18 @@
 #'
 #' @description
 #' Mutating joins add columns from `y` to `x`, matching observations based on
-#' the keys. There are four mutating joins: the inner join, and the three outer
-#' joins.
+#' the keys. The four mutating joins are: inner join, left join, right join and
+#' full join.
 #'
 #' See [dplyr::inner_join()] for details.
 #'
 #' @export
+#' @encoding UTF-8
 #' @rdname mutate-joins.SpatVector
 #' @name mutate-joins.SpatVector
 #'
-#' @seealso [dplyr::inner_join()], [dplyr::left_join()], [dplyr::right_join()],
+#' @seealso
+#' [dplyr::inner_join()], [dplyr::left_join()], [dplyr::right_join()],
 #' [dplyr::full_join()], [terra::merge()]
 #'
 #' @family dplyr.pairs
@@ -19,14 +21,14 @@
 #'
 #' @importFrom dplyr inner_join
 #'
-#' @param x A `SpatVector` created with [terra::vect()].
-#' @param y A data frame or other object coercible to a data frame. **If a
-#'   `SpatVector` of `sf` object** is provided it would return an error (see
-#'   [terra::intersect()] for performing spatial joins).
-#'
 #' @inheritParams dplyr::full_join
+#' @inheritParams as_sf
 #'
-#' @return A `SpatVector` object.
+#' @param y A data frame or other object coercible to a data frame. If a
+#'   `SpatVector` or `sf` object is provided, this method returns an error. See
+#'   [terra::intersect()] for spatial joins.
+#'
+#' @returns A `SpatVector` object.
 #'
 #' @section \CRANpkg{terra} equivalent:
 #'
@@ -38,15 +40,14 @@
 #'
 #' ## `SpatVector`
 #'
-#' The geometry column has a sticky behaviour. This means that the result would
-#' have always the geometry of `x` for the records that matches the join
-#' conditions.
+#' The geometry column has sticky behavior. This means that the result always
+#' has the geometry of `x` for the records that match the join conditions.
 #'
-#' Note that for [right_join()] and [full_join()] it is possible to return
-#' empty geometries (since `y` is expected to be a data frame with no
-#' geometries). Although this kind of joining operations may not be common on
-#' spatial manipulation, it is possible that the function crashes, since
-#' handling of `EMPTY` geometries differs on \CRANpkg{terra} and \CRANpkg{sf}.
+#' For [right_join()] and [full_join()], empty geometries may be returned
+#' (since `y` is expected to be a data frame with no
+#' geometries). Although these join operations are not common in spatial
+#' workflows, the function may crash because handling of `EMPTY`
+#' geometries differs between \CRANpkg{terra} and \CRANpkg{sf}.
 #'
 #' @examples
 #' library(terra)
@@ -130,9 +131,10 @@ inner_join.SpatVector <- function(
 #' @export
 dplyr::inner_join
 
-#' @importFrom dplyr left_join
 #' @export
+#' @encoding UTF-8
 #' @name mutate-joins.SpatVector
+#' @importFrom dplyr left_join
 left_join.SpatVector <- function(
   x,
   y,
@@ -167,9 +169,10 @@ left_join.SpatVector <- function(
 #' @export
 dplyr::left_join
 
-#' @importFrom dplyr right_join
 #' @export
+#' @encoding UTF-8
 #' @name mutate-joins.SpatVector
+#' @importFrom dplyr right_join
 right_join.SpatVector <- function(
   x,
   y,
@@ -204,10 +207,10 @@ right_join.SpatVector <- function(
 #' @export
 dplyr::right_join
 
-
-#' @importFrom dplyr full_join
 #' @export
+#' @encoding UTF-8
 #' @name mutate-joins.SpatVector
+#' @importFrom dplyr full_join
 full_join.SpatVector <- function(
   x,
   y,
@@ -242,18 +245,18 @@ full_join.SpatVector <- function(
 #' @export
 dplyr::full_join
 
-
 #' Filtering joins for `SpatVector` objects
 #'
 #' @description
 #' Filtering joins filter rows from `x` based on the presence or absence of
 #' matches in `y`:
-#' * [semi_join()] return all rows from `x` with a match in `y`.
-#' * [anti_join()] return all rows from `x` without a match in `y`.
+#' - [semi_join()] return all rows from `x` with a match in `y`.
+#' - [anti_join()] return all rows from `x` without a match in `y`.
 #'
 #' See [dplyr::semi_join()] for details.
 #'
 #' @export
+#' @encoding UTF-8
 #' @rdname filter-joins.SpatVector
 #' @name filter-joins.SpatVector
 #'
@@ -266,7 +269,7 @@ dplyr::full_join
 #'
 #' @inheritParams mutate-joins.SpatVector
 #'
-#' @return A `SpatVector` object.
+#' @returns A `SpatVector` object.
 #'
 #' @section \CRANpkg{terra} equivalent:
 #'
@@ -278,9 +281,8 @@ dplyr::full_join
 #'
 #' ## `SpatVector`
 #'
-#' The geometry column has a sticky behaviour. This means that the result would
-#' have always the geometry of `x` for the records that matches the join
-#' conditions.
+#' The geometry column has sticky behavior. This means that the result always
+#' has the geometry of `x` for the records that match the join conditions.
 #'
 #' @examples
 #' library(terra)
@@ -332,9 +334,10 @@ semi_join.SpatVector <- function(x, y, by = NULL, copy = FALSE, ...) {
 #' @export
 dplyr::semi_join
 
-#' @importFrom dplyr anti_join
 #' @export
+#' @encoding UTF-8
 #' @name filter-joins.SpatVector
+#' @importFrom dplyr anti_join
 anti_join.SpatVector <- function(x, y, by = NULL, copy = FALSE, ...) {
   error_spat_join(y)
   # Use own method
@@ -353,12 +356,11 @@ anti_join.SpatVector <- function(x, y, by = NULL, copy = FALSE, ...) {
 #' @export
 dplyr::anti_join
 
-
 error_spat_join <- function(y) {
   if (inherits(y, c("SpatVector", "sf"))) {
     cli::cli_abort(paste(
-      "{.arg y} should not be {.cls {class(y)}}. For spatial joins use",
-      "{.fun terra::intersect}"
+      "{.arg y} must not be {.cls {class(y)}}. For spatial joins, use",
+      "{.fun terra::intersect}."
     ))
   }
 }

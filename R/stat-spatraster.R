@@ -1,40 +1,40 @@
-#' @export
-#' @rdname geom_spatraster
-#'
 #' @description
 #'
-#' `stat_spatraster()` is provided as a complementary function, so the `geom`
-#' can be modified.
+#' `stat_spatraster()` complements [geom_spatraster()] when you need to change
+#' the `geom`.
 #'
-#' @param geom The geometric object to use display the data. Recommended `geom`
-#'   for `SpatRaster` are `"raster"` (the default), `"point"`,`"text"` and
-#'   `"label"`.
+#' @export
+#' @encoding UTF-8
+#' @rdname geom_spatraster
+#'
 #' @seealso
 #'
 #' Recommended `geoms`:
-#' * [ggplot2::geom_point()].
-#' * [ggplot2::geom_label()].
-#' * [ggplot2::geom_text()].
+#' - [ggplot2::geom_point()].
+#' - [ggplot2::geom_label()].
+#' - [ggplot2::geom_text()].
 #'
+#' @param geom Geom used to display the data. Recommended values for
+#'   `SpatRaster` are `"raster"` (the default), `"point"`, `"text"` and
+#'   `"label"`.
 #' @section Aesthetics:
 #'
 #' ## `stat_spatraster()`
 #'
-#' `stat_spatraster()` understands the same aesthetics than `geom_spatraster()`
-#' when using `geom = "raster"` (the default):
+#' `stat_spatraster()` understands the same aesthetics as `geom_spatraster()`
+#' when `geom = "raster"` (the default):
 #'
-#' * [`fill`][ggplot2::aes_colour_fill_alpha]
-#' * [`alpha`][ggplot2::aes_colour_fill_alpha]
+#' - [`fill`][ggplot2::aes_colour_fill_alpha]
+#' - [`alpha`][ggplot2::aes_colour_fill_alpha]
 #'
-#' When `geom = "raster"` the `fill` argument would behave as in
-#' `geom_spatraster()`. If another `geom` is used `stat_spatraster()` would
-#' understand the aesthetics of the required `geom` and
-#' `aes(fill = <name_of_lyr>)` would not be applicable.
+#' When `geom = "raster"`, the `fill` argument behaves as in
+#' `geom_spatraster()`. If another `geom` is used, `stat_spatraster()`
+#' understands the aesthetics required by that `geom`, so
+#' `aes(fill = <name_of_lyr>)` is not applicable.
 #'
-#' Note also that mapping of aesthetics `x` and `y` is provided by default,
-#' so the user does not need to add those aesthetics on `aes()`. In all the
-#' cases the aesthetics should be mapped by using computed variables. See
-#' section **Computed variables** and **Examples**.
+#' The `x` and `y` aesthetics are mapped by default, so you do not need to add
+#' them in `aes()`. In every case, aesthetics should be mapped with computed
+#' variables. See **Computed variables** and **Examples**.
 #' @examples
 #' \donttest{
 #' # Using stat_spatraster
@@ -83,17 +83,11 @@ stat_spatraster <- function(
   maxcell = 500000,
   ...
 ) {
-  if (!inherits(data, "SpatRaster")) {
-    cli::cli_abort(paste(
-      "{.fun tidyterra::stat_spatraster} only works with",
-      "{.cls SpatRaster} objects, not {.cls {class(data)}}.",
-      "See {.help terra::vect}"
-    ))
-  }
+  check_spatraster(data, "stat_spatraster")
 
   # 1. Work with aes ----
 
-  # Prepare aes for StatTerraSpatRaster
+  # Prepare aesthetics for `StatTerraSpatRaster`.
   mapping <- cleanup_aesthetics(mapping, "group")
 
   spatraster <- NULL
@@ -103,14 +97,13 @@ stat_spatraster <- function(
     mapping,
     ggplot2::aes(
       spatraster = spatraster,
-      # For faceting
+      # Keep layer order when faceting.
       lyr = lyr,
       group = lyr
     )
   )
 
-  # Do this only if provided geom is raster
-  # to mimick geom_spatraster
+  # Only do this when `geom = "raster"` to mimic `geom_spatraster()`.
 
   if (geom == "raster") {
     dots <- list(...)
@@ -118,18 +111,18 @@ stat_spatraster <- function(
 
     prepared <- prepare_aes_spatraster(mapping, raster_names, dots)
 
-    # Use prepared data
+    # Use prepared data.
     mapping <- prepared$map
 
-    # Check if need to subset the SpatRaster
+    # Check whether the `SpatRaster` needs to be subset.
     if (is.character(prepared$namelayer)) {
-      # Subset the layer from the data
+      # Subset the layer from the data.
       data <- terra::subset(data, prepared$namelayer)
     }
   }
   # 2. Check if resample is needed----
 
-  # Check mixed types
+  # Check mixed types.
   data <- check_mixed_cols(data)
 
   data <- resample_spat(data, maxcell)
@@ -137,16 +130,16 @@ stat_spatraster <- function(
   # 3. Create a nested list with each layer----
   raster_list <- as.list(data)
 
-  # Now create the data frame
+  # Create the data frame.
   data_tbl <- tibble::tibble(
     spatraster = list(NULL),
-    # For faceting: As factors for keeping orders
+    # Keep layer order when faceting.
     lyr = factor(names(data), levels = names(data))
   )
 
   names(data_tbl$spatraster) <- names(data)
 
-  # Each layer to a row
+  # Store one layer per row.
   for (i in seq_len(terra::nlyr(data))) {
     data_tbl$spatraster[[i]] <- raster_list[[i]]
   }
@@ -155,7 +148,7 @@ stat_spatraster <- function(
 
   crs_terra <- pull_crs(data)
 
-  # Create layer
+  # Create the layer.
   layer_spatrast <- ggplot2::layer(
     data = data_tbl,
     mapping = mapping,
@@ -172,10 +165,9 @@ stat_spatraster <- function(
     )
   )
 
-  # From ggspatial
-  # If the SpatRaster has crs add a geom_sf for training scales
-  # use an emtpy geom_sf() with same CRS as the raster to mimic behaviour of
-  # using the first layer's CRS as the base CRS for coord_sf().
+  # From `ggspatial`.
+  # If the `SpatRaster` has a CRS, add an empty `geom_sf()` to train the
+  # scales. Mimic using the first layer CRS as the base CRS for `coord_sf()`.
 
   if (!is.na(crs_terra)) {
     layer_spatrast <- c(

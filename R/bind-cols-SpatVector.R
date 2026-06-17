@@ -1,32 +1,33 @@
-#' Bind multiple `SpatVector` `sf` and data frames objects by column
+#' Bind multiple `SpatVector`, `sf` and data frame objects by column
 #'
 #' @description
-#' Bind any number of `SpatVector`, data frames and `sf` object by column,
-#' making a wider result. This is similar to `do.call(cbind, dfs)`.
+#' Bind any number of `SpatVector`, data frames and `sf` objects by column,
+#' making a wider result. This is similar to `do.call(cbind, data_frames)`.
 #'
-#' Where possible prefer using a [join][mutate-joins.SpatVector] to combine
-#' `SpatVector` and data frames objects. `bind_spat_cols()` binds the rows in
-#' order in which they appear so it is easy to create meaningless results
-#' without realizing it.
-#'
-#' @param ... Objects to combine. The first argument should be a `SpatVector`
-#'   and each of the subsequent arguments can either be a `SpatVector`, a `sf`
-#'   object or a data frame. Inputs are [recycled][vctrs::theory-faq-recycling]
-#'   to the same length, then matched by position.
-#'
-#' @inheritParams dplyr::bind_cols
-#'
-#' @return A `SpatVector` with the corresponding columns. The geometry and CRS
-#' would correspond to the the first `SpatVector` of `...`.
+#' Where possible prefer using a [join][mutate-joins.SpatVector] to
+#' combine `SpatVector` and data frame objects. `bind_spat_cols()`
+#' binds the rows in order in which they appear so it is easy to create
+#' meaningless results without realizing it.
 #'
 #' @export
-#' @family dplyr.pairs
-#' @family dplyr.methods
-#'
+#' @encoding UTF-8
 #' @rdname bind_cols.SpatVector
 #' @name bind_cols.SpatVector
 #'
 #' @seealso [dplyr::bind_cols()]
+#'
+#' @family dplyr.pairs
+#' @family dplyr.methods
+#'
+#' @inheritParams dplyr::bind_cols
+#'
+#' @param ... Objects to combine. The first argument must be a `SpatVector`.
+#'   Each subsequent argument can be a `SpatVector`, `sf` object or data frame.
+#'   Inputs are [recycled][vctrs::theory-faq-recycling] to the same length, then
+#'   matched by position.
+#'
+#' @returns A `SpatVector` with the corresponding columns. The geometry and CRS
+#' correspond to the first `SpatVector` of `...`.
 #'
 #' @section \CRANpkg{terra} equivalent:
 #'
@@ -34,10 +35,9 @@
 #'
 #' @section Methods:
 #'
-#' Implementation of the [dplyr::bind_rows()] function for
-#' `SpatVector` objects. Note that for the second and subsequent arguments on
-#' `...` the geometry would not be `cbind`ed, and only the data frame (-ish)
-#' columns would be kept.
+#' Implementation of the [dplyr::bind_cols()] function for `SpatVector`
+#' objects. For the second and subsequent arguments in `...`, the geometry is
+#' not `cbind`ed and only the data frame-like columns are kept.
 #'
 #' @examples
 #' library(terra)
@@ -62,50 +62,44 @@
 #' end
 #' glimpse(end)
 #'
-#' # Row sizes must be compatible when column-binding
+#' # Row sizes must be compatible when column-binding.
 #' try(bind_spat_cols(sv, sfobj))
 bind_spat_cols <- function(
   ...,
-  .name_repair = c(
-    "unique",
-    "universal",
-    "check_unique",
-    "minimal"
-  )
+  .name_repair = c("unique", "universal", "check_unique", "minimal")
 ) {
   dots <- rlang::list2(...)
 
-  # Return empty on none
+  # Return an empty object when there are no inputs.
   if (length(dots) == 0) {
-    return(terra::vect("POINT EMPTY"))
+    return(terra::vect("MULTIPOINT EMPTY"))
   }
 
-  # Make it work with list
+  # Support a single list of inputs.
   if (length(dots) == 1 && is.list(dots[[1]])) {
-    # If is a list unlist the first level
+    # Unlist the first level.
     dots <- dots[[1]]
   }
 
-  # Checks
-  # Ensure first is SpatVector
+  # Ensure the first input is a `SpatVector`.
   if (!inherits(dots[[1]], "SpatVector")) {
     cli::cli_abort(paste(
-      "Object {.field 1} in {.arg ...} is not a {.cls SpatVector}"
+      "Object {.val {1}} in {.arg ...} is not a {.cls SpatVector}."
     ))
   }
 
-  # Get templates
+  # Keep the first input as the reconstruction template.
   template <- dots[[1]]
 
-  # Ensure all are tibbles
+  # Convert inputs to tibbles where needed.
   alltibbs <- lapply(seq_along(dots), function(i) {
     x <- dots[[i]]
 
-    # First is always a SpatVector
+    # The first input is always a `SpatVector`.
     if (i == 1) {
       frst <- as_tibble(x)
 
-      # Case when first is only geometry, need to add a mock var
+      # If first is only geometry, add a mock variable.
       if (nrow(frst) == 0) {
         frst <- tibble::tibble(first_empty = seq_len(nrow(x)))
       }
@@ -113,7 +107,7 @@ bind_spat_cols <- function(
       return(frst)
     }
 
-    # Rest of cases
+    # Remaining cases.
 
     if (inherits(x, "SpatVector")) {
       return(as_tibble(x))
@@ -128,15 +122,14 @@ bind_spat_cols <- function(
 
   endobj <- dplyr::bind_cols(alltibbs, .name_repair = .name_repair)
 
-  # If first was geom only bind the rest
-  # Use cbind terra method
+  # Use `terra::cbind()` when the first input only has geometry.
   if (dim(template)[2] == 0) {
     vend <- cbind(template, endobj[, -1])
   } else {
     vend <- cbind(template[, 0], endobj)
   }
 
-  # Groups
+  # Restore grouping metadata.
   vend <- group_prepare_spat(vend, endobj)
 
   vend

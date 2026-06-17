@@ -4,25 +4,26 @@
 #'
 #' Replace `NA`s values on layers/attributes with specified values
 #'
-#' @param data A `SpatRaster` created with [terra::rast()] or a `SpatVector`
-#'   created with [terra::vect()].
-#' @param replace A named list of values, with one value for each
-#'   layer/attribute that has missing values to be replaced. Each value in
-#'   `replace` will be cast to the type of the column in `data` that it being
-#'   used as a replacement in.
-#' @param ... Additional arguments for methods. Currently unused.
-#'
-#' @inherit drop_na.Spat return
-#'
 #' @export
+#' @encoding UTF-8
 #' @rdname replace_na.Spat
 #' @name replace_na.Spat
-#' @importFrom tidyr replace_na
-#'
 #' @seealso [tidyr::replace_na()]
 #'
 #' @family tidyr.missing
 #' @family tidyr.methods
+#'
+#' @importFrom tidyr replace_na
+#'
+#' @inherit drop_na.Spat return
+#'
+#' @param data A `SpatRaster` created with [terra::rast()] or a `SpatVector`
+#'   created with [terra::vect()].
+#' @param replace A named list of values, with one value for each
+#'   layer/attribute that has missing values to be replaced. Each value in
+#'   `replace` will be cast to the type of the column in `data` that it is being
+#'   used as a replacement in.
+#' @param ... Additional arguments for methods. Currently unused.
 #'
 #' @section \CRANpkg{terra} equivalent:
 #'
@@ -65,7 +66,7 @@ replace_na.SpatRaster <- function(data, replace = list(), ...) {
   check_index <- as.logical(!is.na(df_na[1, ]))
 
   # Replace on new raster using a loop
-  # New raster for init the loop
+  # Create a new raster to initialize the loop.
   newrast <- data
 
   for (i in seq_len(terra::nlyr(newrast))) {
@@ -112,6 +113,7 @@ replace_na.SpatRaster <- function(data, replace = list(), ...) {
 }
 
 #' @export
+#' @encoding UTF-8
 #' @rdname replace_na.Spat
 replace_na.SpatVector <- function(data, replace, ...) {
   # Use own method

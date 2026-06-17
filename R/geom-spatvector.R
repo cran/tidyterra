@@ -1,24 +1,9 @@
-#' Visualise `SpatVector` objects
+#' Plot `SpatVector` objects
 #'
 #' @description
 #'
-#' Wrappers of [ggplot2::geom_sf()] family used to visualise `SpatVector`
+#' Wrappers of the [ggplot2::geom_sf()] family used to plot `SpatVector`
 #' objects (see [terra::vect()]).
-#'
-#' @return A \CRANpkg{ggplot2} layer
-#' @family ggplot2.utils
-#'
-#' @name ggspatvector
-#'
-#' @param data A `SpatVector` object, see [terra::vect()].
-#'
-#' @param ... Other arguments passed on to [ggplot2::geom_sf()] functions.
-#'   These are often aesthetics, used to set an aesthetic to a fixed value,
-#'   like `colour = "red"` or `linewidth = 3`.
-#'
-#' @inheritParams ggplot2::geom_sf
-#'
-#' @seealso [ggplot2::geom_sf()]
 #'
 #' @details
 #'
@@ -29,11 +14,27 @@
 #'
 #' See [ggplot2::geom_sf()] for details on aesthetics, etc.
 #'
+#' @export
+#' @encoding UTF-8
+#'
+#' @name ggspatvector
+#'
+#' @seealso [ggplot2::geom_sf()]
+#'
+#' @family ggplot2.utils
+#'
+#' @inheritParams ggplot2::geom_sf
+#'
+#' @param data A `SpatVector` object, see [terra::vect()].
+#'
+#' @param ... Other arguments passed on to [ggplot2::geom_sf()] functions.
+#'   These are often aesthetics, used to set an aesthetic to a fixed value,
+#'   like `colour = "red"` or `linewidth = 3`.
+#'
+#' @returns A \CRANpkg{ggplot2} layer.
 #' @section \CRANpkg{terra} equivalent:
 #'
 #' [terra::plot()]
-#'
-#' @export
 #'
 #' @examples
 #' \donttest{
@@ -91,6 +92,7 @@ geom_spatvector <- function(
 }
 
 #' @export
+#' @encoding UTF-8
 #' @name ggspatvector
 #' @param linewidth Size of label border, in mm.
 geom_spatvector_label <- function(
@@ -114,6 +116,7 @@ geom_spatvector_label <- function(
 }
 
 #' @export
+#' @encoding UTF-8
 #' @name ggspatvector
 geom_spatvector_text <- function(
   mapping = aes(),
@@ -136,6 +139,7 @@ geom_spatvector_text <- function(
 }
 
 #' @export
+#' @encoding UTF-8
 #' @name ggspatvector
 stat_spatvector <- function(
   mapping = NULL,

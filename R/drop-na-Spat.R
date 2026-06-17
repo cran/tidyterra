@@ -1,28 +1,29 @@
 #' Drop attributes of `Spat*` objects containing missing values
 #'
 #' @description
-#' * `SpatVector`: `drop_na()` method drops geometries where any attribute
+#' - `SpatVector`: `drop_na()` method drops geometries where any attribute
 #' specified by `...` contains a missing value.
-#' * `SpatRaster`: `drop_na()` method drops cells where any layer specified by
+#' - `SpatRaster`: `drop_na()` method drops cells where any layer specified by
 #' `...` contains a missing value.
 #'
-#' @return A `Spat*` object of the same class than `data`. See **Methods**.
-#'
-#' @param data A `SpatVector` created with [terra::vect()] or a `SpatRaster`
-#'   [terra::rast()].
-#' @param ... <[`tidy-select`][tidyr::tidyr_tidy_select]>  Attributes to inspect
-#'   for missing values. If empty, all attributes are used.
-#'
 #' @export
+#' @encoding UTF-8
 #'
 #' @rdname drop_na.Spat
 #' @name drop_na.Spat
 #'
-#' @importFrom tidyr drop_na
-#'
 #' @seealso [tidyr::drop_na()]
 #' @family tidyr.missing
 #' @family tidyr.methods
+#'
+#' @importFrom tidyr drop_na
+#'
+#' @param data A `SpatVector` created with [terra::vect()] or a `SpatRaster`
+#'   [terra::rast()].
+#' @param ... <[`tidy-select`][tidyr::tidyr_tidy_select]> Attributes to inspect
+#'   for missing values. If empty, all attributes are used.
+#'
+#' @returns A `Spat*` object of the same class as `data`. See **Methods**.
 #'
 #' @section \CRANpkg{terra} equivalent:
 #'
@@ -35,25 +36,26 @@
 #' ## `SpatVector`
 #'
 #' The implementation of this method is performed on a `by-attribute` basis,
-#' meaning that `NAs` are assessed on the attributes (columns) of each vector
-#' (rows). The result is a `SpatVector` with potentially less geometries than
-#' the input.
+#' meaning that `NA` values are assessed on the attributes (columns) of each
+#' vector (rows). The result is a `SpatVector` with potentially fewer
+#' geometries than the input.
 #'
 #' ## `SpatRaster`
 #'
 #' `r lifecycle::badge('questioning')`
 #'
-#' Actual implementation of `drop_na().SpatRaster` can be understood as a
-#' masking method based on the values of the layers (see [terra::mask()]).
+#' The implementation of `drop_na().SpatRaster` can be understood as a
+#' masking method based on the values of the layers (see
+#' [terra::mask()]).
 #'
 #' `SpatRaster` layers are considered as columns and `SpatRaster` cells as rows,
-#' so rows (cells) with any `NA` value on any layer would get a `NA` value. It
-#' is possible also to mask the cells (rows) based on the values of specific
+#' so rows (cells) with any `NA` value on any layer become `NA`. You can also
+#' mask the cells (rows) based on the values of specific
 #' layers (columns).
 #'
-#' `drop_na()` would effectively remove outer cells that are `NA` (see
-#' [terra::trim()]), so the extent of the resulting object may differ of the
-#' extent of the input (see [terra::resample()] for more info).
+#' `drop_na()` effectively removes outer cells that are `NA` (see
+#' [terra::trim()]), so the extent of the resulting object may differ from the
+#' extent of the input (see [terra::resample()] for more information).
 #'
 #' Check the **Examples** to have a better understanding of this method.
 #'
@@ -70,27 +72,27 @@
 #'
 #' v <- terra::vect(f)
 #'
-#' # Add NAs
+#' # Add missing values.
 #' v <- v |> mutate(iso2 = ifelse(cpro <= "09", NA, cpro))
 #'
-#' # Init
+#' # Initial plot.
 #' plot(v, col = "red")
 #'
-#' # Mask with lyr.1
+#' # Drop geometries with missing values in iso2.
 #' v |>
 #'   drop_na(iso2) |>
 #'   plot(col = "red")
 drop_na.SpatVector <- function(data, ...) {
-  # Use own method, no way to avoid coercion
   tbl <- as_tbl_internal(data)
   dropped <- tidyr::drop_na(tbl, ...)
 
+  # Use own method, there is no way to avoid coercion.
   if (nrow(dropped) == 0) {
     cli::cli_alert_warning(paste0(
       cli::col_red("All geometries dropped."),
-      "\nReturning empty {.cls SpatVector}"
+      "\nReturning an empty {.cls SpatVector}."
     ))
-    vend <- terra::vect("POINT EMPTY")
+    vend <- terra::vect("MULTIPOINT EMPTY")
     terra::crs(vend) <- pull_crs(data)
 
     return(vend)
@@ -105,6 +107,7 @@ drop_na.SpatVector <- function(data, ...) {
 }
 
 #' @export
+#' @encoding UTF-8
 #' @rdname drop_na.Spat
 #'
 #' @examples
@@ -119,35 +122,34 @@ drop_na.SpatVector <- function(data, ...) {
 #' )
 #' terra::values(r) <- seq_len(ncell(r) * nlyr(r))
 #'
-#' # Add NAs
+#' # Add missing values.
 #' r[r > 13 & r < 22 | r > 31 & r < 45] <- NA
 #'
-#' # Init
+#' # Initial plot.
 #' plot(r, nc = 3)
 #'
-#' # Mask with lyr.1
+#' # Mask with lyr.1.
 #' r |>
 #'   drop_na(lyr.1) |>
 #'   plot(nc = 3)
 #'
-#' # Mask with lyr.2
+#' # Mask with lyr.2.
 #' r |>
 #'   drop_na(lyr.2) |>
 #'   plot(nc = 3)
 #'
-#' # Mask with lyr.3
+#' # Mask with lyr.3.
 #' r |>
 #'   drop_na(lyr.3) |>
 #'   plot(nc = 3)
 #'
-#' # Auto-mask all layers
+#' # Mask all layers.
 #' r |>
 #'   drop_na() |>
 #'   plot(nc = 3)
 #' }
 drop_na.SpatRaster <- function(data, ...) {
-  # Don't need to convert to data.frame
-  # Create a matrix to assess results
+  # Create a matrix to assess results without converting to a data frame.
   m <- matrix(nrow = terra::nlyr(data), ncol = terra::nlyr(data))
   diag(m) <- seq_len(terra::nlyr(data))
 
@@ -158,21 +160,21 @@ drop_na.SpatRaster <- function(data, ...) {
 
   # Use template to identify operations
   if (nrow(dropped) == 0) {
-    # All dropped
+    # Mask all layers.
     to_mask <- seq_len(terra::nlyr(data))
   } else {
     to_mask <- as.integer(dropped[1, ])
     to_mask <- to_mask[!is.na(to_mask)]
   }
 
-  # Subset with a loop
+  # Mask each selected layer.
   end <- data
   for (i in to_mask) {
     mask <- terra::subset(data, i)
     end <- terra::mask(end, mask)
   }
 
-  # Trim extent
+  # Trim the extent.
   newrast <- terra::trim(end)
 
   newrast

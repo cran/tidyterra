@@ -14,7 +14,7 @@ test_that("Glimpse SpatVectors", {
   expect_snapshot(glimpse(v))
 
   # With opts
-  expect_snapshot(glimpse(v, geom = "WKT", width = 50))
+  expect_snapshot(glimpse(v, geom = "WKT", width = 5))
 
   skip_if_not_installed("vctrs")
   expect_snapshot(glimpse(v, width = 50, n = 2))
@@ -185,10 +185,10 @@ test_that("Coltab SpatRaster", {
 
 
 test_that("Test formats", {
-  expect_true(grepl("W", decimal_to_degrees(-79.890, "lon"), fixed = TRUE))
-  expect_true(grepl("E", decimal_to_degrees(79.890, "lon"), fixed = TRUE))
-  expect_true(grepl("S", decimal_to_degrees(-79.890, "lat"), fixed = TRUE))
-  expect_true(grepl("N", decimal_to_degrees(79.890, "lat"), fixed = TRUE))
+  expect_match(decimal_to_degrees(-79.890, "lon"), "W", fixed = TRUE)
+  expect_match(decimal_to_degrees(79.890, "lon"), "E", fixed = TRUE)
+  expect_match(decimal_to_degrees(-79.890, "lat"), "S", fixed = TRUE)
+  expect_match(decimal_to_degrees(79.890, "lat"), "N", fixed = TRUE)
 
   skip_on_cran()
   expect_snapshot(decimal_to_degrees(-79.890, "lon"))
@@ -243,4 +243,13 @@ test_that("Long geoms", {
 
   expect_snapshot(glimpse(a_rast, n = NULL, max_extra_cols = NULL))
   expect_snapshot(glimpse(a_rast, n = -1, max_extra_cols = -1))
+})
+
+test_that("Name crs", {
+  expect_false(is.na(get_named_crs(4326)))
+
+  local_mocked_bindings(pull_crs = function(...) {
+    "aa"
+  })
+  expect_true(is.na(get_named_crs(4326)))
 })

@@ -5,21 +5,22 @@
 #' `as_coordinates()` can be used to obtain the position of each cell on the
 #' `SpatRaster` matrix.
 #'
+#' @export
+#' @encoding UTF-8
+#'
+#' @seealso [slice.SpatRaster()]
+#'
+#' @family coerce
 #' @param x A `SpatRaster` object.
 #' @param as.raster If `TRUE`, the result is a `SpatRaster` object with three
 #'   layers indicating the position of each cell (cell number, row and column).
 #'
-#' @return
+#' @returns
 #' A [tibble][tibble::tbl_df] or a `SpatRaster` (if `as.raster = TRUE`) with
-#' the same number of rows (or cells) than the number of cells in `x`.
+#' the same number of rows (or cells) as the number of cells in `x`.
 #'
 #' When `as.raster = TRUE` the resulting `SpatRaster` has the same CRS,
-#' extension and resolution than `x`
-#'
-#' @family coerce
-#' @export
-#'
-#' @seealso [slice.SpatRaster()]
+#' extent and resolution as `x`.
 #'
 #' @examples
 #'
@@ -37,12 +38,12 @@
 as_coordinates <- function(x, as.raster = FALSE) {
   if (!inherits(x, "SpatRaster")) {
     cli::cli_abort(paste(
-      "{.fun tidyterra::as_coordinates} needs a {.cls SpatRaster} object,",
-      "not a {.cls {class(x)}} object"
+      "{.fun tidyterra::as_coordinates} requires a {.cls SpatRaster} object,",
+      "not {.cls {class(x)}}."
     ))
   }
 
-  # Create skeleton
+  # Create cell, row and column indexes.
   df <- data.frame(cellindex = seq_len(terra::ncell(x)))
   rowcol <- as.data.frame(terra::rowColFromCell(x, df$cellindex))
   names(rowcol) <- c("rowindex", "colindex")
@@ -54,7 +55,7 @@ as_coordinates <- function(x, as.raster = FALSE) {
     return(tbl)
   }
 
-  # If not create a raster
+  # Otherwise, create a raster.
 
   template <- terra::rast(x)
   terra::crs(template) <- terra::crs(x)

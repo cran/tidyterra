@@ -8,7 +8,7 @@ test_that("Discrete scale", {
   p2 <- p + scale_fill_princess_d()
 
   mod <- ggplot2::layer_data(p2)$fill
-  expect_true(!any(init %in% mod))
+  expect_false(any(init %in% mod))
 
   # Alpha
   expect_snapshot(p + scale_fill_princess_d(alpha = -1), error = TRUE)
@@ -22,17 +22,11 @@ test_that("Discrete scale", {
   # Reverse also with alpha
   expect_snapshot(p + scale_fill_princess_d(direction = 0.5), error = TRUE)
 
-  p4 <- p +
-    scale_fill_princess_d(
-      direction = -1,
-      alpha = 0.7
-    )
+  p4 <- p + scale_fill_princess_d(direction = -1, alpha = 0.7)
 
   mod_alpha_rev <- ggplot2::layer_data(p4)$fill
 
-  expect_true(
-    all(rev(alpha(mod, alpha = 0.7)) == mod_alpha_rev)
-  )
+  expect_true(all(rev(alpha(mod, alpha = 0.7)) == mod_alpha_rev))
 
   # Change pal
   # Create ggplot for each pal, extract colors and check
@@ -42,10 +36,7 @@ test_that("Discrete scale", {
 
   # Get pals
   allpals_end <- lapply(allpals, function(x) {
-    palplot <- p +
-      scale_fill_princess_d(
-        palette = x
-      )
+    palplot <- p + scale_fill_princess_d(palette = x)
     mod_pal <- ggplot2::layer_data(palplot)$fill
     mod_pal
   })
@@ -70,7 +61,7 @@ test_that("Continous scale", {
   p2 <- p + scale_fill_princess_c()
 
   mod <- ggplot2::layer_data(p2)$fill
-  expect_true(!any(init %in% mod))
+  expect_false(any(init %in% mod))
 
   # Alpha
   expect_snapshot(p + scale_fill_princess_c(alpha = -1), error = TRUE)
@@ -84,17 +75,11 @@ test_that("Continous scale", {
   # Reverse also with alpha
   expect_snapshot(p + scale_fill_princess_c(direction = 0.5), error = TRUE)
 
-  p4 <- p +
-    scale_fill_princess_c(
-      direction = -1,
-      alpha = 0.7
-    )
+  p4 <- p + scale_fill_princess_c(direction = -1, alpha = 0.7)
 
   mod_alpha_rev <- ggplot2::layer_data(p4)$fill
 
-  expect_true(
-    all(rev(alpha(mod, alpha = 0.7)) == mod_alpha_rev)
-  )
+  expect_true(all(rev(alpha(mod, alpha = 0.7)) == mod_alpha_rev))
 
   # Change pal
   # Create ggplot for each pal, extract colors and check
@@ -104,10 +89,7 @@ test_that("Continous scale", {
 
   # Get pals
   allpals_end <- lapply(allpals, function(x) {
-    palplot <- p +
-      scale_fill_princess_c(
-        palette = x
-      )
+    palplot <- p + scale_fill_princess_c(palette = x)
     mod_pal <- ggplot2::layer_data(palplot)$fill
     mod_pal
   })
@@ -123,11 +105,7 @@ test_that("Continous scale", {
 })
 
 test_that("Breaking scale", {
-  d <- data.frame(
-    x = 1:10,
-    y = 1:10,
-    z = 31:40
-  )
+  d <- data.frame(x = 1:10, y = 1:10, z = 31:40)
 
   # Three cuts
   br <- c(32, 37)
@@ -135,28 +113,22 @@ test_that("Breaking scale", {
   p_init <- ggplot2::ggplot(d) +
     ggplot2::geom_col(aes(x, y, fill = z))
 
-  p <- p_init +
-    ggplot2::scale_fill_viridis_b(breaks = br)
+  p <- p_init + ggplot2::scale_fill_viridis_b(breaks = br)
 
   init <- ggplot2::layer_data(p)$fill
   expect_true(length(unique(init)) == 3)
 
-  p2 <- p_init +
-    scale_fill_princess_b(breaks = br)
+  p2 <- p_init + scale_fill_princess_b(breaks = br)
 
   mod <- ggplot2::layer_data(p2)$fill
-  expect_true(!any(init %in% mod))
+  expect_false(any(init %in% mod))
 
   expect_true(length(unique(mod)) == 3)
 
   # Alpha
   expect_snapshot(p_init + scale_fill_princess_b(alpha = -1), error = TRUE)
 
-  p3 <- p_init +
-    scale_fill_princess_b(
-      alpha = 0.9,
-      breaks = br
-    )
+  p3 <- p_init + scale_fill_princess_b(alpha = 0.9, breaks = br)
 
   mod_alpha <- ggplot2::layer_data(p3)$fill
 
@@ -166,12 +138,7 @@ test_that("Breaking scale", {
   # Reverse also with alpha
   expect_snapshot(p + scale_fill_princess_b(direction = 0.5), error = TRUE)
 
-  p4 <- p_init +
-    scale_fill_princess_b(
-      direction = -1,
-      alpha = 0.7,
-      breaks = br
-    )
+  p4 <- p_init + scale_fill_princess_b(direction = -1, alpha = 0.7, breaks = br)
 
   mod_alpha_rev <- ggplot2::layer_data(p4)$fill
   expect_true(length(unique(mod_alpha_rev)) == 3)
@@ -184,10 +151,7 @@ test_that("Breaking scale", {
 
   # Get pals
   allpals_end <- lapply(allpals, function(x) {
-    palplot <- p_init +
-      scale_fill_princess_b(
-        palette = x
-      )
+    palplot <- p_init + scale_fill_princess_b(palette = x)
     mod_pal <- ggplot2::layer_data(palplot)$fill
     mod_pal
   })
@@ -216,10 +180,7 @@ test_that("Palette", {
     pal <- allpals[i]
     colors <- princess.colors(20, pal)
 
-    expect_identical(
-      class(colors),
-      "character"
-    )
+    expect_identical(class(colors), "character")
     expect_length(colors, 20)
   }
 })
@@ -235,7 +196,7 @@ test_that("Discrete scale col", {
   p2 <- p + scale_colour_princess_d()
 
   mod <- ggplot2::layer_data(p2)$colour
-  expect_true(!any(init %in% mod))
+  expect_false(any(init %in% mod))
 
   p3 <- p + scale_color_princess_d()
   mod3 <- ggplot2::layer_data(p3)$colour
@@ -253,17 +214,11 @@ test_that("Discrete scale col", {
   # Reverse also with alpha
   expect_snapshot(p + scale_colour_princess_d(direction = 0.5), error = TRUE)
 
-  p4 <- p +
-    scale_colour_princess_d(
-      direction = -1,
-      alpha = 0.7
-    )
+  p4 <- p + scale_colour_princess_d(direction = -1, alpha = 0.7)
 
   mod_alpha_rev <- ggplot2::layer_data(p4)$colour
 
-  expect_true(
-    all(rev(alpha(mod, alpha = 0.7)) == mod_alpha_rev)
-  )
+  expect_true(all(rev(alpha(mod, alpha = 0.7)) == mod_alpha_rev))
 
   # Change pal
   # Create ggplot for each pal, extract colors and check
@@ -273,10 +228,7 @@ test_that("Discrete scale col", {
 
   # Get pals
   allpals_end <- lapply(allpals, function(x) {
-    palplot <- p +
-      scale_colour_princess_d(
-        palette = x
-      )
+    palplot <- p + scale_colour_princess_d(palette = x)
     mod_pal <- ggplot2::layer_data(palplot)$colour
     mod_pal
   })
@@ -301,7 +253,7 @@ test_that("Continous scale col", {
   p2 <- p + scale_colour_princess_c()
 
   mod <- ggplot2::layer_data(p2)$colour
-  expect_true(!any(init %in% mod))
+  expect_false(any(init %in% mod))
 
   p3 <- p + scale_color_princess_c()
   mod3 <- ggplot2::layer_data(p3)$colour
@@ -319,17 +271,11 @@ test_that("Continous scale col", {
   # Reverse also with alpha
   expect_snapshot(p + scale_colour_princess_c(direction = 0.5), error = TRUE)
 
-  p4 <- p +
-    scale_colour_princess_c(
-      direction = -1,
-      alpha = 0.7
-    )
+  p4 <- p + scale_colour_princess_c(direction = -1, alpha = 0.7)
 
   mod_alpha_rev <- ggplot2::layer_data(p4)$colour
 
-  expect_true(
-    all(rev(alpha(mod, alpha = 0.7)) == mod_alpha_rev)
-  )
+  expect_true(all(rev(alpha(mod, alpha = 0.7)) == mod_alpha_rev))
 
   # Change pal
   # Create ggplot for each pal, extract colors and check
@@ -339,10 +285,7 @@ test_that("Continous scale col", {
 
   # Get pals
   allpals_end <- lapply(allpals, function(x) {
-    palplot <- p +
-      scale_colour_princess_c(
-        palette = x
-      )
+    palplot <- p + scale_colour_princess_c(palette = x)
     mod_pal <- ggplot2::layer_data(palplot)$colour
     mod_pal
   })
@@ -358,11 +301,7 @@ test_that("Continous scale col", {
 })
 
 test_that("Breaking scale col", {
-  d <- data.frame(
-    x = 1:10,
-    y = 1:10,
-    z = 31:40
-  )
+  d <- data.frame(x = 1:10, y = 1:10, z = 31:40)
 
   # Three cuts
   br <- c(32, 37)
@@ -370,36 +309,29 @@ test_that("Breaking scale col", {
   p_init <- ggplot2::ggplot(d) +
     ggplot2::geom_point(aes(x, y, colour = z))
 
-  p <- p_init +
-    ggplot2::scale_colour_viridis_b(breaks = br)
+  p <- p_init + ggplot2::scale_colour_viridis_b(breaks = br)
 
   init <- ggplot2::layer_data(p)$colour
   expect_true(length(unique(init)) == 3)
 
-  p2 <- p_init +
-    scale_colour_princess_b(breaks = br)
+  p2 <- p_init + scale_colour_princess_b(breaks = br)
 
   mod <- ggplot2::layer_data(p2)$colour
 
-  p3 <- p_init +
-    scale_color_princess_b(breaks = br)
+  p3 <- p_init + scale_color_princess_b(breaks = br)
 
   mod3 <- ggplot2::layer_data(p3)$colour
 
   expect_identical(mod, mod3)
 
-  expect_true(!any(init %in% mod))
+  expect_false(any(init %in% mod))
 
   expect_true(length(unique(mod)) == 3)
 
   # Alpha
   expect_snapshot(p_init + scale_colour_princess_b(alpha = -1), error = TRUE)
 
-  p3 <- p_init +
-    scale_colour_princess_b(
-      alpha = 0.9,
-      breaks = br
-    )
+  p3 <- p_init + scale_colour_princess_b(alpha = 0.9, breaks = br)
 
   mod_alpha <- ggplot2::layer_data(p3)$colour
 
@@ -410,11 +342,7 @@ test_that("Breaking scale col", {
   expect_snapshot(p + scale_colour_princess_b(direction = 0.5), error = TRUE)
 
   p4 <- p_init +
-    scale_colour_princess_b(
-      direction = -1,
-      alpha = 0.7,
-      breaks = br
-    )
+    scale_colour_princess_b(direction = -1, alpha = 0.7, breaks = br)
 
   mod_alpha_rev <- ggplot2::layer_data(p4)$colour
   expect_true(length(unique(mod_alpha_rev)) == 3)
@@ -427,10 +355,7 @@ test_that("Breaking scale col", {
 
   # Get pals
   allpals_end <- lapply(allpals, function(x) {
-    palplot <- p_init +
-      scale_colour_princess_b(
-        palette = x
-      )
+    palplot <- p_init + scale_colour_princess_b(palette = x)
     mod_pal <- ggplot2::layer_data(palplot)$colour
     mod_pal
   })

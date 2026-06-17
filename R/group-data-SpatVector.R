@@ -4,44 +4,38 @@
 #' This collection of functions accesses data about grouped `SpatVector` objects
 #' in various ways:
 #'
-#' * [group_data()] returns a tibble that defines the grouping structure.
+#' - [group_data()] returns a tibble that defines the grouping structure.
 #'   The columns give the values of the grouping variables. The last column,
 #'   always called `.rows`, is a list of integer vectors that gives the
 #'   location of the rows in each group.
-#'
-#' * [group_keys()] returns a tibble describing the groups.
-#'
-#' * [group_rows()] returns a list of integer vectors giving the rows that
+#' - [group_keys()] returns a tibble describing the groups.
+#' - [group_rows()] returns a list of integer vectors giving the rows that
 #'   each group contains.
-#'
-#' * [group_indices()] returns an integer vector the same length as `.data`
+#' - [group_indices()] returns an integer vector the same length as `.data`
 #'   that gives the group that each row belongs to.
-#'
-#' * [group_vars()] gives names of grouping variables as character vector.
-#'
-#' * [groups()] gives the names of the grouping variables as a list of symbols.
-#'
-#' * [group_size()] gives the size of each group.
-#'
-#' * [n_groups()] gives the total number of groups.
+#' - [group_vars()] gives names of grouping variables as character vector.
+#' - [groups()] gives the names of the grouping variables as a list of symbols.
+#' - [group_size()] gives the size of each group.
+#' - [n_groups()] gives the total number of groups.
 #'
 #' See [dplyr::group_data()].
 #'
-#' @param .data,.tbl,x A `SpatVector`.
-#' @inheritParams dplyr::group_data
-#'
-#' @keywords internal
-#'
-#' @return
-#'
-#' See the description of the method. The results are usually tibbles,
-#' lists or vectors. These functions does not return `SpatVector` objects.
-#'
+#' @export
+#' @encoding UTF-8
 #' @rdname group_data.SpatVector
 #' @name group_data.SpatVector
 #'
-#' @export
+#' @keywords internal
+#'
 #' @importFrom dplyr group_data
+#'
+#' @inheritParams dplyr::group_data
+#'
+#' @param .data,.tbl,x A `SpatVector`.
+#' @returns
+#'
+#' See the description of the method. The results are usually tibbles,
+#' lists or vectors. These functions do not return `SpatVector` objects.
 #'
 #' @examples
 #' library(terra)
@@ -114,6 +108,7 @@ group_data.SpatVector <- function(.data) {
 dplyr::group_data
 
 #' @export
+#' @encoding UTF-8
 #' @rdname group_data.SpatVector
 #' @importFrom dplyr group_keys
 group_keys.SpatVector <- function(.tbl, ...) {
@@ -124,11 +119,13 @@ group_keys.SpatVector <- function(.tbl, ...) {
 #' @export
 dplyr::group_keys
 
-#' @importFrom dplyr group_rows
 #' @export
+#' @encoding UTF-8
+#' @importFrom dplyr group_rows
 dplyr::group_rows
 
 #' @export
+#' @encoding UTF-8
 #' @rdname group_data.SpatVector
 #' @importFrom dplyr group_indices
 group_indices.SpatVector <- function(.data, ...) {
@@ -140,6 +137,7 @@ group_indices.SpatVector <- function(.data, ...) {
 dplyr::group_indices
 
 #' @export
+#' @encoding UTF-8
 #' @rdname group_data.SpatVector
 #' @importFrom dplyr group_vars
 group_vars.SpatVector <- function(x) {
@@ -151,6 +149,7 @@ group_vars.SpatVector <- function(x) {
 dplyr::group_vars
 
 #' @export
+#' @encoding UTF-8
 #' @rdname group_data.SpatVector
 #' @importFrom dplyr groups
 groups.SpatVector <- function(x) {
@@ -162,6 +161,7 @@ groups.SpatVector <- function(x) {
 dplyr::groups
 
 #' @export
+#' @encoding UTF-8
 #' @rdname group_data.SpatVector
 #' @importFrom dplyr group_size
 group_size.SpatVector <- function(x) {
@@ -176,6 +176,7 @@ dplyr::group_size
 dplyr::groups
 
 #' @export
+#' @encoding UTF-8
 #' @rdname group_data.SpatVector
 #' @importFrom dplyr n_groups
 n_groups.SpatVector <- function(x) {
@@ -185,7 +186,6 @@ n_groups.SpatVector <- function(x) {
 
 #' @export
 dplyr::n_groups
-
 
 # Helper
 tbl_for_groups <- function(x) {

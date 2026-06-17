@@ -1,22 +1,14 @@
-#' Create, modify, and delete cell values/layers/attributes of `Spat*` objects
+#' Create, modify and delete cell values/layers/attributes of `Spat*` objects
 #'
 #' @description
 #'
 #' `mutate()` adds new layers/attributes and preserves existing ones on a
 #' `Spat*` object.
 #'
-#' @inherit select.Spat return
-#'
-#' @param .data A `SpatRaster` created with [terra::rast()] or a `SpatVector`
-#'   created with [terra::vect()].
-#'
-#' @inheritParams dplyr::mutate
-#'
 #' @export
+#' @encoding UTF-8
 #' @rdname mutate.Spat
 #' @name mutate.Spat
-#'
-#' @importFrom dplyr mutate
 #'
 #' @seealso
 #'
@@ -24,14 +16,23 @@
 #'
 #' \CRANpkg{terra} provides several ways to modify `Spat*` objects:
 #'
-#' * [terra::ifel()].
-#' * [terra::classify()].
-#' * [terra::clamp()].
-#' * [terra::app()], [terra::lapp()], [terra::tapp()].
+#' - [terra::ifel()].
+#' - [terra::classify()].
+#' - [terra::clamp()].
+#' - [terra::app()], [terra::lapp()], [terra::tapp()].
 #'
-#' @family single table verbs
+#' @family dplyr.single_table
 #' @family dplyr.cols
 #' @family dplyr.methods
+#'
+#' @importFrom dplyr mutate
+#'
+#' @inherit select.Spat return
+#'
+#' @inheritParams dplyr::mutate
+#'
+#' @param .data A `SpatRaster` created with [terra::rast()] or a `SpatVector`
+#'   created with [terra::vect()].
 #'
 #' @section \CRANpkg{terra} equivalent:
 #'
@@ -46,7 +47,7 @@
 #' ## `SpatRaster`
 #'
 #' Add new layers and preserves existing ones. The result is a
-#' `SpatRaster` with the same extent, resolution and CRS than `.data`. Only the
+#' `SpatRaster` with the same extent, resolution and CRS as `.data`. Only the
 #' values (and possibly the number) of layers is modified.
 #'
 #' ## `SpatVector`
@@ -103,10 +104,10 @@ mutate.SpatRaster <- function(
 
   final_df <- dplyr::bind_cols(xy, values_mutate)
 
-  # To data.table and rearrange attrs
+  # Convert to data.table and rearrange attributes.
   final_df <- data.table::as.data.table(final_df)
 
-  # Spatial attrs
+  # Spatial attributes.
   init_att <- attributes(df)
   final_att <- attributes(final_df)
 
@@ -124,7 +125,7 @@ mutate.SpatRaster <- function(
   if (any(terra::has.colors(.data))) {
     ctab_list <- terra::coltab(.data)
 
-    # Assign coltab by layer
+    # Assign color tables by layer.
     l2 <- lapply(seq_len(terra::nlyr(final_rast)), function(x) {
       rr <- terra::subset(final_rast, x)
       if (x <= length(ctab_list)) {
@@ -143,6 +144,7 @@ mutate.SpatRaster <- function(
   final_rast
 }
 #' @export
+#' @encoding UTF-8
 #' @rdname mutate.Spat
 mutate.SpatVector <- function(
   .data,

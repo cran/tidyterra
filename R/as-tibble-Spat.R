@@ -1,31 +1,32 @@
-#' Coerce a `SpatVector` or `SpatRaster` object to data frames
+#' Coerce `SpatRaster` and `SpatVector` objects to tibbles
 #'
 #' @description
 #'
 #' [as_tibble()] methods for `SpatRaster` and `SpatVector` objects.
 #'
+#' @export
+#' @encoding UTF-8
 #' @rdname as_tibble.Spat
 #' @name as_tibble.Spat
-#'
-#' @return
-#' A [tibble][tibble::tbl_df].
-#'
-#' @param x A `SpatRaster` created with [terra::rast()] or a `SpatVector`
-#'   created with [terra::vect()].
-#' @param ... Arguments passed on to [terra::as.data.frame()].
-#'
-#' @inheritParams terra::as.data.frame
-#' @inheritParams tibble::as_tibble
-#'
-#' @export
-#' @importFrom terra as.data.frame
-#' @importFrom tibble as_tibble
-#' @importFrom tibble tibble
 #'
 #' @seealso [tibble::as_tibble()], [terra::as.data.frame()]
 #'
 #' @family coerce
 #' @family tibble.methods
+#'
+#' @importFrom terra as.data.frame
+#' @importFrom tibble as_tibble
+#' @importFrom tibble tibble
+#'
+#' @inheritParams terra::as.data.frame
+#' @inheritParams tibble::as_tibble
+#'
+#' @param x A `SpatRaster` created with [terra::rast()] or a `SpatVector`
+#'   created with [terra::vect()].
+#' @param ... Arguments passed on to [terra::as.data.frame()].
+#'
+#' @returns
+#' A [tibble][tibble::tbl_df].
 #'
 #' @section \CRANpkg{terra} equivalent:
 #'
@@ -37,33 +38,31 @@
 #'
 #' ## `SpatRaster` and `SpatVector`
 #'
-#' The tibble is returned with an attribute including the CRS of the initial
-#' object in WKT format (see [pull_crs()]).
+#' The returned tibble includes the CRS of the original object as an attribute
+#' in WKT format (see [pull_crs()]).
 #'
 #' @section About layer/column names:
 #'
-#' When coercing `SpatRaster` objects to data frames, `x` and `y` names are
-#' reserved for geographic coordinates of each cell of the `SpatRaster` It
-#' should be also noted that \CRANpkg{terra} allows layers with duplicated
-#' names.
+#' When coercing `SpatRaster` objects to data frames, `x` and `y` are reserved
+#' names for the geographic coordinates of each cell. \CRANpkg{terra} also
+#' allows layers with duplicated names.
 #'
-#' In the process of coercing a `SpatRaster` to a tibble, \CRANpkg{tidyterra}
-#' may rename the layers of your `SpatRaster` for overcoming this issue.
-#' Specifically, layers may be renamed on the following cases:
-#' * Layers with duplicated names.
-#' * When coercing to a tibble, if `xy = TRUE`, layers named `x` or `y` would be
-#'   renamed.
-#' * When working with tidyverse methods (i.e. [filter.SpatRaster()]), the
-#'   latter would happen as well.
+#' When coercing a `SpatRaster` to a tibble, \CRANpkg{tidyterra} may rename its
+#' layers to avoid these issues. Specifically, layers may be renamed in the
+#' following cases:
+#' - Layers with duplicated names.
+#' - When coercing to a tibble, if `xy = TRUE`, layers named `x` or
+#'   `y` are renamed.
+#' - When working with methods from tidyverse packages, for example
+#'   [filter.SpatRaster()], the same renaming happens.
 #'
-#' \CRANpkg{tidyterra} would display a message informing of the changes on the
-#' names of the layer.
+#' \CRANpkg{tidyterra} displays a message describing the renamed layers.
 #'
-#' The same issue happens for `SpatVector` with names `geometry` (when
-#' `geom = c("WKT", "HEX")`) and `x`, `y` (when `geom = "XY"`). These are
-#' reserved names representing the geometry of the `SpatVector` (see
-#' [terra::as.data.frame()]). If `geom` is not `NULL` then the logic described
-#' for `SpatRaster` would apply as well for the columns of the `SpatVector`.
+#' The same issue affects `SpatVector` objects with reserved names such as
+#' `geometry` (when `geom = c("WKT", "HEX")`) and `x`, `y` (when
+#' `geom = "XY"`). These names represent geometry columns in
+#' [terra::as.data.frame()]. If `geom` is not `NULL`, the same renaming logic
+#' described for `SpatRaster` also applies to `SpatVector` columns.
 #'
 #' @examples
 #'
@@ -106,10 +105,10 @@ as_tibble.SpatRaster <- function(
     .name_repair = .name_repair
   )
 
-  # Handle nas
+  # Preserve missing values explicitly.
   df[is.na(df)] <- NA
 
-  # Set attributes
+  # Store the CRS as an attribute.
   attr(df, "crs") <- terra::crs(x)
 
   df
@@ -139,26 +138,26 @@ as_tibble.SpatVector <- function(
     .name_repair = .name_repair
   )
 
-  # Grouped
+  # Restore grouped data frame metadata.
   if (is_grouped_spatvector(x)) {
-    # Add class
+    # Add the grouped class.
     class(df) <- c("grouped_df", class(df))
     attr(df, "groups") <- attr(x, "groups")
 
-    # Validate
+    # Validate the grouped tibble.
     dplyr::validate_grouped_df(df)
   }
 
-  # Rowwise
+  # Restore rowwise metadata.
   if (is_rowwise_spatvector(x)) {
-    # Add class
+    # Add the rowwise class.
     class(df) <- c("rowwise_df", class(df))
     attr(df, "groups") <- attr(x, "groups")
   }
 
   df <- check_regroups(df)
 
-  # Set attributes if present
+  # Store the CRS when it is available.
   if (!is.na(pull_crs(x))) {
     attr(df, "crs") <- pull_crs(x)
   }
@@ -169,7 +168,7 @@ as_tibble.SpatVector <- function(
 as_tbl_internal <- function(x) {
   if (!inherits(x, c("SpatRaster", "SpatVector"))) {
     cli::cli_abort(
-      "{.arg x} is not of {.cls SpatRaster} or {.cls SpatVector} object"
+      "{.arg x} must be a {.cls SpatRaster} or {.cls SpatVector} object."
     )
   }
 
@@ -180,9 +179,9 @@ as_tbl_internal <- function(x) {
   }
 }
 
-#' Strict internal version, returns a tibble with required attributes to
-#' rebuild a `SpatRaster`
-#' This is the underlying object that would be handled by the tidyverse
+#' Strict internal version that stores `SpatRaster` reconstruction metadata.
+#'
+#' This is the tibble representation handled by tidyterra methods.
 #' @noRd
 as_tbl_spat_attr <- function(x) {
   x <- make_safe_names(x)
@@ -190,27 +189,26 @@ as_tbl_spat_attr <- function(x) {
   todf <- data.table::as.data.table(x, xy = TRUE, na.rm = FALSE)
   todf[is.na(todf)] <- NA
 
-  # Set attributes
+  # Store the class marker used by `as_spat_internal()`.
   attr(todf, "source") <- "SpatRaster"
 
+  # Store spatial metadata required to rebuild the raster.
   attr(todf, "crs") <- terra::crs(x)
-  # Extent
   attr(todf, "ext") <- c(
     terra::xmin(x),
     terra::xmax(x),
     terra::ymin(x),
     terra::ymax(x)
   )
-  # Dimensions
   attr(todf, "dims") <- as.double(dim(x))
   attr(todf, "res") <- as.double(terra::res(x))
 
   todf
 }
 
-#' Strict internal version, returns a tibble with required attributes to
-#' rebuild a `SpatVector`
-#' This is the underlying object that would be handled by the tidyverse
+#' Strict internal version that stores `SpatVector` reconstruction metadata.
+#'
+#' This is the tibble representation handled by tidyterra methods.
 #' @noRd
 as_tbl_vector_internal <- function(x) {
   x <- make_safe_names(x, geom = "WKT")
@@ -219,26 +217,26 @@ as_tbl_vector_internal <- function(x) {
   todf[is.na(todf)] <- NA
   todf <- tibble::as_tibble(todf)
 
-  # Grouped
+  # Restore grouped data frame metadata.
   if (is_grouped_spatvector(x)) {
-    # Add class
+    # Add the grouped class.
     class(todf) <- c("grouped_df", class(todf))
     attr(todf, "groups") <- attr(x, "groups")
 
-    # Validate
+    # Validate the grouped tibble.
     dplyr::validate_grouped_df(todf)
   }
 
-  # Rowwise
+  # Restore rowwise metadata.
   if (is_rowwise_spatvector(x)) {
-    # Add class
+    # Add the rowwise class.
     class(todf) <- c("rowwise_df", class(todf))
     attr(todf, "groups") <- attr(x, "groups")
   }
 
   todf <- check_regroups(todf)
 
-  # Set attributes
+  # Store spatial metadata required to rebuild the vector.
   attr(todf, "source") <- "SpatVector"
   attr(todf, "crs") <- terra::crs(x)
   attr(todf, "geomtype") <- terra::geomtype(x)
@@ -246,7 +244,7 @@ as_tbl_vector_internal <- function(x) {
   todf
 }
 
-# Protect reserved names on coercion
+# Protect reserved names during coercion.
 make_safe_names <- function(x, geom = NULL, messages = TRUE) {
   init_names <- names(x)
 
@@ -271,28 +269,28 @@ make_safe_names <- function(x, geom = NULL, messages = TRUE) {
     cli::cli_alert_info(
       paste(
         for_message,
-        "with duplicated/reserved names detected.",
+        "with duplicated or reserved names detected.",
         "See {.strong About layer/column names} section on",
         "{.fun tidyterra::as_tibble.SpatRaster}"
       ),
       wrap = TRUE
     )
-    cli::cli_alert_warning("Renaming columns:")
+    cli::cli_alert_warning("Renaming columns and layers:")
   }
   if (geom == "XY") {
     names_with_coords <- c("x", "y", init_names)
-    # Make new names
+    # Generate repaired names.
     newnames <- make.names(names_with_coords, unique = TRUE)
 
     newnames <- newnames[-c(1, 2)]
   } else {
     names_with_coords <- c("geometry", init_names)
-    # Make new names
+    # Generate repaired names.
     newnames <- make.names(names_with_coords, unique = TRUE)
 
     newnames <- newnames[-1]
   }
-  # Make new names
+  # Report renamed columns or layers.
   if (messages) {
     names_changed <- !newnames == init_names
 
@@ -313,10 +311,10 @@ make_safe_names <- function(x, geom = NULL, messages = TRUE) {
 #' @export
 tibble::as_tibble
 
-
-#' Validate construction of groups. This is needed since that mixing terra
-#' syntax with tidy syntax can modify group data (i.e. remove columns, change
-#' number of rows) that won't be captured by tidyterra
+#' Validate grouped output after reconstruction.
+#' Mixing \CRANpkg{terra} syntax with tidy syntax can modify grouped data, for
+#' example by removing columns or changing the number of rows, in ways that
+#' \CRANpkg{tidyterra} cannot track automatically.
 #'
 #' @noRd
 check_regroups <- function(x) {
@@ -328,10 +326,10 @@ check_regroups <- function(x) {
 
     if (isFALSE(any_var)) {
       cli::cli_alert_warning(paste(
-        "{.fun tidyterra::group_vars.SpatVector} missing on data.",
-        " Have you mixed {.pkg terra} and {.pkg tidyterra} syntax?"
+        "Grouping variables are missing from data.",
+        "Have you mixed {.pkg terra} and {.pkg tidyterra} syntax?"
       ))
-      cli::cli_bullets(c(i = "Ungrouping data"))
+      cli::cli_bullets(c(i = "Ungrouping data."))
       return(dplyr::ungroup(x))
     }
 
@@ -342,7 +340,7 @@ check_regroups <- function(x) {
       return(dplyr::group_by(ung, across_all_of(regroup_vars)))
     }
 
-    # Check rows have been kept
+    # Check that rows have been kept.
     dif_rows <- all(sum(group_size(x)) == nrow(x))
 
     if (isFALSE(dif_rows)) {
@@ -357,10 +355,10 @@ check_regroups <- function(x) {
   if (is_rowwise_df(x)) {
     gvars <- dplyr::group_vars(x)
 
-    # Does not need return vars in rowwise
+    # Rowwise data does not need grouping variables here.
 
     if (identical(gvars, character(0))) {
-      # Check rows have been kept
+      # Check that rows have been kept.
       dif_rows <- all(sum(group_size(x)) == nrow(x))
 
       if (isFALSE(dif_rows)) {
@@ -377,10 +375,10 @@ check_regroups <- function(x) {
 
     if (isFALSE(any_var)) {
       cli::cli_alert_warning(paste(
-        "{.fun tidyterra::group_vars.SpatVector} missing on data.",
-        " Have you mixed {.pkg terra} and {.pkg tidyterra} syntax?"
+        "Grouping variables are missing from data.",
+        "Have you mixed {.pkg terra} and {.pkg tidyterra} syntax?"
       ))
-      cli::cli_bullets(c(i = "Ungrouping data"))
+      cli::cli_bullets(c(i = "Ungrouping data."))
       return(dplyr::ungroup(x))
     }
 
@@ -391,7 +389,7 @@ check_regroups <- function(x) {
       return(dplyr::rowwise(ung, dplyr::all_of(regroup_vars)))
     }
 
-    # Check rows have been kept
+    # Check that rows have been kept.
     dif_rows <- all(sum(group_size(x)) == nrow(x))
 
     if (isFALSE(dif_rows)) {

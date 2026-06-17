@@ -2,21 +2,22 @@
 #'
 #' @description
 #'
-#' [as_sf()] turns a `SpatVector` to [`sf`][sf::st_sf] object. This is a wrapper
-#' of [sf::st_as_sf()] with the particularity that the groups created with
-#' [group_by.SpatVector()] are preserved.
-#'
-#' @return
-#' A [`sf`][sf::st_sf] object object with an additional `tbl_df` class, for
-#' pretty printing method.
+#' [as_sf()] coerces a `SpatVector` into an [`sf`][sf::st_sf] object. It wraps
+#' [sf::st_as_sf()] and preserves groups created with
+#' [group_by.SpatVector()].
 #'
 #' @export
-#'
-#' @param x A `SpatVector`.
-#'
-#' @param ... additional arguments passed on to [sf::st_as_sf()].
+#' @encoding UTF-8
 #'
 #' @family coerce
+#'
+#' @param x A `SpatVector` created with [terra::vect()].
+#'
+#' @param ... Additional arguments passed on to [sf::st_as_sf()].
+#'
+#' @returns
+#' A [`sf`][sf::st_sf] object with an additional `tbl_df` class for
+#' pretty printing.
 #'
 #' @examples
 #'
@@ -56,13 +57,15 @@
 #'
 as_sf <- function(x, ...) {
   if (!inherits(x, "SpatVector")) {
-    cli::cli_abort("{.arg x} is a {.cls {class(x)}} not a {.cls SpatVector}")
+    cli::cli_abort(
+      "{.arg x} must be a {.cls SpatVector}, not {.cls {class(x)}}."
+    )
   }
   sfobj <- sf::st_as_sf(x, ...)
 
-  # Make a sf/tibble object
+  # Make an sf/tibble object.
   # https://github.com/r-spatial/sf/issues/951
-  # But boosting performance
+  # This boosts performance
   template <- sf::st_as_sf(tibble::tibble(x = 1, y = 1), coords = c("x", "y"))
   class(sfobj) <- class(template)
 

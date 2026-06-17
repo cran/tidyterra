@@ -5,12 +5,13 @@
 #' values of selected columns.
 #'
 #' @export
+#' @encoding UTF-8
 #' @rdname arrange.SpatVector
 #' @name arrange.SpatVector
 #'
 #' @seealso [dplyr::arrange()]
 #'
-#' @family single table verbs
+#' @family dplyr.single_table
 #' @family dplyr.rows
 #' @family dplyr.methods
 #'
@@ -18,10 +19,10 @@
 #'
 #' @inheritParams dplyr::arrange
 #' @param .data A `SpatVector` created with [terra::vect()].
-#' @param .by_group If `TRUE`, will sort first by grouping variable. Applies to
-#'   grouped `SpatVector` only.
+#' @param .by_group If `TRUE`, sort first by grouping variable. This applies to
+#'   grouped `SpatVector` objects only.
 #'
-#' @return A `SpatVector` object.
+#' @returns A `SpatVector` object.
 #'
 #' @section \CRANpkg{terra} equivalent:
 #'
@@ -46,7 +47,7 @@
 #'
 #' # Two variables
 #' v |>
-#'   mutate(even = as.double(cpro) %% 2 == 0, ) |>
+#'   mutate(even = as.double(cpro) %% 2 == 0) |>
 #'   arrange(desc(even), desc(iso2))
 #'
 #' # With new variables

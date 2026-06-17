@@ -2,17 +2,14 @@
 #'
 #' @description
 #'
-#' Probably you already know the [volcano] dataset. This dataset provides
-#' updated information of Maungawhau (Mt. Eden) from
+#' You may already know the [volcano] dataset. This dataset provides updated
+#' information for Maungawhau (Mt. Eden) from
 #' [Toitu Te Whenua Land Information New Zealand](https://data.linz.govt.nz/),
-#' the Government's agency that provides free online access to New Zealand’s
+#' the government agency that provides free online access to New Zealand's
 #' most up-to-date land and seabed data.
 #'
 #' @docType data
 #'
-#' @family datasets
-#'
-#' @name volcano2
 #' @format
 #' A matrix of `r dim(volcano2)[1]` rows and `r dim(volcano2)[2]` columns. Each
 #' value is the corresponding altitude in meters.
@@ -23,21 +20,25 @@
 #' (2013)](https://data.linz.govt.nz/layer/53405-auckland-lidar-1m-dem-2013/).
 #'
 #' DEM for LiDAR data from the Auckland region captured in 2013. The original
-#' data has been downsampled to a resolution of 5m due to disk space constrains.
+#' data has been downsampled to a resolution of 5 m due to disk space
+#' constraints.
 #'
-#' Data License: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+#' Data license: [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
 #'
+#' @name volcano2
 #' @seealso [volcano]
+#'
+#' @family datasets
 #'
 #' @note
 #' Information needed for regenerating the original `SpatRaster` file:
-#' * resolution: `c(5, 5)`
-#' * extent: `1756969, 1757579, 5917003, 5917873`  (xmin, xmax, ymin, ymax)
-#' * coord. ref. : NZGD2000 / New Zealand Transverse Mercator 2000
-#'   (`EPSG:2193`)
+#' - resolution: `c(5, 5)`
+#' - extent: `1756969, 1757579, 5917003, 5917873` (xmin, xmax, ymin, ymax)
+#' - Coordinate reference system: NZGD2000 / New Zealand Transverse Mercator
+#'   2000 (`EPSG:2193`)
 #'
 #' @examples
-#'
+#' \donttest{
 #' data("volcano2")
 #' filled.contour(volcano2, color.palette = hypso.colors, asp = 1)
 #' title(main = "volcano2 data: filled contour map")
@@ -60,38 +61,39 @@
 #'     subtitle = "Georeferenced",
 #'     fill = "Elevation (m)"
 #'   )
+#' }
 NULL
 
 #' Hypsometric palettes database
 #'
 #' @description
 #' A [tibble][tibble::tbl_df] including the color map of
-#' `r length(unique(hypsometric_tints_db$pal))` gradient palettes. All the
-#' palettes includes also a definition of colors limits in terms of elevation
-#' (meters), that can be used with [ggplot2::scale_fill_gradientn()].
+#' `r length(unique(hypsometric_tints_db$pal))` gradient palettes. Each palette
+#' also includes a definition of color limits in terms of elevation (meters)
+#' that can be used with [ggplot2::scale_fill_gradientn()].
 #'
 #' @docType data
 #'
-#' @family datasets
-#'
-#' @name hypsometric_tints_db
 #' @format
 #' A [tibble][tibble::tbl_df] of `r nrow(hypsometric_tints_db)` rows and
-#' `r ncol(hypsometric_tints_db)` columns. with the following fields:
+#' `r ncol(hypsometric_tints_db)` columns with the following fields:
 #'
 #' \describe{
-#'   \item{pal}{ Name of the palette.}
+#'   \item{pal}{Name of the palette.}
 #'   \item{limit}{Recommended elevation limit (in meters) for each color.}
 #'   \item{r}{Value of the red channel (RGB color mode).}
 #'   \item{g}{Value of the green channel (RGB color mode).}
 #'   \item{b}{Value of the blue channel (RGB color mode).}
-#'   \item{hex}{ Hex code of the color.}
+#'   \item{hex}{Hex code of the color.}
 #' }
 #'
 #' @source
-#' cpt-city: <http://seaviewsensing.com/pub/cpt-city/>.
+#' cpt-city: <https://phillips.shef.ac.uk/pub/cpt-city/>.
 #'
+#' @name hypsometric_tints_db
 #' @seealso [scale_fill_hypso_c()]
+#'
+#' @family datasets
 #'
 #' @examples
 #' \donttest{
@@ -130,34 +132,8 @@ NULL
 #' @description
 #' A [tibble][tibble::tbl_df] including the color map of
 #' `r length(unique(cross_blended_hypsometric_tints_db$pal))` gradient palettes.
-#' All the palettes includes also a definition of colors limits in terms of
-#' elevation (meters), that can be used with [ggplot2::scale_fill_gradientn()].
-#'
-#' @docType data
-#'
-#' @family datasets
-#'
-#' @name cross_blended_hypsometric_tints_db
-#' @format
-#' A tibble of `r nrow(cross_blended_hypsometric_tints_db)` rows and
-#' `r ncol(cross_blended_hypsometric_tints_db)` columns. with the following
-#' fields:
-#'
-#' \describe{
-#'   \item{pal}{ Name of the palette.}
-#'   \item{limit}{Recommended elevation limit (in meters) for each color.}
-#'   \item{r}{Value of the red channel (RGB color mode).}
-#'   \item{g}{Value of the green channel (RGB color mode).}
-#'   \item{b}{Value of the blue channel (RGB color mode).}
-#'   \item{hex}{ Hex code of the color.}
-#' }
-#'
-#' @source
-#'
-#' Derived from:
-#' * Patterson, T., & Jenny, B. (2011). The Development and Rationale of
-#'   Cross-blended Hypsometric Tints. *Cartographic Perspectives,* (69),
-#'   31 - 46. \doi{10.14714/CP69.20}.
+#' All palettes also include a definition of color limits in terms of elevation
+#' (meters) that can be used with [ggplot2::scale_fill_gradientn()].
 #'
 #' @details
 #' From Patterson & Jenny (2011):
@@ -170,7 +146,34 @@ NULL
 #'     differing natural environments of world regions, which merge into
 #'     one another.*
 #'
+#' @docType data
+#'
+#' @format
+#' A tibble of `r nrow(cross_blended_hypsometric_tints_db)` rows and
+#' `r ncol(cross_blended_hypsometric_tints_db)` columns with the following
+#' fields:
+#'
+#' \describe{
+#'   \item{pal}{Name of the palette.}
+#'   \item{limit}{Recommended elevation limit (in meters) for each color.}
+#'   \item{r}{Value of the red channel (RGB color mode).}
+#'   \item{g}{Value of the green channel (RGB color mode).}
+#'   \item{b}{Value of the blue channel (RGB color mode).}
+#'   \item{hex}{Hex code of the color.}
+#' }
+#'
+#' @source
+#'
+#' Derived from:
+#'
+#' - Patterson, T., & Jenny, B. (2011). The Development and Rationale of
+#'   Cross-blended Hypsometric Tints. *Cartographic Perspectives,* (69), 31-46.
+#'   \doi{10.14714/CP69.20}.
+#'
+#' @name cross_blended_hypsometric_tints_db
 #' @seealso [scale_fill_cross_blended_c()]
+#'
+#' @family datasets
 #'
 #' @examples
 #' \donttest{
@@ -210,42 +213,9 @@ NULL
 #'
 #' @description
 #' A [tibble][tibble::tbl_df] including the color map of
-#' `r length(unique(grass_db$pal))` gradient palettes. Some palettes includes
-#' also a definition of colors limits that can be used with
+#' `r length(unique(grass_db$pal))` gradient palettes. Some palettes also
+#' include a definition of color limits that can be used with
 #' [ggplot2::scale_fill_gradientn()].
-#'
-#' @docType data
-#'
-#' @family datasets
-#'
-#' @name grass_db
-#' @format
-#' A tibble of `r nrow(grass_db)` rows and `r ncol(grass_db)` columns. with
-#' the following fields:
-#'
-#' \describe{
-#'   \item{pal}{ Name of the palette.}
-#'   \item{limit}{(Optional) limit for each color.}
-#'   \item{r}{Value of the red channel (RGB color mode).}
-#'   \item{g}{Value of the green channel (RGB color mode).}
-#'   \item{b}{Value of the blue channel (RGB color mode).}
-#'   \item{hex}{ Hex code of the color.}
-#' }
-#'
-#' @section \CRANpkg{terra} equivalent:
-#'
-#' [terra::map.pal()]
-#'
-#' @source
-#'
-#' Derived from <https://github.com/OSGeo/grass/tree/main/lib/gis/colors>. See
-#' also [r.color - GRASS GIS
-#' Manual](https://grass.osgeo.org/grass83/manuals/r.colors.html).
-#'
-#' @references
-#' GRASS Development Team (2024). *Geographic Resources Analysis Support System
-#' (GRASS) Software, Version 8.3.2*. Open Source Geospatial Foundation, USA.
-#' <https://grass.osgeo.org>.
 #'
 #' @details
 #' Summary of palettes provided, description and recommended use:
@@ -253,7 +223,31 @@ NULL
 #' ```{r child = "man/chunks/grassdec.Rmd"}
 #' ```
 #'
+#' @docType data
+#'
+#' @format
+#' A tibble of `r nrow(grass_db)` rows and `r ncol(grass_db)` columns with
+#' the following fields:
+#'
+#' \describe{
+#'   \item{pal}{Name of the palette.}
+#'   \item{limit}{(Optional) limit for each color.}
+#'   \item{r}{Value of the red channel (RGB color mode).}
+#'   \item{g}{Value of the green channel (RGB color mode).}
+#'   \item{b}{Value of the blue channel (RGB color mode).}
+#'   \item{hex}{Hex code of the color.}
+#' }
+#'
+#' @name grass_db
 #' @seealso [scale_fill_grass_c()]
+#'
+#' @family datasets
+#'
+#' @inherit scale_grass source references
+#'
+#' @section \CRANpkg{terra} equivalent:
+#'
+#' [terra::map.pal()]
 #'
 #' @examples
 #' \donttest{
@@ -296,25 +290,25 @@ NULL
 #'
 #' @docType data
 #'
-#' @family datasets
-#'
-#' @name princess_db
 #' @format
 #' A [tibble][tibble::tbl_df] of `r nrow(princess_db)` rows and
-#' `r ncol(princess_db)` columns. with the following fields:
+#' `r ncol(princess_db)` columns with the following fields:
 #'
 #' \describe{
-#'   \item{pal}{ Name of the palette.}
+#'   \item{pal}{Name of the palette.}
 #'   \item{r}{Value of the red channel (RGB color mode).}
 #'   \item{g}{Value of the green channel (RGB color mode).}
 #'   \item{b}{Value of the blue channel (RGB color mode).}
-#'   \item{hex}{ Hex code of the color.}
+#'   \item{hex}{Hex code of the color.}
 #' }
 #'
 #' @source
 #' <https://leahsmyth.github.io/Princess-Colour-Schemes/index.html>.
 #'
+#' @name princess_db
 #' @seealso [scale_fill_princess_c()]
+#'
+#' @family datasets
 #'
 #' @examples
 #' \donttest{
