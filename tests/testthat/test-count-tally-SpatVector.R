@@ -73,6 +73,14 @@ test_that("name must be string", {
   expect_snapshot(error = TRUE, count(df1, x, name = letters))
 })
 
+test_that("count validates .dissolve", {
+  skip_on_cran()
+
+  df <- terra::vect(tibble(lat = 1, lon = 1), crs = "EPSG:4326")
+
+  expect_snapshot(count(df, .dissolve = "yes"), error = TRUE)
+})
+
 test_that(".drop argument deprecated", {
   skip_on_cran()
 
@@ -154,7 +162,7 @@ test_that("tally can sort output", {
   expect_s4_class(gf, "SpatVector")
   expect_identical(group_vars(gf), "x")
   out <- tally(gf, sort = TRUE)
-  expect_true(all(as_tibble(out) == data.frame(x = c(2, 1), n = c(3, 2))))
+  expect_equal(as_tibble(out), tibble(x = c(2, 1), n = c(3, 2)))
 })
 
 test_that("weighted tally drops NAs", {

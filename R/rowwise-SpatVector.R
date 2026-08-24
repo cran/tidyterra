@@ -15,21 +15,19 @@
 #'
 #' See **Details** on [dplyr::rowwise()].
 #'
-#' @export
-#' @encoding UTF-8
 #' @rdname rowwise.SpatVector
 #' @name rowwise.SpatVector
 #'
-#' @seealso [dplyr::rowwise()]
+#' @seealso [dplyr::rowwise()].
 #'
 #' @family dplyr.groups
-#' @family dplyr.methods
 #'
 #' @importFrom dplyr rowwise
+#' @inheritSection group_by.SpatVector Grouping metadata
 #' @param data A `SpatVector` object. See **Methods**.
 #' @param ... <[`tidy-select`][dplyr::dplyr_tidy_select]> Variables to be
-#'   preserved when calling [summarise.SpatVector()]. This is typically a set of
-#'   variables whose combination uniquely identifies each row. See
+#'   preserved when calling [summarise.SpatVector()]. This is typically a set
+#'   of variables whose combination uniquely identifies each row. See
 #'   [dplyr::rowwise()].
 #'
 #'   Unlike [group_by.SpatVector()], you cannot create new variables here.
@@ -40,20 +38,11 @@
 #'
 #' @section Methods:
 #'
-#' Implementation of the **generic** [dplyr::rowwise()] function for
+#' Implementation of the **generic** [dplyr::rowwise()] method for
 #' `SpatVector` objects.
 #'
-#' **When mixing** \CRANpkg{terra} **and** \CRANpkg{dplyr} **syntax** on a
-#' row-wise `SpatVector`, for example subsetting a `SpatVector` like
-#' `v[1:3,1:2]`, the `groups` attribute can be corrupted.
-#' \CRANpkg{tidyterra} tries to
-#' regenerate the `SpatVector`. This is triggered the next time you use a
-#' \CRANpkg{dplyr} verb on your `SpatVector`.
-#'
-#' Some operations, such as `terra::spatSample()`, create a new `SpatVector`.
-#' In these cases, the result does not preserve the `groups` attribute. Use
-#' [rowwise.SpatVector()] to re-group.
-#'
+#' @encoding UTF-8
+#' @export
 #' @examples
 #' library(terra)
 #' library(dplyr)
@@ -65,7 +54,7 @@
 #'   select(starts_with("NWBIR")) |>
 #'   glimpse()
 #'
-#' # Compute the mean of NWBIR on each geometry
+#' # Compute the mean of NWBIR for each geometry.
 #' nb |>
 #'   rowwise() |>
 #'   mutate(nb_mean = mean(c(NWBIR74, NWBIR79)))
@@ -99,7 +88,7 @@
 #'   autoplot(aes(fill = as.factor(id2)))
 #' }
 rowwise.SpatVector <- function(data, ...) {
-  # Use own method
+  # Use the package method.
   x <- data
 
   data <- as_tibble(data)

@@ -28,7 +28,7 @@
 \item{x}{A \code{SpatRaster} created with \code{\link[terra:rast]{terra::rast()}} or a \code{SpatVector}
 created with \code{\link[terra:vect]{terra::vect()}}.}
 
-\item{...}{Arguments passed on to \code{\link[terra:as.data.frame]{terra::as.data.frame()}}.}
+\item{...}{Arguments passed to \code{\link[terra:as.data.frame]{terra::as.data.frame()}}.}
 
 \item{xy}{logical. If \code{TRUE}, the coordinates of each raster cell are included}
 
@@ -63,13 +63,14 @@ A \link[tibble:tbl_df]{tibble}.
 \section{\CRANpkg{terra} equivalent}{
 
 
-\code{\link[terra:as.data.frame]{terra::as.data.frame()}}
+\code{\link[terra:as.data.frame]{terra::as.data.frame()}}.
 }
 
 \section{Methods}{
 
 
-Implementation of the \strong{generic} \code{\link[tibble:as_tibble]{tibble::as_tibble()}} method.
+Implementation of the \strong{generic} \code{\link[tibble:as_tibble]{tibble::as_tibble()}} methods for \verb{Spat*}
+objects.
 \subsection{\code{SpatRaster} and \code{SpatVector}}{
 
 The returned tibble includes the CRS of the original object as an attribute
@@ -77,7 +78,7 @@ in WKT format (see \code{\link[=pull_crs]{pull_crs()}}).
 }
 }
 
-\section{About layer/column names}{
+\section{Layer and column names}{
 
 
 When coercing \code{SpatRaster} objects to data frames, \code{x} and \code{y} are reserved
@@ -124,7 +125,7 @@ as_tibble(v)
 
 }
 \seealso{
-\code{\link[tibble:as_tibble]{tibble::as_tibble()}}, \code{\link[terra:as.data.frame]{terra::as.data.frame()}}
+\code{\link[tibble:as_tibble]{tibble::as_tibble()}}, \code{\link[terra:as.data.frame]{terra::as.data.frame()}}.
 
 Coercing objects:
 \code{\link[=as_coordinates]{as_coordinates()}},

@@ -1,18 +1,17 @@
 #' Nest join `SpatVector` objects
 #'
 #' @description
+#' `r lifecycle::badge("experimental")`
+#'
 #' `nest_join()` returns a tibble with the attributes and geometry of `x`, plus
 #' a list-column containing matching rows from `y`.
 #'
-#' @export
-#' @encoding UTF-8
 #' @rdname nest_join.SpatVector
 #' @name nest_join.SpatVector
 #'
-#' @seealso [dplyr::nest_join()]
+#' @seealso [dplyr::nest_join()].
 #'
 #' @family dplyr.pairs
-#' @family dplyr.methods
 #'
 #' @importFrom dplyr nest_join
 #'
@@ -25,13 +24,14 @@
 #'
 #' @section Methods:
 #'
-#' Implementation of the **generic** [dplyr::nest_join()] method.
-#'
-#' ## `SpatVector`
+#' Implementation of the **generic** [dplyr::nest_join()] method for
+#' `SpatVector` objects.
 #'
 #' The output is a tibble with the attributes and WKT geometry of `x`, plus a
 #' list-column with matching rows from `y`.
 #'
+#' @encoding UTF-8
+#' @export
 #' @examples
 #' v <- terra::vect(system.file("extdata/cyl.gpkg", package = "tidyterra"))
 #' extra <- tibble::tibble(cpro = c("05", "09"), value = c(1, 2))
@@ -49,7 +49,7 @@ nest_join.SpatVector <- function(
 ) {
   error_spat_join(y)
 
-  if (is.null(name)) {
+  if (is_null(name)) {
     name <- "data"
   }
 

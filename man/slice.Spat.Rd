@@ -109,7 +109,6 @@ created with \code{\link[terra:vect]{terra::vect()}}.}
 
 \item{...}{<\code{\link[rlang:args_data_masking]{data-masking}}> Integer row values.
 Provide either positive values to keep or negative values to drop.
-
 The values provided must be either all positive or all negative. Indices
 beyond the number of rows in the input are silently ignored. See
 \strong{Methods}.}
@@ -142,8 +141,8 @@ them in a data frame or tibble.}
 may return more rows than you request. Use \code{FALSE} to ignore ties,
 and return the first \code{n} rows.}
 
-\item{na.rm}{Logical. If \code{TRUE}, remove cells with \code{NA} values when computing
-\code{slice_min()/slice_max()}. The default is \code{TRUE}.}
+\item{na.rm}{Logical. If \code{TRUE}, remove cells with \code{NA} values when
+computing \code{slice_min()/slice_max()}. The default is \code{TRUE}.}
 
 \item{na_rm}{Should missing values in \code{order_by} be removed from the result?
 If \code{FALSE}, \code{NA} values are sorted to the end (like in \code{\link[dplyr:arrange]{arrange()}}), so
@@ -193,17 +192,18 @@ See \strong{Methods} for details.
 \section{\CRANpkg{terra} equivalent}{
 
 
-\code{\link[terra:subset]{terra::subset()}}, \code{\link[terra:spatSample]{terra::spatSample()}}
+\code{\link[terra:subset]{terra::subset()}} and \code{\link[terra:spatSample]{terra::spatSample()}}.
 }
 
 \section{Methods}{
 
 
-Implementation of the \strong{generic} \code{\link[dplyr:slice]{dplyr::slice()}} method.
+Implementation of the \strong{generic} \code{\link[dplyr:slice]{dplyr::slice()}} methods for \verb{Spat*}
+objects.
 \subsection{\code{SpatRaster}}{
 
 The result is a \code{SpatRaster} with the CRS and resolution of the input and
-where cell values of the selected cells/columns/rows are preserved.
+the values of the selected cells, columns or rows.
 
 Use \code{.keep_extent = TRUE} to preserve the extent of \code{.data} on the output.
 The non-selected cells have a value of \code{NA}.
@@ -254,14 +254,15 @@ r |>
   ) |>
   plot()
 
-# Group wise operation with SpatVectors--------------------------------------
+# Group-wise operation with SpatVector objects
 v <- terra::vect(system.file("ex/lux.shp", package = "terra"))
 
 \donttest{
 glimpse(v) |> autoplot(aes(fill = NAME_1))
 
 gv <- v |> group_by(NAME_1)
-# All slice helpers operate per group, silently truncating to the group size
+# All slice helpers operate per group, silently truncating to the group
+# size.
 gv |>
   slice_head(n = 1) |>
   glimpse() |>
@@ -284,44 +285,10 @@ gv |>
 \code{\link[dplyr:slice]{dplyr::slice()}}, \code{\link[terra:spatSample]{terra::spatSample()}}, \code{\link[=as_coordinates]{as_coordinates()}},
 \code{\link[=filter.SpatRaster]{filter.SpatRaster()}}.
 
-Other \CRANpkg{dplyr} single-table verbs:
-\code{\link[=arrange.SpatVector]{arrange.SpatVector()}},
-\code{\link{filter.Spat}},
-\code{\link{mutate.Spat}},
-\code{\link[=reframe.SpatVector]{reframe.SpatVector()}},
-\code{\link{rename.Spat}},
-\code{\link{select.Spat}},
-\code{\link[=summarise.SpatVector]{summarise.SpatVector()}}
-
 Other \CRANpkg{dplyr} verbs that operate on rows:
 \code{\link[=arrange.SpatVector]{arrange.SpatVector()}},
 \code{\link[=distinct.SpatVector]{distinct.SpatVector()}},
 \code{\link{filter.Spat}},
 \code{\link{rows.SpatVector}}
-
-Other \CRANpkg{dplyr} methods:
-\code{\link[=arrange.SpatVector]{arrange.SpatVector()}},
-\code{\link{bind_cols.SpatVector}},
-\code{\link{bind_rows.SpatVector}},
-\code{\link[=count.SpatVector]{count.SpatVector()}},
-\code{\link[=cross_join.SpatVector]{cross_join.SpatVector()}},
-\code{\link[=distinct.SpatVector]{distinct.SpatVector()}},
-\code{\link{filter-joins.SpatVector}},
-\code{\link{filter.Spat}},
-\code{\link{glimpse.Spat}},
-\code{\link[=group_by.SpatVector]{group_by.SpatVector()}},
-\code{\link{mutate-joins.SpatVector}},
-\code{\link{mutate.Spat}},
-\code{\link[=nest_join.SpatVector]{nest_join.SpatVector()}},
-\code{\link{pull.Spat}},
-\code{\link[=reframe.SpatVector]{reframe.SpatVector()}},
-\code{\link{relocate.Spat}},
-\code{\link{rename.Spat}},
-\code{\link{rows.SpatVector}},
-\code{\link[=rowwise.SpatVector]{rowwise.SpatVector()}},
-\code{\link{select.Spat}},
-\code{\link[=summarise.SpatVector]{summarise.SpatVector()}}
 }
-\concept{dplyr.methods}
 \concept{dplyr.rows}
-\concept{dplyr.single_table}

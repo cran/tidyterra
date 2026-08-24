@@ -4,34 +4,31 @@
 #' Bind any number of `SpatVector`, data frames and `sf` objects by column,
 #' making a wider result. This is similar to `do.call(cbind, data_frames)`.
 #'
-#' Where possible prefer using a [join][mutate-joins.SpatVector] to
+#' Where possible, prefer using a [join][mutate-joins.SpatVector] to
 #' combine `SpatVector` and data frame objects. `bind_spat_cols()`
-#' binds the rows in order in which they appear so it is easy to create
+#' binds rows in the order in which they appear, so it is easy to create
 #' meaningless results without realizing it.
 #'
-#' @export
-#' @encoding UTF-8
 #' @rdname bind_cols.SpatVector
 #' @name bind_cols.SpatVector
 #'
-#' @seealso [dplyr::bind_cols()]
+#' @seealso [dplyr::bind_cols()].
 #'
 #' @family dplyr.pairs
-#' @family dplyr.methods
 #'
 #' @inheritParams dplyr::bind_cols
 #'
 #' @param ... Objects to combine. The first argument must be a `SpatVector`.
 #'   Each subsequent argument can be a `SpatVector`, `sf` object or data frame.
-#'   Inputs are [recycled][vctrs::theory-faq-recycling] to the same length, then
-#'   matched by position.
+#'   Inputs are [recycled][vctrs::theory-faq-recycling] to the same length,
+#'   then matched by position.
 #'
 #' @returns A `SpatVector` with the corresponding columns. The geometry and CRS
-#' correspond to the first `SpatVector` of `...`.
+#' correspond to the first `SpatVector` in `...`.
 #'
 #' @section \CRANpkg{terra} equivalent:
 #'
-#' `cbind()` method
+#' `cbind()` method.
 #'
 #' @section Methods:
 #'
@@ -39,6 +36,8 @@
 #' objects. For the second and subsequent arguments in `...`, the geometry is
 #' not `cbind`ed and only the data frame-like columns are kept.
 #'
+#' @encoding UTF-8
+#' @export
 #' @examples
 #' library(terra)
 #' sv <- vect(system.file("extdata/cyl.gpkg", package = "tidyterra"))
@@ -76,7 +75,7 @@ bind_spat_cols <- function(
   }
 
   # Support a single list of inputs.
-  if (length(dots) == 1 && is.list(dots[[1]])) {
+  if (length(dots) == 1 && is_list(dots[[1]])) {
     # Unlist the first level.
     dots <- dots[[1]]
   }

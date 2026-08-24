@@ -18,9 +18,10 @@ created with \code{\link[terra:vect]{terra::vect()}}.}
 \item{...}{<\code{\link[dplyr:dplyr_tidy_select]{tidy-select}}> layers/attributes to
 move.}
 
-\item{.before, .after}{<\code{\link[dplyr:dplyr_tidy_select]{tidy-select}}> Destination
-of layers/attributes selected by \code{...}. Supplying neither will move
-layers/attributes to the left-hand side. Specifying both is an error.}
+\item{.before, .after}{<\code{\link[dplyr:dplyr_tidy_select]{tidy-select}}>
+Destination of layers/attributes selected by \code{...}. Supplying neither
+will move layers/attributes to the left-hand side. Specifying both is an
+error.}
 }
 \value{
 A \verb{Spat*} object of the same class as \code{.data}. See \strong{Methods}.
@@ -33,21 +34,22 @@ layers/attributes at once.
 \section{\CRANpkg{terra} equivalent}{
 
 
-\code{terra::subset(data, c("name_layer", "name_other_layer"))}
+\code{terra::subset(data, c("name_layer", "name_other_layer"))}.
 }
 
 \section{Methods}{
 
 
-Implementation of the \strong{generic} \code{\link[dplyr:relocate]{dplyr::relocate()}} method.
+Implementation of the \strong{generic} \code{\link[dplyr:relocate]{dplyr::relocate()}} methods for \verb{Spat*}
+objects.
 \subsection{\code{SpatRaster}}{
 
-Relocate layers of a \code{SpatRaster}.
+Relocates layers of a \code{SpatRaster}.
 }
 
 \subsection{\code{SpatVector}}{
 
-The result is a \code{SpatVector} with the attributes on a different order.
+The result is a \code{SpatVector} with the attributes in a different order.
 }
 }
 
@@ -66,7 +68,7 @@ spatrast |>
 
 }
 \seealso{
-\code{\link[dplyr:relocate]{dplyr::relocate()}}
+\code{\link[dplyr:relocate]{dplyr::relocate()}}.
 
 Other \CRANpkg{dplyr} verbs that operate on columns:
 \code{\link{glimpse.Spat}},
@@ -74,29 +76,5 @@ Other \CRANpkg{dplyr} verbs that operate on columns:
 \code{\link{pull.Spat}},
 \code{\link{rename.Spat}},
 \code{\link{select.Spat}}
-
-Other \CRANpkg{dplyr} methods:
-\code{\link[=arrange.SpatVector]{arrange.SpatVector()}},
-\code{\link{bind_cols.SpatVector}},
-\code{\link{bind_rows.SpatVector}},
-\code{\link[=count.SpatVector]{count.SpatVector()}},
-\code{\link[=cross_join.SpatVector]{cross_join.SpatVector()}},
-\code{\link[=distinct.SpatVector]{distinct.SpatVector()}},
-\code{\link{filter-joins.SpatVector}},
-\code{\link{filter.Spat}},
-\code{\link{glimpse.Spat}},
-\code{\link[=group_by.SpatVector]{group_by.SpatVector()}},
-\code{\link{mutate-joins.SpatVector}},
-\code{\link{mutate.Spat}},
-\code{\link[=nest_join.SpatVector]{nest_join.SpatVector()}},
-\code{\link{pull.Spat}},
-\code{\link[=reframe.SpatVector]{reframe.SpatVector()}},
-\code{\link{rename.Spat}},
-\code{\link{rows.SpatVector}},
-\code{\link[=rowwise.SpatVector]{rowwise.SpatVector()}},
-\code{\link{select.Spat}},
-\code{\link{slice.Spat}},
-\code{\link[=summarise.SpatVector]{summarise.SpatVector()}}
 }
 \concept{dplyr.cols}
-\concept{dplyr.methods}

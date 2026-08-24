@@ -10,7 +10,7 @@ as_spatraster(x, ..., xycols = 1:2, crs = "", digits = 6)
 \arguments{
 \item{x}{A \link[tibble:tbl_df]{tibble} or data frame.}
 
-\item{...}{Additional arguments passed on to \code{\link[terra:rast]{terra::rast()}}.}
+\item{...}{Additional arguments passed to \code{\link[terra:rast]{terra::rast()}}.}
 
 \item{xycols}{A vector of integers of length 2 determining the position of
 the columns that hold the \code{x} and \code{y} coordinates.}
@@ -32,7 +32,7 @@ A \code{SpatRaster}.
 \code{data.frame}.
 }
 \details{
-If no \code{crs} is provided and the tibble has been created with the method
+If no \code{crs} is provided and the tibble was created with
 \code{\link[=as_tibble.SpatRaster]{as_tibble.SpatRaster()}}, the \code{crs} is inferred from
 \code{\link[=attr]{attr(x, "crs")}}.
 }
@@ -60,8 +60,9 @@ newrast
 
 }
 \seealso{
-\code{\link[=pull_crs]{pull_crs()}} for retrieving CRS and the corresponding utilities
-\code{\link[sf:st_crs]{sf::st_crs()}} and \code{\link[terra:crs]{terra::crs()}}.
+\code{\link[=is_regular_grid]{is_regular_grid()}} for checking whether coordinates form a regular grid.
+\code{\link[=pull_crs]{pull_crs()}} retrieves CRS information, as do \code{\link[sf:st_crs]{sf::st_crs()}} and
+\code{\link[terra:crs]{terra::crs()}}.
 
 Coercing objects:
 \code{\link[=as_coordinates]{as_coordinates()}},

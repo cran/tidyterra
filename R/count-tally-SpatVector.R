@@ -8,18 +8,15 @@
 #' `df |> summarise(n = n())`. Supply `wt` to perform weighted counts,
 #' switching the summary from `n = n()` to `n = sum(wt)`.
 #'
-#' `add_count()` is equivalent to `count()` but use [mutate()] instead of
+#' `add_count()` is equivalent to `count()` but uses [mutate()] instead of
 #' [summarise()] so that it adds a new column with group-wise counts.
 #'
-#' @export
-#' @encoding UTF-8
 #' @rdname count.SpatVector
 #' @name count.SpatVector
 #'
-#' @seealso [dplyr::count()], [dplyr::tally()]
+#' @seealso [dplyr::count()], [dplyr::tally()].
 #'
 #' @family dplyr.groups
-#' @family dplyr.methods
 #'
 #' @importFrom dplyr count
 #'
@@ -35,16 +32,18 @@
 #'
 #' @section \CRANpkg{terra} equivalent:
 #'
-#' [terra::aggregate()]
+#' [terra::aggregate()].
 #'
 #' @section Methods:
 #'
-#' Implementation of the **generic** [dplyr::count()] methods for `SpatVector`
-#' objects.
+#' Implementation of the **generic** [dplyr::count()] method family for
+#' `SpatVector` objects.
 #'
 #' [tally()] will always return a disaggregated geometry while [count()] can
 #' handle this. See also [summarise.SpatVector()].
 #'
+#' @encoding UTF-8
+#' @export
 #' @examples
 #' \donttest{
 #'
@@ -86,6 +85,8 @@ count.SpatVector <- function(
   .drop = deprecated(),
   .dissolve = TRUE
 ) {
+  check_bool(.dissolve)
+
   if (lifecycle::is_present(.drop)) {
     lifecycle::deprecate_warn(
       when = "1.1.0",
@@ -125,7 +126,7 @@ count.SpatVector <- function(
     vend <- cbind(vend[, 0], keepdf)
   }
 
-  # Ensure groups
+  # Restore groups.
   vend <- ungroup(vend)
 
   # Re-group based on the template
@@ -140,9 +141,9 @@ count.SpatVector <- function(
 #' @export
 dplyr::count
 
-#' @export
-#' @name count.SpatVector
+#' @rdname count.SpatVector
 #' @importFrom dplyr tally
+#' @export
 tally.SpatVector <- function(x, wt = NULL, sort = FALSE, name = NULL) {
   # Use terra method on ungrouped
   if (!is_grouped_spatvector(x)) {
@@ -193,10 +194,9 @@ tally.SpatVector <- function(x, wt = NULL, sort = FALSE, name = NULL) {
 #' @export
 dplyr::tally
 
-#' @export
-#' @encoding UTF-8
-#' @name count.SpatVector
+#' @rdname count.SpatVector
 #' @importFrom dplyr add_count
+#' @export
 add_count.SpatVector <- function(
   x,
   ...,
@@ -231,7 +231,7 @@ add_count.SpatVector <- function(
 
   # Prepare a template for groups
   template <- dplyr::add_count(as_tibble(x), ..., sort = sort, name = name)
-  # Ensure groups
+  # Restore groups.
   vend <- ungroup(vend)
 
   # Re-group based on the template

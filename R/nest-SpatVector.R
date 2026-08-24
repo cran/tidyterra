@@ -1,17 +1,15 @@
 #' Nest `SpatVector` rows
 #'
 #' @description
+#' `r lifecycle::badge("experimental")`
 #'
 #' `nest()` creates list-columns of `SpatVector` objects.
 #'
-#' @export
-#' @encoding UTF-8
 #' @rdname nest.SpatVector
 #'
-#' @seealso [tidyr::nest()], [terra::svc()]
+#' @seealso [tidyr::nest()], [terra::svc()].
 #'
 #' @family tidyr.nest
-#' @family tidyr.methods
 #'
 #' @importFrom tidyr nest
 #'
@@ -26,14 +24,15 @@
 #'
 #' @section Methods:
 #'
-#' Implementation of the **generic** [tidyr::nest()] method.
-#'
-#' ## `SpatVector`
+#' Implementation of the **generic** [tidyr::nest()] method for `SpatVector`
+#' objects.
 #'
 #' The geometry column must be nested with the other attributes that form each
 #' nested `SpatVector`. These nested list-columns contain `SpatVector` objects
 #' and cannot be passed directly to [tidyr::unnest()].
 #'
+#' @encoding UTF-8
+#' @export
 #' @examples
 #' v <- terra::vect(system.file("extdata/cyl.gpkg", package = "tidyterra"))
 #'

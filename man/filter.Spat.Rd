@@ -61,27 +61,27 @@ See \strong{Examples} and section \strong{About layer names} on \code{\link[=as_
 \section{Methods}{
 
 
-Implementation of the \strong{generic} \code{\link[dplyr:filter]{dplyr::filter()}} method.
+Implementation of the \strong{generic} \code{\link[dplyr:filter]{dplyr::filter()}} methods for \verb{Spat*}
+objects.
 \subsection{\code{SpatRaster}}{
 
-Cells that do not meet the conditions on \code{...} are returned with value
-\code{NA}. On a multi-layer \code{SpatRaster} the \code{NA} is propagated across all the
-layers.
+Cells that do not meet the conditions in \code{...} are returned as \code{NA}. On a
+multi-layer \code{SpatRaster}, \code{NA} is propagated across all layers.
 
-If \code{.keep_extent = TRUE} the returned \code{SpatRaster} has the same CRS, extent,
-resolution and number of cells as \code{.data}. If
-\code{.keep_extent = FALSE} the outer \code{NA} cells are trimmed with \code{\link[terra:trim]{terra::trim()}},
-so the extent and number of cells may differ. The output will still have
-the same CRS and resolution as \code{.data}.
+If \code{.keep_extent = TRUE}, the returned \code{SpatRaster} has the same CRS,
+extent, resolution and number of cells as \code{.data}. If
+\code{.keep_extent = FALSE}, the outer \code{NA} cells are trimmed with
+\code{\link[terra:trim]{terra::trim()}}, so the extent and number of cells may differ. The output
+still has the same CRS and resolution as \code{.data}.
 
-\code{x} and \code{y} variables, the longitude and latitude of the \code{SpatRaster},
-are also available internally for filtering. See \strong{Examples}.
+The \code{x} and \code{y} coordinates of the \code{SpatRaster} are also available
+internally for filtering. See \strong{Examples}.
 }
 
 \subsection{\code{SpatVector}}{
 
-The result is a \code{SpatVector} with all the geometries that produce a value of
-\code{TRUE} for all conditions.
+The result is a \code{SpatVector} containing the geometries whose attributes
+satisfy all conditions.
 }
 }
 
@@ -126,46 +126,12 @@ v |> filter(cpro < 10)
 v |> filter_out(cpro >= 10)
 }
 \seealso{
-\code{\link[dplyr:filter]{dplyr::filter()}}
-
-Other \CRANpkg{dplyr} single-table verbs:
-\code{\link[=arrange.SpatVector]{arrange.SpatVector()}},
-\code{\link{mutate.Spat}},
-\code{\link[=reframe.SpatVector]{reframe.SpatVector()}},
-\code{\link{rename.Spat}},
-\code{\link{select.Spat}},
-\code{\link{slice.Spat}},
-\code{\link[=summarise.SpatVector]{summarise.SpatVector()}}
+\code{\link[dplyr:filter]{dplyr::filter()}}.
 
 Other \CRANpkg{dplyr} verbs that operate on rows:
 \code{\link[=arrange.SpatVector]{arrange.SpatVector()}},
 \code{\link[=distinct.SpatVector]{distinct.SpatVector()}},
 \code{\link{rows.SpatVector}},
 \code{\link{slice.Spat}}
-
-Other \CRANpkg{dplyr} methods:
-\code{\link[=arrange.SpatVector]{arrange.SpatVector()}},
-\code{\link{bind_cols.SpatVector}},
-\code{\link{bind_rows.SpatVector}},
-\code{\link[=count.SpatVector]{count.SpatVector()}},
-\code{\link[=cross_join.SpatVector]{cross_join.SpatVector()}},
-\code{\link[=distinct.SpatVector]{distinct.SpatVector()}},
-\code{\link{filter-joins.SpatVector}},
-\code{\link{glimpse.Spat}},
-\code{\link[=group_by.SpatVector]{group_by.SpatVector()}},
-\code{\link{mutate-joins.SpatVector}},
-\code{\link{mutate.Spat}},
-\code{\link[=nest_join.SpatVector]{nest_join.SpatVector()}},
-\code{\link{pull.Spat}},
-\code{\link[=reframe.SpatVector]{reframe.SpatVector()}},
-\code{\link{relocate.Spat}},
-\code{\link{rename.Spat}},
-\code{\link{rows.SpatVector}},
-\code{\link[=rowwise.SpatVector]{rowwise.SpatVector()}},
-\code{\link{select.Spat}},
-\code{\link{slice.Spat}},
-\code{\link[=summarise.SpatVector]{summarise.SpatVector()}}
 }
-\concept{dplyr.methods}
 \concept{dplyr.rows}
-\concept{dplyr.single_table}

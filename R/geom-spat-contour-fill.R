@@ -1,8 +1,7 @@
-#' @export
-#' @encoding UTF-8
 #' @rdname geom_spat_contour
 #' @order 3
 #'
+#' @export
 geom_spatraster_contour_filled <- function(
   mapping = NULL,
   data,
@@ -17,6 +16,10 @@ geom_spatraster_contour_filled <- function(
   mask_projection = FALSE
 ) {
   check_spatraster(data, "geom_spatraster_contour_filled")
+  check_maxcell(maxcell)
+  check_bool(na.rm)
+  check_bool(inherit.aes)
+  check_bool(mask_projection)
 
   contour_data <- prepare_spatraster_contour_data(mapping, data, maxcell)
   mapping <- contour_data$mapping
@@ -48,7 +51,7 @@ geom_spatraster_contour_filled <- function(
   # If the `SpatRaster` has a CRS, add an empty `geom_sf()` to train scales.
   # This mimics using the first layer CRS as the base CRS for `coord_sf()`.
 
-  if (!is.na(crs_terra)) {
+  if (!is_na(crs_terra)) {
     layer_spatrast <- c(
       layer_spatrast,
       ggplot2::geom_sf(
@@ -68,9 +71,9 @@ GeomSpatRasterContourFilled <- ggplot2::ggproto(
   ggplot2::GeomPolygon,
   default_aes = aes(
     colour = NA,
-    fill = "grey90",
-    linewidth = 0.2,
-    linetype = 1,
+    fill = "#E5E5E5",
+    linewidth = from_theme(linewidth),
+    linetype = from_theme(linetype),
     alpha = NA,
     subgroup = NULL
   )

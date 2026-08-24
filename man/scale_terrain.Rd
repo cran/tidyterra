@@ -201,15 +201,16 @@ ggplot() +
 }
 }
 \seealso{
-\code{\link[terra:plot]{terra::plot()}}, \code{\link[ggplot2:scale_fill_viridis_c]{ggplot2::scale_fill_viridis_c()}} and \CRANpkg{ggplot2} docs
-on additional \code{...} arguments.
+\code{\link[terra:plot]{terra::plot()}}, \code{\link[ggplot2:scale_fill_viridis_c]{ggplot2::scale_fill_viridis_c()}} and \CRANpkg{ggplot2}
+documentation on additional \code{...} arguments.
 
 Other color scales, palettes and hypsometric tints:
-\code{\link[=scale_color_coltab]{scale_color_coltab()}},
+\code{\link{scale_coltab}},
 \code{\link{scale_cross_blended}},
 \code{\link{scale_grass}},
 \code{\link{scale_hypso}},
 \code{\link{scale_princess}},
-\code{\link{scale_whitebox}}
+\code{\link{scale_whitebox}},
+\code{\link{scale_wiki}}
 }
 \concept{gradients}

@@ -1,8 +1,8 @@
-#' Cross blended hypsometric tints scales
+#' Cross-blended hypsometric tint scales
 #'
 #' @description
 #'
-#' Implementation of the cross blended hypsometric gradients presented on
+#' Implementation of the cross-blended hypsometric gradients presented in
 #' \doi{10.14714/CP69.20}. The following fill scales and palettes are provided:
 #'
 #' - `scale_*_cross_blended_d()`: For discrete values.
@@ -41,13 +41,11 @@
 #' - Patterson, T. (2004). *Using Cross-blended Hypsometric Tints for
 #'   Generalized Environmental Mapping.* Online, Accessed June 10, 2022.
 #'
-#' @export
-#' @encoding UTF-8
-#'
 #' @name scale_cross_blended
 #'
-#' @seealso [cross_blended_hypsometric_tints_db], [terra::plot()],
-#' [terra::minmax()], [ggplot2::scale_fill_viridis_c()].
+#' @seealso
+#' [cross_blended_hypsometric_tints_db], [terra::plot()], [terra::minmax()],
+#' [ggplot2::scale_fill_viridis_c()].
 #'
 #' See also \CRANpkg{ggplot2} docs on additional `...` arguments.
 #'
@@ -88,6 +86,8 @@
 #' The corresponding \CRANpkg{ggplot2} layer with the values applied to the
 #' `fill/colour` aesthetics.
 #'
+#' @encoding UTF-8
+#' @export
 #' @examples
 #' \donttest{
 #' filepath <- system.file("extdata/volcano2.tif", package = "tidyterra")
@@ -185,9 +185,8 @@ scale_fill_cross_blended_d <- function(
     ...
   )
 }
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_cross_blended
+#' @export
 scale_colour_cross_blended_d <- function(
   palette = "cold_humid",
   ...,
@@ -211,9 +210,8 @@ scale_colour_cross_blended_d <- function(
   )
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_cross_blended
+#' @export
 scale_fill_cross_blended_c <- function(
   palette = "cold_humid",
   ...,
@@ -244,9 +242,8 @@ scale_fill_cross_blended_c <- function(
   )
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_cross_blended
+#' @export
 scale_colour_cross_blended_c <- function(
   palette = "cold_humid",
   ...,
@@ -276,9 +273,8 @@ scale_colour_cross_blended_c <- function(
     ...
   )
 }
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_cross_blended
+#' @export
 scale_fill_cross_blended_b <- function(
   palette = "cold_humid",
   ...,
@@ -308,9 +304,8 @@ scale_fill_cross_blended_b <- function(
     ...
   )
 }
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_cross_blended
+#' @export
 scale_colour_cross_blended_b <- function(
   palette = "cold_humid",
   ...,
@@ -341,11 +336,10 @@ scale_colour_cross_blended_b <- function(
   )
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_cross_blended
 #'
 #' @inheritParams wiki.colors
+#' @export
 #' @examples
 #' # Display all the cross-blended palettes
 #'
@@ -373,6 +367,8 @@ cross_blended.colors <- function(
   alpha = 1,
   rev = FALSE
 ) {
+  check_color_args(n, alpha, rev)
+
   if ((n <- as.integer(n[1L])) > 0) {
     paltab <- extract_pal(
       tidyterra::cross_blended_hypsometric_tints_db,
@@ -414,13 +410,12 @@ cross_blended.colors <- function(
 #' `oob = scales::oob_squish`, to avoid blank pixels in the plot.
 #'
 #' `cross_blended.colors2()` provides a gradient color palette where the
-#' distance between colors is different depending of the type of color.
+#' distance between colors differs depending on the type of color.
 #' In contrast, `cross_blended.colors()` provides a uniform gradient across
 #' colors. See **Examples**.
 #'
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_cross_blended
+#' @export
 scale_fill_cross_blended_tint_d <- function(
   palette = "cold_humid",
   ...,
@@ -444,9 +439,8 @@ scale_fill_cross_blended_tint_d <- function(
   )
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_cross_blended
+#' @export
 scale_colour_cross_blended_tint_d <- function(
   palette = "cold_humid",
   ...,
@@ -469,9 +463,8 @@ scale_colour_cross_blended_tint_d <- function(
     ...
   )
 }
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_cross_blended
+#' @export
 scale_fill_cross_blended_tint_c <- function(
   palette = "cold_humid",
   ...,
@@ -504,9 +497,8 @@ scale_fill_cross_blended_tint_c <- function(
   )
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_cross_blended
+#' @export
 scale_colour_cross_blended_tint_c <- function(
   palette = "cold_humid",
   ...,
@@ -539,9 +531,8 @@ scale_colour_cross_blended_tint_c <- function(
   )
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_cross_blended
+#' @export
 scale_fill_cross_blended_tint_b <- function(
   palette = "cold_humid",
   ...,
@@ -574,9 +565,8 @@ scale_fill_cross_blended_tint_b <- function(
   )
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_cross_blended
+#' @export
 scale_colour_cross_blended_tint_b <- function(
   palette = "cold_humid",
   ...,
@@ -609,11 +599,10 @@ scale_colour_cross_blended_tint_b <- function(
   )
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_cross_blended
+#' @export
 #' @examples
-#' # Display all the cross-blended palettes on version 2
+#' # Display all version 2 cross-blended palettes.
 #'
 #' pals <- unique(cross_blended_hypsometric_tints_db$pal)
 #'
@@ -639,6 +628,8 @@ cross_blended.colors2 <- function(
   alpha = 1,
   rev = FALSE
 ) {
+  check_color_args(n, alpha, rev)
+
   if ((n <- as.integer(n[1L])) > 0) {
     paltab <- extract_pal(
       tidyterra::cross_blended_hypsometric_tints_db,
@@ -680,38 +671,32 @@ cross_blended_pal2 <- function(alpha = 1, direction = 1, palette) {
   }
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_cross_blended
 #' @usage NULL
+#' @export
 scale_color_cross_blended_d <- scale_colour_cross_blended_d
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_cross_blended
 #' @usage NULL
+#' @export
 scale_color_cross_blended_tint_d <- scale_colour_cross_blended_tint_d
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_cross_blended
 #' @usage NULL
+#' @export
 scale_color_cross_blended_c <- scale_colour_cross_blended_c
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_cross_blended
 #' @usage NULL
+#' @export
 scale_color_cross_blended_tint_c <- scale_colour_cross_blended_tint_c
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_cross_blended
 #' @usage NULL
+#' @export
 scale_color_cross_blended_b <- scale_colour_cross_blended_b
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_cross_blended
 #' @usage NULL
+#' @export
 scale_color_cross_blended_tint_b <- scale_colour_cross_blended_tint_b

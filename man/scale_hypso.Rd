@@ -153,7 +153,7 @@ hypso.colors2(n, palette = "etopo1_hypso", alpha = 1, rev = FALSE)
 available palettes, ignoring upper vs. lower case. See
 \link{hypsometric_tints_db} for more information. The available values are
 listed below.
-\code{"arctic"}, \code{"arctic_bathy"}, \code{"arctic_hypso"}, \code{"c3t1"}, \code{"colombia"}, \code{"colombia_bathy"}, \code{"colombia_hypso"}, \code{"dem_poster"}, \code{"dem_print"}, \code{"dem_screen"}, \code{"etopo1"}, \code{"etopo1_bathy"}, \code{"etopo1_hypso"}, \code{"gmt_globe"}, \code{"gmt_globe_bathy"}, \code{"gmt_globe_hypso"}, \code{"meyers"}, \code{"meyers_bathy"}, \code{"meyers_hypso"}, \code{"moon"}, \code{"moon_bathy"}, \code{"moon_hypso"}, \code{"nordisk-familjebok"}, \code{"nordisk-familjebok_bathy"}, \code{"nordisk-familjebok_hypso"}, \code{"pakistan"}, \code{"spain"}, \code{"usgs-gswa2"}, \code{"utah_1"}, \code{"wiki-2.0"}, \code{"wiki-2.0_bathy"}, \code{"wiki-2.0_hypso"}, \code{"wiki-schwarzwald-cont"}.}
+\code{"arctic"}, \code{"arctic_bathy"}, \code{"arctic_hypso"}, \code{"c3t1"}, \code{"colombia"}, \code{"colombia_bathy"}, \code{"colombia_hypso"}, \code{"dem_poster"}, \code{"dem_print"}, \code{"dem_screen"}, \code{"etopo1"}, \code{"etopo1_bathy"}, \code{"etopo1_hypso"}, \code{"gmt_globe"}, \code{"gmt_globe_bathy"}, \code{"gmt_globe_hypso"}, \code{"meyers"}, \code{"meyers_bathy"}, \code{"meyers_hypso"}, \code{"moon"}, \code{"moon_bathy"}, \code{"moon_hypso"}, \code{"nordisk-familjebok"}, \code{"nordisk-familjebok_bathy"}, \code{"nordisk-familjebok_hypso"}, \code{"pakistan"}, \code{"spain"}, \code{"usgs-gswa2"}, \code{"utah_1"}, \code{"wiki-2.0"}, \code{"wiki-2.0_bathy"}, \code{"wiki-2.0_hypso"}, \code{"wiki-schwarzwald-cont"}, \code{"xkcd-painbow"}.}
 
 \item{...}{
   Arguments passed on to \code{\link[ggplot2:discrete_scale]{ggplot2::discrete_scale}}, \code{\link[ggplot2:continuous_scale]{ggplot2::continuous_scale}}, \code{\link[ggplot2:binned_scale]{ggplot2::binned_scale}}
@@ -321,7 +321,7 @@ the tint. You can combine this with \code{oob}, for example
 \code{oob = scales::oob_squish}, to avoid blank pixels in the plot.
 
 \code{hypso.colors2()} provides a gradient color palette where the distance
-between colors is different depending of the type of color. In contrast,
+between colors differs depending on the type of color. In contrast,
 \code{hypso.colors()} provides a uniform gradient across colors. See
 \strong{Examples}.
 }
@@ -416,7 +416,7 @@ for (i in pals) {
   )
 }
 par(opar)
-# Display all the cpt-city palettes on version 2
+# Display all version 2 cpt-city palettes.
 
 pals <- unique(hypsometric_tints_db$pal)
 
@@ -444,11 +444,12 @@ par(opar)
 See also \CRANpkg{ggplot2} docs on additional \code{...} arguments.
 
 Other color scales, palettes and hypsometric tints:
-\code{\link[=scale_color_coltab]{scale_color_coltab()}},
+\code{\link{scale_coltab}},
 \code{\link{scale_cross_blended}},
 \code{\link{scale_grass}},
 \code{\link{scale_princess}},
 \code{\link{scale_terrain}},
-\code{\link{scale_whitebox}}
+\code{\link{scale_whitebox}},
+\code{\link{scale_wiki}}
 }
 \concept{gradients}

@@ -40,8 +40,8 @@ geom_spatraster_rgb(
 \item{alpha}{The alpha transparency, a number in [0,1], see argument alpha in
 \code{\link[grDevices]{hsv}}.}
 
-\item{maxcell}{Positive integer. Maximum number of cells to use for
-the plot.}
+\item{maxcell}{Positive integer or \code{Inf}. Maximum number of raster cells to
+use. Use \code{Inf} to use all cells.}
 
 \item{max_col_value}{Number giving the upper bound of the color value range.
 When this is \code{255} (the default), the result is computed most efficiently.
@@ -98,7 +98,7 @@ The underlying implementation is based on \code{\link[ggplot2:geom_raster]{ggplo
 \section{\CRANpkg{terra} equivalent}{
 
 
-\code{\link[terra:plotRGB]{terra::plotRGB()}}
+\code{\link[terra:plotRGB]{terra::plotRGB()}}.
 }
 
 \section{Aesthetics}{
@@ -107,7 +107,7 @@ The underlying implementation is based on \code{\link[ggplot2:geom_raster]{ggplo
 No \code{aes()} is required. In fact, \code{aes()} will be ignored.
 }
 
-\section{Coords}{
+\section{Coordinates}{
 
 
 When the \code{SpatRaster} does not have a CRS, that is,

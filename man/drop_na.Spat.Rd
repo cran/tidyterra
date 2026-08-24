@@ -32,18 +32,19 @@ specified by \code{...} contains a missing value.
 \section{\CRANpkg{terra} equivalent}{
 
 
-\code{\link[terra:trim]{terra::trim()}}
+\code{\link[terra:trim]{terra::trim()}}.
 }
 
 \section{Methods}{
 
 
-Implementation of the \strong{generic} \code{\link[tidyr:drop_na]{tidyr::drop_na()}} method.
+Implementation of the \strong{generic} \code{\link[tidyr:drop_na]{tidyr::drop_na()}} methods for \verb{Spat*}
+objects.
 \subsection{\code{SpatVector}}{
 
-The implementation of this method is performed on a \code{by-attribute} basis,
-meaning that \code{NA} values are assessed on the attributes (columns) of each
-vector (rows). The result is a \code{SpatVector} with potentially fewer
+This method operates on attributes, meaning that \code{NA} values are assessed in
+the attributes (columns) of each geometry (row). The result is a
+\code{SpatVector} with potentially fewer
 geometries than the input.
 }
 
@@ -51,14 +52,12 @@ geometries than the input.
 
 \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#questioning}{\figure{lifecycle-questioning.svg}{options: alt='[Questioning]'}}}{\strong{[Questioning]}}
 
-The implementation of \verb{drop_na().SpatRaster} can be understood as a
-masking method based on the values of the layers (see
-\code{\link[terra:mask]{terra::mask()}}).
+The implementation of \code{\link[=drop_na.SpatRaster]{drop_na.SpatRaster()}} can be understood as a
+masking method based on the values of the layers (see \code{\link[terra:mask]{terra::mask()}}).
 
-\code{SpatRaster} layers are considered as columns and \code{SpatRaster} cells as rows,
-so rows (cells) with any \code{NA} value on any layer become \code{NA}. You can also
-mask the cells (rows) based on the values of specific
-layers (columns).
+\code{SpatRaster} layers are treated as columns and \code{SpatRaster} cells as
+rows, so rows (cells) with any \code{NA} value on any layer become \code{NA}. You can
+also mask the cells (rows) based on the values of specific layers (columns).
 
 \code{drop_na()} effectively removes outer cells that are \code{NA} (see
 \code{\link[terra:trim]{terra::trim()}}), so the extent of the resulting object may differ from the
@@ -131,24 +130,12 @@ r |>
 }
 }
 \seealso{
-\code{\link[tidyr:drop_na]{tidyr::drop_na()}}
+\code{\link[tidyr:drop_na]{tidyr::drop_na()}}.
 
 Other \CRANpkg{tidyr} verbs for handling missing values:
 \code{\link[=complete.SpatVector]{complete.SpatVector()}},
 \code{\link[=expand.SpatVector]{expand.SpatVector()}},
 \code{\link[=fill.SpatVector]{fill.SpatVector()}},
 \code{\link{replace_na.Spat}}
-
-Other \CRANpkg{tidyr} methods:
-\code{\link[=complete.SpatVector]{complete.SpatVector()}},
-\code{\link[=expand.SpatVector]{expand.SpatVector()}},
-\code{\link[=fill.SpatVector]{fill.SpatVector()}},
-\code{\link[=nest.SpatVector]{nest.SpatVector()}},
-\code{\link[=pivot_longer.SpatVector]{pivot_longer.SpatVector()}},
-\code{\link[=pivot_wider.SpatVector]{pivot_wider.SpatVector()}},
-\code{\link{replace_na.Spat}},
-\code{\link[=uncount.SpatVector]{uncount.SpatVector()}},
-\code{\link{unite.Spat}}
 }
-\concept{tidyr.methods}
 \concept{tidyr.missing}

@@ -108,19 +108,19 @@ keys in \code{x}.
 A \code{SpatVector}.
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+
 Methods for the \code{\link[dplyr:rows_insert]{dplyr::rows_insert()}} family on \code{SpatVector} objects.
 }
 \section{Methods}{
 
 
-Implementation of the \strong{generic} \code{\link[dplyr:rows_insert]{dplyr::rows_insert()}} family for
+Implementation of the \strong{generic} \code{\link[dplyr:rows_insert]{dplyr::rows_insert()}} method family for
 \code{SpatVector} objects.
-\subsection{\code{SpatVector}}{
 
 Row operations update attributes while preserving the geometry column. When
 inserting data frame rows without geometry, the output contains empty
 geometries for the new rows.
-}
 }
 
 \examples{
@@ -139,7 +139,7 @@ rows_insert(
 )
 }
 \seealso{
-\code{\link[dplyr:rows_insert]{dplyr::rows_insert()}}
+\code{\link[dplyr:rows_insert]{dplyr::rows_insert()}}.
 
 Other \CRANpkg{dplyr} verbs that operate on rows:
 \code{\link[=arrange.SpatVector]{arrange.SpatVector()}},
@@ -154,30 +154,6 @@ Other \CRANpkg{dplyr} verbs that operate on pairs of \code{SpatVector} and data 
 \code{\link{filter-joins.SpatVector}},
 \code{\link{mutate-joins.SpatVector}},
 \code{\link[=nest_join.SpatVector]{nest_join.SpatVector()}}
-
-Other \CRANpkg{dplyr} methods:
-\code{\link[=arrange.SpatVector]{arrange.SpatVector()}},
-\code{\link{bind_cols.SpatVector}},
-\code{\link{bind_rows.SpatVector}},
-\code{\link[=count.SpatVector]{count.SpatVector()}},
-\code{\link[=cross_join.SpatVector]{cross_join.SpatVector()}},
-\code{\link[=distinct.SpatVector]{distinct.SpatVector()}},
-\code{\link{filter-joins.SpatVector}},
-\code{\link{filter.Spat}},
-\code{\link{glimpse.Spat}},
-\code{\link[=group_by.SpatVector]{group_by.SpatVector()}},
-\code{\link{mutate-joins.SpatVector}},
-\code{\link{mutate.Spat}},
-\code{\link[=nest_join.SpatVector]{nest_join.SpatVector()}},
-\code{\link{pull.Spat}},
-\code{\link[=reframe.SpatVector]{reframe.SpatVector()}},
-\code{\link{relocate.Spat}},
-\code{\link{rename.Spat}},
-\code{\link[=rowwise.SpatVector]{rowwise.SpatVector()}},
-\code{\link{select.Spat}},
-\code{\link{slice.Spat}},
-\code{\link[=summarise.SpatVector]{summarise.SpatVector()}}
 }
-\concept{dplyr.methods}
 \concept{dplyr.pairs}
 \concept{dplyr.rows}

@@ -60,20 +60,20 @@ A \code{SpatVector} object with updated grouping metadata.
 \code{df |> summarise(n = n())}. Supply \code{wt} to perform weighted counts,
 switching the summary from \code{n = n()} to \code{n = sum(wt)}.
 
-\code{add_count()} is equivalent to \code{count()} but use \code{\link[=mutate]{mutate()}} instead of
+\code{add_count()} is equivalent to \code{count()} but uses \code{\link[=mutate]{mutate()}} instead of
 \code{\link[=summarise]{summarise()}} so that it adds a new column with group-wise counts.
 }
 \section{\CRANpkg{terra} equivalent}{
 
 
-\code{\link[terra:aggregate]{terra::aggregate()}}
+\code{\link[terra:aggregate]{terra::aggregate()}}.
 }
 
 \section{Methods}{
 
 
-Implementation of the \strong{generic} \code{\link[dplyr:count]{dplyr::count()}} methods for \code{SpatVector}
-objects.
+Implementation of the \strong{generic} \code{\link[dplyr:count]{dplyr::count()}} method family for
+\code{SpatVector} objects.
 
 \code{\link[=tally]{tally()}} will always return a disaggregated geometry while \code{\link[=count]{count()}} can
 handle this. See also \code{\link[=summarise.SpatVector]{summarise.SpatVector()}}.
@@ -113,36 +113,12 @@ p |>
 }
 }
 \seealso{
-\code{\link[dplyr:count]{dplyr::count()}}, \code{\link[dplyr:tally]{dplyr::tally()}}
+\code{\link[dplyr:count]{dplyr::count()}}, \code{\link[dplyr:tally]{dplyr::tally()}}.
 
 Other \CRANpkg{dplyr} verbs that operate on groups of rows:
 \code{\link[=group_by.SpatVector]{group_by.SpatVector()}},
 \code{\link[=reframe.SpatVector]{reframe.SpatVector()}},
 \code{\link[=rowwise.SpatVector]{rowwise.SpatVector()}},
 \code{\link[=summarise.SpatVector]{summarise.SpatVector()}}
-
-Other \CRANpkg{dplyr} methods:
-\code{\link[=arrange.SpatVector]{arrange.SpatVector()}},
-\code{\link{bind_cols.SpatVector}},
-\code{\link{bind_rows.SpatVector}},
-\code{\link[=cross_join.SpatVector]{cross_join.SpatVector()}},
-\code{\link[=distinct.SpatVector]{distinct.SpatVector()}},
-\code{\link{filter-joins.SpatVector}},
-\code{\link{filter.Spat}},
-\code{\link{glimpse.Spat}},
-\code{\link[=group_by.SpatVector]{group_by.SpatVector()}},
-\code{\link{mutate-joins.SpatVector}},
-\code{\link{mutate.Spat}},
-\code{\link[=nest_join.SpatVector]{nest_join.SpatVector()}},
-\code{\link{pull.Spat}},
-\code{\link[=reframe.SpatVector]{reframe.SpatVector()}},
-\code{\link{relocate.Spat}},
-\code{\link{rename.Spat}},
-\code{\link{rows.SpatVector}},
-\code{\link[=rowwise.SpatVector]{rowwise.SpatVector()}},
-\code{\link{select.Spat}},
-\code{\link{slice.Spat}},
-\code{\link[=summarise.SpatVector]{summarise.SpatVector()}}
 }
 \concept{dplyr.groups}
-\concept{dplyr.methods}

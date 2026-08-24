@@ -24,12 +24,10 @@
 #' @source <https://github.com/jblindsay/whitebox-tools>, under
 #' MIT License. Copyright (c) 2017-2021 John Lindsay.
 #'
-#' @export
-#' @encoding UTF-8
-#'
 #' @name scale_whitebox
 #'
-#' @seealso [terra::plot()], [ggplot2::scale_fill_viridis_c()]
+#' @seealso
+#' [terra::plot()], [ggplot2::scale_fill_viridis_c()].
 #'
 #' See also \CRANpkg{ggplot2} docs on additional `...` arguments.
 #'
@@ -59,6 +57,8 @@
 #' The corresponding \CRANpkg{ggplot2} layer with the values applied to the
 #' `fill/colour` aesthetics.
 #'
+#' @encoding UTF-8
+#' @export
 #' @examples
 #' \donttest{
 #' filepath <- system.file("extdata/volcano2.tif", package = "tidyterra")
@@ -114,9 +114,8 @@ scale_fill_whitebox_d <- function(
     ...
   )
 }
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_whitebox
+#' @export
 scale_colour_whitebox_d <- function(
   palette = "high_relief",
   ...,
@@ -140,9 +139,8 @@ scale_colour_whitebox_d <- function(
   )
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_whitebox
+#' @export
 scale_fill_whitebox_c <- function(
   palette = "high_relief",
   ...,
@@ -168,9 +166,8 @@ scale_fill_whitebox_c <- function(
   )
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_whitebox
+#' @export
 scale_colour_whitebox_c <- function(
   palette = "high_relief",
   ...,
@@ -196,9 +193,8 @@ scale_colour_whitebox_c <- function(
   )
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_whitebox
+#' @export
 scale_fill_whitebox_b <- function(
   palette = "high_relief",
   ...,
@@ -224,9 +220,8 @@ scale_fill_whitebox_b <- function(
   )
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_whitebox
+#' @export
 scale_colour_whitebox_b <- function(
   palette = "high_relief",
   ...,
@@ -252,11 +247,10 @@ scale_colour_whitebox_b <- function(
   )
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_whitebox
 #'
 #' @inheritParams wiki.colors
+#' @export
 #' @examples
 #'
 #' # Display all the whitebox palettes
@@ -288,6 +282,8 @@ whitebox.colors <- function(
   alpha = 1,
   rev = FALSE
 ) {
+  check_color_args(n, alpha, rev)
+
   if ((n <- as.integer(n[1L])) > 0) {
     paltab <- extract_pal(whitebox_coltab, palette = palette)
     colors <- as.character(paltab$hex)
@@ -320,20 +316,17 @@ extract_pal <- function(df, palette) {
   df
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_whitebox
 #' @usage NULL
+#' @export
 scale_color_whitebox_d <- scale_colour_whitebox_d
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_whitebox
 #' @usage NULL
+#' @export
 scale_color_whitebox_c <- scale_colour_whitebox_c
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_whitebox
 #' @usage NULL
+#' @export
 scale_color_whitebox_b <- scale_colour_whitebox_b

@@ -4,14 +4,11 @@
 #'
 #' Replace `NA`s values on layers/attributes with specified values
 #'
-#' @export
-#' @encoding UTF-8
 #' @rdname replace_na.Spat
 #' @name replace_na.Spat
-#' @seealso [tidyr::replace_na()]
+#' @seealso [tidyr::replace_na()].
 #'
 #' @family tidyr.missing
-#' @family tidyr.methods
 #'
 #' @importFrom tidyr replace_na
 #'
@@ -21,14 +18,16 @@
 #'   created with [terra::vect()].
 #' @param replace A named list of values, with one value for each
 #'   layer/attribute that has missing values to be replaced. Each value in
-#'   `replace` will be cast to the type of the column in `data` that it is being
-#'   used as a replacement in.
+#'   `replace` will be cast to the type of the column in `data` where it is
+#'   used as a replacement.
 #' @param ... Additional arguments for methods. Currently unused.
 #'
 #' @section \CRANpkg{terra} equivalent:
 #'
-#' Use `r[is.na(r)] <- <replacement>`
+#' Use `r[is.na(r)] <- <replacement>`.
 #'
+#' @encoding UTF-8
+#' @export
 #' @examples
 #'
 #' library(terra)
@@ -112,11 +111,10 @@ replace_na.SpatRaster <- function(data, replace = list(), ...) {
   newrast
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname replace_na.Spat
+#' @export
 replace_na.SpatVector <- function(data, replace, ...) {
-  # Use own method
+  # Use the package method.
   tbl <- as_tibble(data)
   replaced <- tidyr::replace_na(tbl, replace = replace, ...)
 

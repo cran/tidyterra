@@ -1,21 +1,17 @@
 #' Glance at an `Spat*` object
 #'
-#' Glance accepts a model object and returns a [tibble::tibble()] with exactly
-#' one row of `Spat`. The summaries are typically geographic information.
-#'
-#' @export
-#' @encoding UTF-8
+#' `glance()` accepts a `Spat*` object and returns a [tibble::tibble()] with
+#' exactly one row. The summaries typically contain geographic information.
 #'
 #' @rdname glance.Spat
 #' @name glance.Spat
 #'
-#' @seealso
-#' [`glimpse.Spat`], [generics::glance()].
+#' @seealso [`glimpse.Spat`], [generics::glance()].
 #'
 #' @family generics.methods
 #'
 #' @importFrom generics glance
-#' @inheritParams glimpse.Spat
+#' @inheritParams as_tibble.Spat
 #'
 #' @param ... Ignored by this method.
 #'
@@ -24,9 +20,11 @@
 #'
 #' @section Methods:
 #'
-#' Implementation of the **generic** [generics::glance()] method for
+#' Implementation of the **generic** [generics::glance()] methods for
 #' `Spat*` objects.
 #'
+#' @encoding UTF-8
+#' @export
 #' @examples
 #'
 #' library(terra)
@@ -58,7 +56,7 @@ glance.SpatRaster <- function(x, ...) {
 
   # Add CRS information.
   crsnamed <- get_named_crs(x)
-  if (is.na(crsnamed)) {
+  if (is_na(crsnamed)) {
     crsnamed <- "CRS: not defined or empty"
   }
 
@@ -79,9 +77,8 @@ glance.SpatRaster <- function(x, ...) {
   initial
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname glance.Spat
+#' @export
 glance.SpatVector <- function(x, ...) {
   initial <- tibble::tibble(
     geometry = terra::geomtype(x),
@@ -101,7 +98,7 @@ glance.SpatVector <- function(x, ...) {
   initial$source <- paste0(basename(f), collapse = ", ")
   # Add CRS information.
   crsnamed <- get_named_crs(x)
-  if (is.na(crsnamed)) {
+  if (is_na(crsnamed)) {
     crsnamed <- "CRS: not defined or empty"
   }
 
@@ -116,7 +113,7 @@ generics::glance
 # Helpers ----
 get_crs_units <- function(x) {
   pulled_crs <- pull_crs(x)
-  if (is.na(pulled_crs)) {
+  if (is_na(pulled_crs)) {
     return(NA)
   }
 
@@ -124,7 +121,7 @@ get_crs_units <- function(x) {
     return("degrees")
   }
 
-  unts <- try(sf::st_crs(pulled_crs)$units, silent = TRUE)
+  unts <- try(tt_sf_st_crs(pulled_crs)$units, silent = TRUE)
 
   if (inherits(unts, "character")) {
     unitsdb <- unitsdb
@@ -134,4 +131,8 @@ get_crs_units <- function(x) {
   } else {
     NULL
   }
+}
+
+tt_sf_st_crs <- function(x) {
+  sf::st_crs(x)
 }

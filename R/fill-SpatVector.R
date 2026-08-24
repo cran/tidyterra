@@ -6,15 +6,12 @@
 #' This is useful in the common output format where values are not repeated,
 #' and are only recorded when they change.
 #'
-#' @export
-#' @encoding UTF-8
 #' @rdname fill.SpatVector
 #' @name fill.SpatVector
 #'
-#' @seealso [tidyr::fill()]
+#' @seealso [tidyr::fill()].
 #'
 #' @family tidyr.missing
-#' @family tidyr.methods
 #'
 #' @importFrom tidyr fill
 #'
@@ -25,14 +22,17 @@
 #'
 #' @section Methods:
 #'
-#' Implementation of the **generic** [tidyr::fill()] function for `SpatVector`.
+#' Implementation of the **generic** [tidyr::fill()] method for `SpatVector`
+#' objects.
 #'
 #' @section Grouped `SpatVector`:
 #'
-#' With grouped `SpatVector` created by [group_by.SpatVector()], `fill()` will
-#' be applied _within_ each group, meaning that it won't fill across group
+#' With grouped `SpatVector` objects created by [group_by.SpatVector()],
+#' `fill()` is applied _within_ each group and does not fill across group
 #' boundaries.
 #'
+#' @encoding UTF-8
+#' @export
 #' @examples
 #' library(dplyr)
 #'
@@ -67,7 +67,7 @@ fill.SpatVector <- function(
   .by = NULL,
   .direction = c("down", "up", "downup", "updown")
 ) {
-  # Use own method
+  # Use the package method.
   tbl <- as_tibble(data)
   filled <- tidyr::fill(tbl, ..., .by = {{ .by }}, .direction = .direction)
 

@@ -48,12 +48,11 @@ geometries should be added explicitly.
 \section{Methods}{
 
 
-Implementation of the \strong{generic} \code{\link[tidyr:expand]{tidyr::expand()}} method.
-\subsection{\code{SpatVector}}{
+Implementation of the \strong{generic} \code{\link[tidyr:expand]{tidyr::expand()}} method for \code{SpatVector}
+objects.
 
 The output is a tibble with attribute combinations. Geometry is not
 preserved because new combinations do not have a well-defined geometry.
-}
 }
 
 \examples{
@@ -63,24 +62,12 @@ v$grp <- rep(c("A", "B"), length.out = nrow(v))
 expand(v, grp, cpro)
 }
 \seealso{
-\code{\link[tidyr:expand]{tidyr::expand()}}, \code{\link[=complete.SpatVector]{complete.SpatVector()}}
+\code{\link[tidyr:expand]{tidyr::expand()}}, \code{\link[=complete.SpatVector]{complete.SpatVector()}}.
 
 Other \CRANpkg{tidyr} verbs for handling missing values:
 \code{\link[=complete.SpatVector]{complete.SpatVector()}},
 \code{\link{drop_na.Spat}},
 \code{\link[=fill.SpatVector]{fill.SpatVector()}},
 \code{\link{replace_na.Spat}}
-
-Other \CRANpkg{tidyr} methods:
-\code{\link[=complete.SpatVector]{complete.SpatVector()}},
-\code{\link{drop_na.Spat}},
-\code{\link[=fill.SpatVector]{fill.SpatVector()}},
-\code{\link[=nest.SpatVector]{nest.SpatVector()}},
-\code{\link[=pivot_longer.SpatVector]{pivot_longer.SpatVector()}},
-\code{\link[=pivot_wider.SpatVector]{pivot_wider.SpatVector()}},
-\code{\link{replace_na.Spat}},
-\code{\link[=uncount.SpatVector]{uncount.SpatVector()}},
-\code{\link{unite.Spat}}
 }
-\concept{tidyr.methods}
 \concept{tidyr.missing}

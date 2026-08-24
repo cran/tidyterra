@@ -57,6 +57,16 @@ test_that("Slice", {
   expect_false(any(df$cell_index %in% c(1:80, 137:234, 300:400)))
 })
 
+test_that("slice validates .keep_extent", {
+  skip_on_cran()
+
+  r <- terra::rast(matrix(1:16, nrow = 4, ncol = 4))
+  terra::values(r) <- seq_len(terra::ncell(r))
+  names(r) <- "cell_index"
+
+  expect_snapshot(slice(r, 1:4, .keep_extent = "yes"), error = TRUE)
+})
+
 test_that("Slice head", {
   skip_on_cran()
   m <- matrix(1:400, nrow = 20, ncol = 20)
@@ -107,6 +117,46 @@ test_that("Slice head", {
 
   df <- terra::as.data.frame(sliced, na.rm = TRUE)
   expect_true(all(df$cell_index == seq_len(aprox)))
+})
+
+test_that("slice_colrows can invert selections", {
+  skip_on_cran()
+
+  r <- terra::rast(matrix(1:16, nrow = 4, ncol = 4))
+  terra::values(r) <- seq_len(terra::ncell(r))
+  names(r) <- "cell_index"
+
+  selected <- as_coordinates(r)
+  selected <- selected$cellindex[
+    selected$rowindex == 2 & selected$colindex == 2
+  ]
+
+  regular <- slice_colrows(r, cols = 2, rows = 2, .keep_extent = TRUE)
+  inverse <- slice_colrows(
+    r,
+    cols = 2,
+    rows = 2,
+    .keep_extent = TRUE,
+    inverse = TRUE
+  )
+
+  regular_values <- terra::as.data.frame(regular, na.rm = TRUE)$cell_index
+  inverse_values <- terra::as.data.frame(inverse, na.rm = TRUE)$cell_index
+
+  expect_identical(regular_values, selected)
+  expect_false(selected %in% inverse_values)
+  expect_length(inverse_values, terra::ncell(r) - length(selected))
+})
+
+test_that("slice_colrows validates inverse", {
+  skip_on_cran()
+
+  r <- terra::rast(matrix(1:16, nrow = 4, ncol = 4))
+
+  expect_snapshot(
+    slice_colrows(r, cols = 2, rows = 2, inverse = "yes"),
+    error = TRUE
+  )
 })
 
 test_that("Slice tail", {
@@ -343,12 +393,25 @@ test_that("Slice sample", {
   )
 
   # W replacement
+  withr::local_seed(1234)
   r_3 <- r[c(1, 3), drop = FALSE]
   sliced <- slice_sample(r_3, n = 20, replace = TRUE)
 
   expect_s4_class(sliced, "SpatRaster")
+  expect_lte(terra::ncell(sliced), terra::ncell(r_3))
 
-  expect_true(terra::ncell(sliced) == terra::ncell(r_3))
+  df <- terra::as.data.frame(sliced, na.rm = TRUE)
+
+  expect_setequal(df$cell_index, intersect(df$cell_index, c(1, 3)))
+  expect_equal(unique(df$cell_index), df$cell_index)
+
+  # W replacement, keep extent
+  withr::local_seed(1234)
+  sliced <- slice_sample(r_3, n = 20, replace = TRUE, .keep_extent = TRUE)
+
+  expect_s4_class(sliced, "SpatRaster")
+  expect_equal(terra::ncell(sliced), terra::ncell(r_3))
+  expect_silent(compare_spatrasters(r_3, sliced))
 
   # W/0 replacement, no keep extent
   sliced <- slice_sample(r, n = 1, replace = FALSE)

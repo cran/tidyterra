@@ -16,10 +16,8 @@
 #' Thanks to [Dewey Dunnington](https://github.com/paleolimbot) and [ggspatial
 #' contributors](https://github.com/paleolimbot/ggspatial/graphs/contributors).
 #'
-#' @export
-#' @encoding UTF-8
-#' @seealso [ggplot2::geom_raster()], [ggplot2::coord_sf()],
-#' [ggplot2::facet_wrap()]
+#' @seealso
+#' [ggplot2::geom_raster()], [ggplot2::coord_sf()], [ggplot2::facet_wrap()].
 #'
 #' @family ggplot2.utils
 #' @inheritParams ggplot2::geom_raster
@@ -27,7 +25,8 @@
 #' @param data A `SpatRaster` object.
 #'
 #' @param mapping Set of aesthetic mappings created by [ggplot2::aes()]. See
-#'   **Aesthetics**, especially in the use of the `fill` aesthetic.
+#'   **Aesthetics**, especially the use of the `fill` and `alpha` aesthetics
+#'   with `SpatRaster` layers.
 #'
 #' @param na.rm If `TRUE`, the default, missing values are silently removed. If
 #'   `FALSE`, missing values are removed with a warning.
@@ -35,8 +34,8 @@
 #' @param inherit.aes If `FALSE`, override the default aesthetics rather than
 #'   combining with them.
 #'
-#' @param maxcell Positive integer. Maximum number of cells to use for
-#'   the plot.
+#' @param maxcell Positive integer or `Inf`. Maximum number of raster cells to
+#'   use. Use `Inf` to use all cells.
 #'
 #' @param use_coltab Logical. Only applicable to `SpatRaster` objects that have
 #'   an associated color table from [terra::coltab()]. If `TRUE`, use that
@@ -50,9 +49,9 @@
 #' @returns A \CRANpkg{ggplot2} layer.
 #' @section \CRANpkg{terra} equivalent:
 #'
-#' [terra::plot()]
+#' [terra::plot()].
 #'
-#' @section Coords:
+#' @section Coordinates:
 #'
 #' When the `SpatRaster` does not have a CRS, that is,
 #' `terra::crs(rast) == ""`, the geom does not make any assumption about the
@@ -65,6 +64,7 @@
 #' @section Aesthetics:
 #'
 #' `geom_spatraster()` understands the following aesthetics:
+#'
 #' - [`fill`][ggplot2::aes_colour_fill_alpha]
 #' - [`alpha`][ggplot2::aes_colour_fill_alpha]
 #'
@@ -75,7 +75,7 @@
 #'
 #' If `fill` is used, it should contain the name of one layer that is present
 #' on the `SpatRaster` (for example,
-#' `geom_spatraster(data = rast, aes(fill = <name_of_lyr>)`). Layer names can
+#' `geom_spatraster(data = rast, aes(fill = <name_of_lyr>))`). Layer names can
 #' be retrieved using `names(rast)`.
 #'
 #' Using `geom_spatraster(..., mapping = aes(fill = NULL))` or
@@ -84,25 +84,32 @@
 #'
 #' `fill` can use computed variables.
 #'
-#' For `alpha`, use a computed variable. See section **Computed variables**.
+#' For `alpha`, use a computed variable or the name of one layer that is
+#' present on the `SpatRaster`. When `alpha` is a layer name, it can refer to
+#' the same layer as `fill` or to another layer in the `SpatRaster`. See section
+#' **Computed variables**.
 #'
 #' @section Facets:
 #'
-#' You can use `facet_wrap(~lyr)` to create a faceted plot by each layer of the
-#' `SpatRaster` object. See [ggplot2::facet_wrap()] for details.
+#' You can use `facet_wrap(~lyr)` to create a faceted plot for each layer of
+#' the `SpatRaster` object. See [ggplot2::facet_wrap()] for details.
 #'
 #' @section Computed variables:
 #'
-#' This geom computes internally some variables that are available for use as
+#' This geom computes variables internally that are available for use as
 #' aesthetics, using (for example) `aes(alpha = after_stat(value))` (see
 #' [ggplot2::after_stat()]).
 #'
 #' - `after_stat(value)`: Cell values of the `SpatRaster`.
+#' - `after_stat(alpha)`: Cell values of the layer mapped to `alpha`, when
+#'   `alpha` is the name of a layer.
 #' - `after_stat(lyr)`: Name of the layer.
 #'
+#' @encoding UTF-8
+#' @export
 #' @examples
 #' \donttest{
-#' # Avg temperature on spring in Castile and Leon (Spain)
+#' # Average spring temperature in Castile and Leon (Spain)
 #' file_path <- system.file("extdata/cyl_temp.tif", package = "tidyterra")
 #'
 #' library(terra)
@@ -152,6 +159,12 @@ geom_spatraster <- function(
   ...
 ) {
   check_spatraster(data, "geom_spatraster")
+  check_bool(na.rm)
+  check_bool(inherit.aes)
+  check_bool(interpolate)
+  check_maxcell(maxcell)
+  check_bool(use_coltab)
+  check_bool(mask_projection)
 
   # Warn when an RGB raster should use the RGB geom.
   if (terra::has.RGB(data)) {
@@ -172,8 +185,15 @@ geom_spatraster <- function(
   # Use prepared data.
   mapping <- prepared$map
 
+  # Keep the alpha layer separate from the displayed layer. This allows users to
+  # map `fill` and `alpha` to different raster layers.
+  alpha_data <- NULL
+  if (is_character(prepared$alphalayer)) {
+    alpha_data <- terra::subset(data, prepared$alphalayer)
+  }
+
   # Check whether the `SpatRaster` needs to be subset.
-  if (is.character(prepared$namelayer)) {
+  if (is_character(prepared$namelayer)) {
     # Subset the layer from the data.
     data <- terra::subset(data, prepared$namelayer)
   }
@@ -183,13 +203,16 @@ geom_spatraster <- function(
   data <- check_mixed_cols(data)
 
   data <- resample_spat(data, maxcell)
+  if (!is_null(alpha_data)) {
+    alpha_data <- resample_spat(alpha_data, maxcell, inform = FALSE)
+  }
 
   # 3. Create a nested list with each layer----
   raster_list <- as.list(data)
 
   # Create the data frame.
   data_tbl <- tibble::tibble(
-    spatraster = list(NULL),
+    spatraster = vector("list", terra::nlyr(data)),
     # Keep layer order when faceting.
     lyr = factor(names(data), levels = names(data))
   )
@@ -219,6 +242,7 @@ geom_spatraster <- function(
       # Extra params
       maxcell = maxcell,
       interpolate = interpolate,
+      alpha_spatraster = alpha_data,
       mask_projection = mask_projection,
       ...
     )
@@ -228,7 +252,7 @@ geom_spatraster <- function(
   # If the `SpatRaster` has a CRS, add an empty `geom_sf()` to train scales.
   # This mimics using the first layer CRS as the base CRS for `coord_sf()`.
 
-  if (!is.na(crs_terra)) {
+  if (!is_na(crs_terra)) {
     layer_spatrast <- c(
       layer_spatrast,
       ggplot2::geom_sf(
@@ -257,7 +281,13 @@ StatTerraSpatRaster <- ggplot2::ggproto(
     group = lyr,
     spatraster = after_stat(spatraster)
   ),
-  extra_params = c("maxcell", "na.rm", "coord_crs", "mask_projection"),
+  extra_params = c(
+    "maxcell",
+    "na.rm",
+    "coord_crs",
+    "alpha_spatraster",
+    "mask_projection"
+  ),
   compute_layer = function(self, data, params, layout) {
     warn_overlapping_layers(data, "geom_spatraster")
     # Add the coordinate CRS so it can be forwarded to `compute_group()`.
@@ -274,6 +304,7 @@ StatTerraSpatRaster <- ggplot2::ggproto(
     coord,
     params,
     coord_crs = NA,
+    alpha_spatraster = NULL,
     mask_projection = FALSE
   ) {
     # Extract the raster from the current group.
@@ -281,9 +312,24 @@ StatTerraSpatRaster <- ggplot2::ggproto(
 
     # Reproject if needed.
     rast <- reproject_raster_on_stat(rast, coord_crs, mask = mask_projection)
+    alpha_rast <- alpha_spatraster
+    if (!is_null(alpha_rast)) {
+      alpha_rast <- prepare_alpha_spatraster(
+        alpha_rast,
+        rast,
+        coord_crs,
+        mask = mask_projection
+      )
+    }
 
     # Convert to a data frame and prepare output.
     data_end <- pivot_longer_spat(rast)
+    if (!is_null(alpha_rast)) {
+      alpha_tbl <- pivot_longer_spat(alpha_rast)
+      alpha_tbl <- remove_columns(alpha_tbl, "lyr")
+      names(alpha_tbl)[names(alpha_tbl) == "value"] <- "alpha"
+      data_end <- dplyr::left_join(data_end, alpha_tbl, by = c("x", "y"))
+    }
     data_rest <- data
 
     # Drop the raster payload before joining to reduce the output size.
@@ -309,13 +355,13 @@ reproject_raster_on_stat <- function(raster, coords_crs = NA, mask = FALSE) {
   crs_terra <- pull_crs(raster)
 
   # Do not reproject rasters without a CRS.
-  if (is.na(crs_terra)) {
+  if (is_na(crs_terra)) {
     return(raster)
   }
 
   coord_crs <- pull_crs(coords_crs)
 
-  if (is.na(coord_crs)) {
+  if (is_na(coord_crs)) {
     cli::cli_abort(
       paste(
         "{.code geom_spatraster_*()} on {.cls SpatRaster} objects with CRS",
@@ -348,6 +394,27 @@ reproject_raster_on_stat <- function(raster, coords_crs = NA, mask = FALSE) {
   proj_rast
 }
 
+prepare_alpha_spatraster <- function(
+  alpha_rast,
+  template_rast,
+  coord_crs = NA,
+  mask = FALSE
+) {
+  alpha_rast <- reproject_raster_on_stat(alpha_rast, coord_crs, mask = mask)
+
+  same_geom <- terra::compareGeom(
+    alpha_rast,
+    template_rast,
+    stopOnError = FALSE
+  )
+
+  if (isTRUE(same_geom)) {
+    return(alpha_rast)
+  }
+
+  terra::resample(alpha_rast, template_rast)
+}
+
 pivot_longer_spat <- function(x) {
   tb <- as_tbl_internal(x)
   tb_pivot <- tidyr::pivot_longer(tb, -c(1, 2), names_to = "lyr")
@@ -359,11 +426,11 @@ pivot_longer_spat <- function(x) {
 # Combine aesthetics with overriding values.
 # From ggspatial.
 override_aesthetics <- function(user_mapping = NULL, default_mapping = NULL) {
-  if (is.null(user_mapping) && is.null(default_mapping)) {
+  if (is_null(user_mapping) && is_null(default_mapping)) {
     ggplot2::aes()
-  } else if (is.null(default_mapping)) {
+  } else if (is_null(default_mapping)) {
     user_mapping
-  } else if (is.null(user_mapping)) {
+  } else if (is_null(user_mapping)) {
     default_mapping
   } else {
     all_aes_names <- unique(c(names(user_mapping), names(default_mapping)))
@@ -385,7 +452,7 @@ select_spatraster_layer <- function(
   mapping,
   data,
   aes = "z",
-  call = rlang::caller_env()
+  call = caller_env()
 ) {
   if (!aes %in% names(mapping)) {
     return(list(mapping = mapping, data = data))
@@ -406,13 +473,15 @@ select_spatraster_layer <- function(
   )
 }
 
-resample_spat <- function(r, maxcell = 50000) {
+resample_spat <- function(r, maxcell = 50000, inform = TRUE) {
   if (terra::ncell(r) > 1.1 * maxcell) {
     r <- terra::spatSample(r, maxcell, as.raster = TRUE, method = "regular")
-    cli::cli_inform(paste(
-      "{.cls SpatRaster} resampled to",
-      "{.val {terra::ncell(r)}} cell{?s}."
-    ))
+    if (isTRUE(inform)) {
+      cli::cli_inform(paste(
+        "{.cls SpatRaster} resampled to",
+        "{.val {terra::ncell(r)}} cell{?s}."
+      ))
+    }
   }
 
   r
@@ -486,44 +555,52 @@ prepare_aes_spatraster <- function(
 
   # Create the default result object first, this may be overridden.
 
-  result_obj <- list(namelayer = FALSE, map = mapinit)
+  result_obj <- list(namelayer = FALSE, alphalayer = FALSE, map = mapinit)
 
   # Capture all info
   fill_from_dots <- "fill" %in% names(dots)
+  alpha_from_dots <- "alpha" %in% names(dots)
 
   # Do nothing if fill in dots
-  if (isTRUE(fill_from_dots)) {
-    return(result_obj)
+  if (!isTRUE(fill_from_dots)) {
+    # Extract from aes
+    fill_from_aes <- unname(vapply(mapinit, rlang::as_label, character(1))[
+      "fill"
+    ])
+    fill_not_provided <- is_na(fill_from_aes)
+    is_layer <- fill_from_aes %in% raster_names
+
+    # If not provided add after_stat
+    if (fill_not_provided) {
+      result_obj$map <- override_aesthetics(
+        mapinit,
+        ggplot2::aes(fill = after_stat(.data$value))
+      )
+    }
+
+    # If it is a layer need to override the fill value and keep the namelayer
+    if (is_layer) {
+      result_obj$map <- override_aesthetics(
+        ggplot2::aes(fill = after_stat(.data$value)),
+        result_obj$map
+      )
+      result_obj$namelayer <- fill_from_aes
+    }
   }
 
-  # Extract from aes
-  fill_from_aes <- unname(vapply(mapinit, rlang::as_label, character(1))[
-    "fill"
-  ])
-  fill_not_provided <- is.na(fill_from_aes)
-  is_layer <- fill_from_aes %in% raster_names
+  if (!isTRUE(alpha_from_dots)) {
+    alpha_from_aes <- unname(vapply(mapinit, rlang::as_label, character(1))[
+      "alpha"
+    ])
+    is_alpha_layer <- alpha_from_aes %in% raster_names
 
-  # If not provided add after_stat
-  if (fill_not_provided) {
-    map_not_prov <- override_aesthetics(
-      mapinit,
-      ggplot2::aes(fill = after_stat(.data$value))
-    )
-
-    result_obj$map <- map_not_prov
-    return(result_obj)
-  }
-
-  # If it is a layer need to override the fill value and keep the namelayer
-  if (is_layer) {
-    map_layer <- override_aesthetics(
-      ggplot2::aes(fill = after_stat(.data$value)),
-      mapinit
-    )
-
-    result_obj$map <- map_layer
-    result_obj$namelayer <- fill_from_aes
-    return(result_obj)
+    if (is_alpha_layer) {
+      result_obj$map <- override_aesthetics(
+        ggplot2::aes(alpha = after_stat(.data$alpha)),
+        result_obj$map
+      )
+      result_obj$alphalayer <- alpha_from_aes
+    }
   }
 
   # Otherwise leave as it is

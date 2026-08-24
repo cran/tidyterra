@@ -35,8 +35,9 @@ that can be used to iterate on grouped \code{SpatVector} objects.
 }
 \details{
 Each conceptual group is exposed to \code{.f} with two pieces of information:
-\code{.x}, the subset of rows for the group as a \code{SpatVector}, and \code{.y}, a one-row
-tibble with one column per grouping variable that identifies the group.
+\code{.x}, the subset of rows for the group as a \code{SpatVector}, and \code{.y}, a
+one-row tibble with one column per grouping variable that identifies the
+group.
 
 These methods also work on ungrouped \code{SpatVector} objects. In that case,
 \code{.f} is applied to the entire object and \code{.y} is a one-row tibble with no
@@ -45,14 +46,12 @@ columns.
 \section{Methods}{
 
 
-Implementation of the \strong{generic} \code{\link[dplyr:group_map]{dplyr::group_map()}} family for
+Implementation of the \strong{generic} \code{\link[dplyr:group_map]{dplyr::group_map()}} method family for
 \code{SpatVector} objects.
-\subsection{\code{SpatVector}}{
 
 \code{group_map()} applies \code{.f} to each group and returns a list.
 \code{group_modify()} requires \code{.f} to return \code{SpatVector} objects and binds the
 results.
-}
 }
 
 \examples{
@@ -64,10 +63,11 @@ group_map(group_by(v, grp), ~ nrow(.x))
 group_modify(group_by(v, grp), ~ mutate(.x, key = .y$grp))
 }
 \seealso{
-\code{\link[dplyr:group_map]{dplyr::group_map()}} and \code{\link[dplyr:group_modify]{dplyr::group_modify()}}.
+\code{\link[dplyr:group_map]{dplyr::group_map()}}, \code{\link[dplyr:group_modify]{dplyr::group_modify()}}.
 
 Other \CRANpkg{dplyr} grouping methods:
 \code{\link[=group_by.SpatVector]{group_by.SpatVector()}},
+\code{\link[=group_data.SpatVector]{group_data.SpatVector()}},
 \code{\link[=group_nest.SpatVector]{group_nest.SpatVector()}},
 \code{\link[=group_split.SpatVector]{group_split.SpatVector()}},
 \code{\link[=group_trim.SpatVector]{group_trim.SpatVector()}}

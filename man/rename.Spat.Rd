@@ -43,22 +43,23 @@ using a function.
 \section{\CRANpkg{terra} equivalent}{
 
 
-\verb{names(Spat*) <- c("a", "b", "c")}
+\verb{names(Spat*) <- c("a", "b", "c")}.
 }
 
 \section{Methods}{
 
 
-Implementation of the \strong{generic} \code{\link[dplyr:rename]{dplyr::rename()}} method.
+Implementation of the \strong{generic} \code{\link[dplyr:rename]{dplyr::rename()}} methods for \verb{Spat*}
+objects.
 \subsection{\code{SpatRaster}}{
 
-Rename layers of a \code{SpatRaster}.
+Renames layers of a \code{SpatRaster}.
 }
 
 \subsection{\code{SpatVector}}{
 
-The result is a \code{SpatVector} with the renamed attributes on the function
-call.
+The result is a \code{SpatVector} with the attributes renamed as specified in the
+function call.
 }
 }
 
@@ -81,16 +82,7 @@ spatrast |> rename_with(
 )
 }
 \seealso{
-\code{\link[dplyr:rename]{dplyr::rename()}}
-
-Other \CRANpkg{dplyr} single-table verbs:
-\code{\link[=arrange.SpatVector]{arrange.SpatVector()}},
-\code{\link{filter.Spat}},
-\code{\link{mutate.Spat}},
-\code{\link[=reframe.SpatVector]{reframe.SpatVector()}},
-\code{\link{select.Spat}},
-\code{\link{slice.Spat}},
-\code{\link[=summarise.SpatVector]{summarise.SpatVector()}}
+\code{\link[dplyr:rename]{dplyr::rename()}}.
 
 Other \CRANpkg{dplyr} verbs that operate on columns:
 \code{\link{glimpse.Spat}},
@@ -98,30 +90,5 @@ Other \CRANpkg{dplyr} verbs that operate on columns:
 \code{\link{pull.Spat}},
 \code{\link{relocate.Spat}},
 \code{\link{select.Spat}}
-
-Other \CRANpkg{dplyr} methods:
-\code{\link[=arrange.SpatVector]{arrange.SpatVector()}},
-\code{\link{bind_cols.SpatVector}},
-\code{\link{bind_rows.SpatVector}},
-\code{\link[=count.SpatVector]{count.SpatVector()}},
-\code{\link[=cross_join.SpatVector]{cross_join.SpatVector()}},
-\code{\link[=distinct.SpatVector]{distinct.SpatVector()}},
-\code{\link{filter-joins.SpatVector}},
-\code{\link{filter.Spat}},
-\code{\link{glimpse.Spat}},
-\code{\link[=group_by.SpatVector]{group_by.SpatVector()}},
-\code{\link{mutate-joins.SpatVector}},
-\code{\link{mutate.Spat}},
-\code{\link[=nest_join.SpatVector]{nest_join.SpatVector()}},
-\code{\link{pull.Spat}},
-\code{\link[=reframe.SpatVector]{reframe.SpatVector()}},
-\code{\link{relocate.Spat}},
-\code{\link{rows.SpatVector}},
-\code{\link[=rowwise.SpatVector]{rowwise.SpatVector()}},
-\code{\link{select.Spat}},
-\code{\link{slice.Spat}},
-\code{\link[=summarise.SpatVector]{summarise.SpatVector()}}
 }
 \concept{dplyr.cols}
-\concept{dplyr.methods}
-\concept{dplyr.single_table}

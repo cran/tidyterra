@@ -30,11 +30,10 @@ A \code{SpatVector} object.
 \section{Methods}{
 
 
-Implementation of the \strong{generic} \code{\link[tidyr:uncount]{tidyr::uncount()}} method.
-\subsection{\code{SpatVector}}{
+Implementation of the \strong{generic} \code{\link[tidyr:uncount]{tidyr::uncount()}} method for \code{SpatVector}
+objects.
 
 Each duplicated row keeps the input geometry.
-}
 }
 
 \examples{
@@ -47,18 +46,6 @@ uncount(v, copies)
 
 }
 \seealso{
-\code{\link[tidyr:uncount]{tidyr::uncount()}}
-
-Other \CRANpkg{tidyr} methods:
-\code{\link[=complete.SpatVector]{complete.SpatVector()}},
-\code{\link{drop_na.Spat}},
-\code{\link[=expand.SpatVector]{expand.SpatVector()}},
-\code{\link[=fill.SpatVector]{fill.SpatVector()}},
-\code{\link[=nest.SpatVector]{nest.SpatVector()}},
-\code{\link[=pivot_longer.SpatVector]{pivot_longer.SpatVector()}},
-\code{\link[=pivot_wider.SpatVector]{pivot_wider.SpatVector()}},
-\code{\link{replace_na.Spat}},
-\code{\link{unite.Spat}}
+\code{\link[tidyr:uncount]{tidyr::uncount()}}.
 }
-\concept{tidyr.methods}
 \concept{tidyr.rows}

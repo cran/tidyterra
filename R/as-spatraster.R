@@ -8,17 +8,14 @@
 #'
 #' @details
 #'
-#' If no `crs` is provided and the tibble has been created with the method
+#' If no `crs` is provided and the tibble was created with
 #' [as_tibble.SpatRaster()], the `crs` is inferred from
 #' [`attr(x, "crs")`][attr()].
 #'
-#' @export
-#' @encoding UTF-8
-#'
 #' @seealso
-#'
-#' [pull_crs()] for retrieving CRS and the corresponding utilities
-#' [sf::st_crs()] and [terra::crs()].
+#' [is_regular_grid()] for checking whether coordinates form a regular grid.
+#' [pull_crs()] retrieves CRS information, as do [sf::st_crs()] and
+#' [terra::crs()].
 #'
 #' @family coerce
 #'
@@ -34,7 +31,7 @@
 #'   includes the target coordinate reference system. See [pull_crs()] and
 #'   **Details**.
 #'
-#' @param ... Additional arguments passed on to [terra::rast()].
+#' @param ... Additional arguments passed to [terra::rast()].
 #'
 #' @returns
 #' A `SpatRaster`.
@@ -43,6 +40,8 @@
 #'
 #' [terra::rast()] (see S4 method for signature `data.frame`).
 #'
+#' @encoding UTF-8
+#' @export
 #' @examples
 #' library(terra)
 #'
@@ -66,26 +65,12 @@ as_spatraster <- function(x, ..., xycols = 1:2, crs = "", digits = 6) {
 
   # Materialize lazy dtplyr input.
   if (inherits(x, "dtplyr_step")) {
-    x <- tibble::as_tibble(x) # nocov
+    x <- tibble::as_tibble(x)
   }
 
-  if (!inherits(x, "data.frame")) {
-    cli::cli_abort(paste0(
-      "{.arg x} must be a {.cls data.frame} or {.cls tbl}, ",
-      "not {.cls {class(x)}}."
-    ))
-  }
-
-  if (length(xycols) != 2) {
-    cli::cli_abort(paste(
-      "{.arg xycols} must have length {.val {as.integer(2)}},",
-      "not {.val {length(xycols)}}."
-    ))
-  }
-
-  if (!is.numeric(xycols)) {
-    cli::cli_abort("{.arg xycols} must be numeric, not {.cls {class(xycols)}}.")
-  }
+  check_data_frame(x)
+  check_number_whole_vector(xycols, length = 2)
+  check_number_whole(digits)
 
   xycols <- as.integer(xycols)
 
@@ -215,11 +200,11 @@ prepare_spatraster_cols <- function(x, xycols) {
 resolve_spatraster_crs <- function(crs, crs_attr) {
   crs <- pull_crs(crs)
 
-  if (is.na(crs)) {
+  if (is_na(crs)) {
     crs <- crs_attr
   }
 
-  if (is.na(pull_crs(crs))) {
+  if (is_na(pull_crs(crs))) {
     crs <- NA
   }
 
@@ -227,7 +212,7 @@ resolve_spatraster_crs <- function(crs, crs_attr) {
 }
 
 build_raster_layers <- function(template, values, layer_names) {
-  if (!is.function(template)) {
+  if (!is_function(template)) {
     template <- local({
       raster_template <- template
       function() raster_template

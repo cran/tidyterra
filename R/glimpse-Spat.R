@@ -5,23 +5,20 @@
 #' down the page and data runs across. This makes it possible to see every
 #' layer/column in a `Spat*` object.
 #'
-#' @export
-#' @encoding UTF-8
 #' @rdname glimpse.Spat
 #' @name glimpse.Spat
 #'
 #' @seealso [tibble::print.tbl_df()]
 #'
 #' @family dplyr.cols
-#' @family dplyr.methods
 #'
 #' @importFrom dplyr glimpse
 #'
 #' @inheritParams as_tibble.Spat
 #' @inheritParams pillar::glimpse
 #'
-#' @param ... Arguments passed on to [`as_tibble()`][as_tibble.Spat] methods
-#'   for `SpatRaster` and `SpatVector`.
+#' @param ... Arguments passed to [as_tibble.SpatRaster()] or
+#'   [as_tibble.SpatVector()] methods.
 #' @param max_extra_cols Number of extra columns or layers to print abbreviated
 #'   information for, if `n` is too small for the `Spat*` object.
 #' @param n Maximum number of rows to show.
@@ -31,13 +28,15 @@
 #'
 #' @section \CRANpkg{terra} equivalent:
 #'
-#' `print()`
+#' `print()`.
 #'
 #' @section Methods:
 #'
-#' Implementation of the **generic** [dplyr::glimpse()] function for
+#' Implementation of the **generic** [dplyr::glimpse()] methods for
 #' `Spat*` objects.
 #'
+#' @encoding UTF-8
+#' @export
 #' @examples
 #'
 #' library(terra)
@@ -47,7 +46,7 @@
 #'
 #' v |> glimpse(n = 2)
 #'
-#' # Use on a pipeline
+#' # Use in a pipeline.
 #' v |>
 #'   glimpse() |>
 #'   mutate(a = 30) |>
@@ -59,7 +58,7 @@
 #'
 #' r |> glimpse()
 #'
-#' # Use on a pipeline
+#' # Use in a pipeline.
 #' r |>
 #'   glimpse() |>
 #'   mutate(b = elevation_m / 100) |>
@@ -115,9 +114,8 @@ glimpse.SpatRaster <- function(
   invisible(x)
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname glimpse.Spat
+#' @export
 glimpse.SpatVector <- function(
   x,
   width = NULL,
@@ -157,7 +155,7 @@ dplyr::glimpse
 get_named_crs <- function(x) {
   # Based on `terra:::.name_or_proj4()`.
   pulled <- pull_crs(x)
-  if (is.na(pulled)) {
+  if (is_na(pulled)) {
     return(NA)
   }
 
@@ -179,7 +177,7 @@ get_named_crs <- function(x) {
     } else {
       r <- d$name
     }
-    if (!is.na(d$code)) {
+    if (!is_na(d$code)) {
       r <- paste0(r, " (", d$authority, ":", d$code, ")")
     }
   }
@@ -191,7 +189,7 @@ get_named_crs <- function(x) {
     r <- try
   }
 
-  if (is.na(r) || !nzchar(r) || is.null(r)) {
+  if (is_null(r) || is_na(r) || !nzchar(r)) {
     r <- NA # nocov
   }
 
@@ -247,7 +245,7 @@ tterra_header <- function(...) {
 # Print CRS information.
 tterra_header_string_crs <- function(x) {
   crsnamed <- get_named_crs(x)
-  if (is.na(crsnamed)) {
+  if (is_na(crsnamed)) {
     tterra_header("CRS: not defined or empty")
     return(invisible(NULL))
   }
@@ -314,7 +312,7 @@ tterra_header_string_res <- function(x) {
 tterra_header_string_rgb <- function(x) {
   # Check RGB color
   rgb_info <- terra::RGB(x)
-  if (!all(!is.null(rgb_info), length(rgb_info) > 0)) {
+  if (!all(!is_null(rgb_info), length(rgb_info) > 0)) {
     return(invisible(NULL))
   }
 
@@ -328,7 +326,7 @@ tterra_header_string_rgb <- function(x) {
 }
 
 tterra_header_string_ctab <- function(x) {
-  # Check coltab
+  # Check color tables.
   coltab_info <- terra::has.colors(x)
   if (!any(coltab_info)) {
     return(invisible(NULL))
@@ -380,7 +378,7 @@ tterra_body <- function(
   cli::cat_line(capt[-c(1:2)])
 
   # Render the footer.
-  if (!is.null(extra_cols)) {
+  if (!is_null(extra_cols)) {
     extra_text <- vapply(
       extra_cols,
       function(x) {

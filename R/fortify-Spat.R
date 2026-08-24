@@ -6,14 +6,10 @@
 #'
 #' These methods are now implemented as wrappers around [`tidy.Spat`] methods.
 #'
-#' @export
-#' @encoding UTF-8
-#'
 #' @rdname fortify.Spat
 #' @name fortify.Spat
 #'
-#' @seealso [`tidy.Spat`], [sf::st_as_sf()], [`as_tibble.Spat`],
-#'   [as_spatraster()], [ggplot2::fortify()].
+#' @seealso [`tidy.Spat`], [sf::st_as_sf()].
 #'
 #' @family ggplot2.utils
 #' @family ggplot2.methods
@@ -34,7 +30,8 @@
 #'
 #' @section Methods:
 #'
-#' Implementation of the **generic** [ggplot2::fortify()] method.
+#' Implementation of the **generic** [ggplot2::fortify()] methods for `Spat*`
+#' objects.
 #'
 #' ## `SpatRaster`
 #'
@@ -53,6 +50,7 @@
 #'
 #' When `pivot = TRUE`, the `SpatRaster` is fortified in long format (see
 #' [tidyr::pivot_longer()]). The fortified object has the following columns:
+#'
 #' - `x`, `y`: Coordinates of the cell center in the corresponding CRS.
 #' - `lyr`: Name of the `SpatRaster` layer associated with `value`.
 #' - `value`: Cell value for the corresponding `lyr`.
@@ -65,6 +63,8 @@
 #' Returns an [`sf`][sf::st_sf] object that can be used with
 #' [ggplot2::geom_sf()].
 #'
+#' @encoding UTF-8
+#' @export
 #' @examples
 #' \donttest{
 #'
@@ -127,6 +127,13 @@ fortify.SpatRaster <- function(
   maxcell = terra::ncell(model) * 1.1,
   pivot = FALSE
 ) {
+  if (missing(maxcell)) {
+    maxcell <- ceiling(maxcell)
+  }
+
+  check_maxcell(maxcell)
+  check_bool(pivot)
+
   tidy(
     x = model,
     ...,
@@ -136,23 +143,20 @@ fortify.SpatRaster <- function(
   )
 }
 
+#' @rdname fortify.Spat
 #' @export
-#' @encoding UTF-8
-#' @name fortify.Spat
 fortify.SpatVector <- function(model, data, ...) {
   tidy(x = model, ...)
 }
 
+#' @rdname fortify.Spat
 #' @export
-#' @encoding UTF-8
-#' @name fortify.Spat
 fortify.SpatGraticule <- function(model, data, ...) {
   tidy(x = model, ...)
 }
 
+#' @rdname fortify.Spat
 #' @export
-#' @encoding UTF-8
-#' @name fortify.Spat
 fortify.SpatExtent <- function(model, data, ..., crs = "") {
   tidy(x = model, ..., crs = crs)
 }

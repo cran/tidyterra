@@ -234,7 +234,7 @@ blank pixels in the plot.
 \section{\CRANpkg{terra} equivalent}{
 
 
-\code{\link[terra:map.pal]{terra::map.pal()}}
+\code{\link[terra:map.pal]{terra::map.pal()}}.
 }
 
 \examples{
@@ -252,7 +252,7 @@ ggplot() +
   geom_spatraster(data = volcano2_rast) +
   scale_fill_grass_c(palette = "terrain")
 
-# Use with no default limits
+# Use without default limits.
 ggplot() +
   geom_spatraster(data = volcano2_rast) +
   scale_fill_grass_c(palette = "terrain", use_grass_range = FALSE)
@@ -347,17 +347,18 @@ GRASS Development Team (2024). \emph{Geographic Resources Analysis Support Syste
 \url{https://grass.osgeo.org}.
 }
 \seealso{
-\link{grass_db}, \code{\link[terra:plot]{terra::plot()}},
-\code{\link[terra:minmax]{terra::minmax()}}, \code{\link[ggplot2:scale_fill_viridis_c]{ggplot2::scale_fill_viridis_c()}}.
+\link{grass_db}, \code{\link[terra:plot]{terra::plot()}}, \code{\link[terra:minmax]{terra::minmax()}},
+\code{\link[ggplot2:scale_fill_viridis_c]{ggplot2::scale_fill_viridis_c()}}.
 
 See also \CRANpkg{ggplot2} docs on additional \code{...} arguments:
 
 Other color scales, palettes and hypsometric tints:
-\code{\link[=scale_color_coltab]{scale_color_coltab()}},
+\code{\link{scale_coltab}},
 \code{\link{scale_cross_blended}},
 \code{\link{scale_hypso}},
 \code{\link{scale_princess}},
 \code{\link{scale_terrain}},
-\code{\link{scale_whitebox}}
+\code{\link{scale_whitebox}},
+\code{\link{scale_wiki}}
 }
 \concept{gradients}

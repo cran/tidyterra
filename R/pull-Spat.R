@@ -10,15 +10,12 @@
 #'
 #' See **Examples** and section **About layer names** on [as_tibble.Spat()].
 #'
-#' @export
-#' @encoding UTF-8
 #' @rdname pull.Spat
 #' @name pull.Spat
 #'
-#' @seealso [dplyr::pull()]
+#' @seealso [dplyr::pull()].
 #'
 #' @family dplyr.cols
-#' @family dplyr.methods
 #'
 #' @importFrom dplyr pull
 #'
@@ -37,9 +34,10 @@
 #'   [quasiquotation][rlang::topic-inject] (you can unquote column names and
 #'   column locations).
 #'
-#' @param ... Arguments passed on to [`as_tibble.Spat()`][as_tibble.Spat].
+#' @param ... Arguments passed to [as_tibble.SpatRaster()] or
+#'   [as_tibble.SpatVector()] methods.
 #'
-#' @returns A vector the same number of cells/geometries as `.data`.
+#' @returns A vector with the same number of cells/geometries as `.data`.
 #'
 #' On `SpatRaster` objects, note that the default (`na.rm = FALSE`) removes
 #' empty cells, so you may need to pass (`na.rm = FALSE`) to `...`. See
@@ -47,43 +45,45 @@
 #'
 #' @section \CRANpkg{terra} equivalent:
 #'
-#' [terra::values()]
+#' [terra::values()].
 #'
 #' @section Methods:
 #'
-#' Implementation of the **generic** [dplyr::pull()] method. This is done
-#' by coercing the `Spat*` object to a tibble first (see [as_tibble.Spat]) and
-#' then using [dplyr::pull()] method over the tibble.
+#' Implementation of the **generic** [dplyr::pull()] methods. Each method first
+#' coerces the `Spat*` object to a tibble (see [as_tibble.Spat]) and then
+#' applies [dplyr::pull()] to the tibble.
 #'
 #' ## `SpatRaster`
 #'
-#' When passing option `na.rm = TRUE` to `...`, only cells with a value
-#' distinct to `NA` are extracted. See [terra::as.data.frame()].
+#' When passing `na.rm = TRUE` to `...`, only cells with a value other than
+#' `NA` are extracted. See [terra::as.data.frame()].
 #'
-#' If `xy = TRUE` option is passed to `...`, two columns names `x` and `y`
+#' If `xy = TRUE` is passed to `...`, two columns named `x` and `y`
 #' (corresponding to the geographic coordinates of each cell) are available
-#' in position `1` and `2`. Hence, `pull(.data, 1)` and
-#' `pull(.data, 1, xy = TRUE)` return different result.
+#' in positions `1` and `2`. Therefore, `pull(.data, 1)` and
+#' `pull(.data, 1, xy = TRUE)` return different results.
 #'
 #' ## `SpatVector`
 #'
-#' When passing `geom = "WKT"/geom = "HEX"` to `...`, the geometry of the
-#' `SpatVector` can be pulled passing `var = geometry`. Similarly to
-#' `SpatRaster` method, when using `geom = "XY"` the `x,y` coordinates can be
-#' pulled with `var = x/var = y`. See [terra::as.data.frame()] options.
+#' When passing `geom = "WKT"` or `geom = "HEX"` to `...`, the geometry of the
+#' `SpatVector` can be extracted with `var = geometry`. Similarly, when using
+#' `geom = "XY"`, the coordinates can be extracted with `var = x` or
+#' `var = y`. See the options in [terra::as.data.frame()].
 #'
+#' @encoding UTF-8
+#' @export
 #' @examples
 #'
 #' library(terra)
 #' f <- system.file("extdata/cyl_tile.tif", package = "tidyterra")
 #' r <- rast(f)
 #'
-#' # Extract second layer
+#' # Extract the second layer.
 #' r |>
 #'   pull(2) |>
 #'   head()
 #'
-#' # With xy the first two cols are `x` (longitude) and `y` (latitude)
+#' # With `xy`, the first two columns are `x` (longitude) and `y` (latitude).
 #'
 #' r |>
 #'   pull(2, xy = TRUE) |>
@@ -102,9 +102,8 @@ pull.SpatRaster <- function(.data, var = -1, name = NULL, ...) {
   dplyr::pull(as_tibble(.data, ...), !!var, !!name)
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname pull.Spat
+#' @export
 pull.SpatVector <- function(.data, var = -1, name = NULL, ...) {
   var <- rlang::enquo(var)
   name <- rlang::enquo(name)

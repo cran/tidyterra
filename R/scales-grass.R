@@ -39,33 +39,21 @@
 #' also [r.color - GRASS GIS
 #' Manual](https://grass.osgeo.org/grass-stable/manuals/r.colors.html).
 #'
-#' @export
-#' @encoding UTF-8
-#'
 #' @name scale_grass
 #'
-#' @seealso [grass_db], [terra::plot()],
-#' [terra::minmax()], [ggplot2::scale_fill_viridis_c()].
+#' @seealso
+#' [grass_db], [terra::plot()], [terra::minmax()],
+#' [ggplot2::scale_fill_viridis_c()].
 #'
 #' See also \CRANpkg{ggplot2} docs on additional `...` arguments:
 #'
 #' @family gradients
 #'
-#' @inheritParams ggplot2::scale_fill_viridis_b
-#' @inheritParams ggplot2::continuous_scale
+#' @inheritParams scale_cross_blended
 #'
 #' @inheritDotParams ggplot2::discrete_scale breaks:drop
 #' @inheritDotParams ggplot2::continuous_scale breaks:labels
 #' @inheritDotParams ggplot2::binned_scale breaks:limits nice.breaks
-#' @param na.translate Logical. If `TRUE`, remove `NA` values from the legend.
-#'   The default is `TRUE`.
-#' @param na.value Missing values will be replaced with this value. By default,
-#'   \CRANpkg{tidyterra} uses `na.value = "transparent"` so cells with `NA` are
-#'   not filled. See also
-#'   [#120](https://github.com/dieghernan/tidyterra/issues/120).
-#'
-#' @param drop Logical. If `TRUE`, omit unused factor levels from the scale.
-#'   The default (`TRUE`) removes unused factors.
 #' @param palette A valid palette name. The name is matched to the list of
 #'   available palettes, ignoring upper vs. lower case. See
 #'   [grass_db] for more information.
@@ -78,13 +66,15 @@
 #'
 #' @section \CRANpkg{terra} equivalent:
 #'
-#' [terra::map.pal()]
+#' [terra::map.pal()].
 #'
 #' @references
 #' GRASS Development Team (2024). *Geographic Resources Analysis Support System
 #' (GRASS) Software, Version 8.3.2*. Open Source Geospatial Foundation, USA.
 #' <https://grass.osgeo.org>.
 #'
+#' @encoding UTF-8
+#' @export
 #' @examples
 #' \donttest{
 #' filepath <- system.file("extdata/volcano2.tif", package = "tidyterra")
@@ -100,7 +90,7 @@
 #'   geom_spatraster(data = volcano2_rast) +
 #'   scale_fill_grass_c(palette = "terrain")
 #'
-#' # Use with no default limits
+#' # Use without default limits.
 #' ggplot() +
 #'   geom_spatraster(data = volcano2_rast) +
 #'   scale_fill_grass_c(palette = "terrain", use_grass_range = FALSE)
@@ -168,9 +158,8 @@ scale_fill_grass_d <- function(
     ...
   )
 }
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_grass
+#' @export
 scale_colour_grass_d <- function(
   palette = "viridis",
   ...,
@@ -194,15 +183,13 @@ scale_colour_grass_d <- function(
   )
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_grass
 #' @usage NULL
+#' @export
 scale_color_grass_d <- scale_colour_grass_d
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_grass
+#' @export
 scale_fill_grass_c <- function(
   palette = "viridis",
   ...,
@@ -215,6 +202,7 @@ scale_fill_grass_c <- function(
   guide = "colourbar"
 ) {
   check_alpha_direction(alpha, direction)
+  check_bool(use_grass_range)
 
   scale_params <- grass_scale_params(
     palette = palette,
@@ -235,9 +223,8 @@ scale_fill_grass_c <- function(
   )
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_grass
+#' @export
 scale_colour_grass_c <- function(
   palette = "viridis",
   ...,
@@ -250,6 +237,7 @@ scale_colour_grass_c <- function(
   guide = "colourbar"
 ) {
   check_alpha_direction(alpha, direction)
+  check_bool(use_grass_range)
 
   scale_params <- grass_scale_params(
     palette = palette,
@@ -270,15 +258,13 @@ scale_colour_grass_c <- function(
   )
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_grass
 #' @usage NULL
+#' @export
 scale_color_grass_c <- scale_colour_grass_c
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_grass
+#' @export
 scale_fill_grass_b <- function(
   palette = "viridis",
   ...,
@@ -291,6 +277,7 @@ scale_fill_grass_b <- function(
   guide = "coloursteps"
 ) {
   check_alpha_direction(alpha, direction)
+  check_bool(use_grass_range)
 
   scale_params <- grass_scale_params(
     palette = palette,
@@ -311,9 +298,8 @@ scale_fill_grass_b <- function(
   )
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_grass
+#' @export
 scale_colour_grass_b <- function(
   palette = "viridis",
   ...,
@@ -326,6 +312,7 @@ scale_colour_grass_b <- function(
   guide = "coloursteps"
 ) {
   check_alpha_direction(alpha, direction)
+  check_bool(use_grass_range)
 
   scale_params <- grass_scale_params(
     palette = palette,
@@ -346,17 +333,15 @@ scale_colour_grass_b <- function(
   )
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_grass
 #' @usage NULL
+#' @export
 scale_color_grass_b <- scale_colour_grass_b
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_grass
 #'
 #' @inheritParams wiki.colors
+#' @export
 #' @examples
 #'
 #' # Display all the GRASS palettes
@@ -401,6 +386,8 @@ scale_color_grass_b <- scale_colour_grass_b
 #' }
 #' par(opar)
 grass.colors <- function(n, palette = "viridis", alpha = 1, rev = FALSE) {
+  check_color_args(n, alpha, rev)
+
   if ((n <- as.integer(n[1L])) > 0) {
     paltab <- extract_pal(tidyterra::grass_db, palette = palette)
     colors <- as.character(paltab$hex)
@@ -430,7 +417,7 @@ grass_scale_params <- function(
   values,
   limits,
   use_grass_range,
-  call = rlang::caller_env()
+  call = caller_env()
 ) {
   coltab <- tidyterra::grass_db
 
@@ -447,14 +434,14 @@ grass_scale_params <- function(
 
   if (any(!use_grass_range, anyNA(pal_cols$limit))) {
     rescaled_values <- values
-    if (!is.null(values)) {
+    if (!is_null(values)) {
       rescaled_values <- scales::rescale(values)
     }
   } else {
-    if (is.null(values)) {
+    if (is_null(values)) {
       values <- pal_cols$limit
     }
-    if (is.null(limits)) {
+    if (is_null(limits)) {
       limits <- range(values)
     }
     rescaled_values <- scales::rescale(values, from = limits)

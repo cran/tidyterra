@@ -42,18 +42,21 @@ See \strong{Details} on \code{\link[dplyr:group_by]{dplyr::group_by()}}.
 \section{Methods}{
 
 
-Implementation of the \strong{generic} \code{\link[dplyr:group_by]{dplyr::group_by()}} family functions for
+Implementation of the \strong{generic} \code{\link[dplyr:group_by]{dplyr::group_by()}} method family for
 \code{SpatVector} objects.
+}
 
-\strong{When mixing} \CRANpkg{terra} \strong{and} \CRANpkg{dplyr} \strong{syntax}
-on a grouped \code{SpatVector}, for example subsetting a \code{SpatVector} like
-\code{v[1:3,1:2]}, the \code{groups} attribute can be corrupted.
-\CRANpkg{tidyterra} tries to re-group the \code{SpatVector}. This is triggered
-the next time you use a \CRANpkg{dplyr} verb on your \code{SpatVector}.
+\section{Grouping metadata}{
 
-Some operations, such as \code{terra::spatSample()}, create a new \code{SpatVector}.
-In these cases, the result does not preserve the \code{groups} attribute. Use
-\code{\link[=group_by]{group_by()}} to re-group.
+
+Mixing \CRANpkg{terra} and \CRANpkg{dplyr} syntax on a grouped or row-wise
+\code{SpatVector}, for example by subsetting with \code{v[1:3, 1:2]}, can corrupt its
+grouping metadata. \CRANpkg{tidyterra} attempts to restore this metadata the
+next time you use a \CRANpkg{dplyr} verb on the object.
+
+Some operations, such as \code{\link[terra:spatSample]{terra::spatSample()}}, create a new \code{SpatVector}
+without preserving grouping metadata. Call \code{\link[=group_by.SpatVector]{group_by.SpatVector()}} or
+\code{\link[=rowwise.SpatVector]{rowwise.SpatVector()}} again, as appropriate.
 }
 
 \examples{
@@ -106,7 +109,7 @@ by_name2_name1 |>
   group_by(ID_1, ID_2) |>
   group_vars()
 
-# Use add = TRUE to append instead.
+# Use `.add = TRUE` to append instead.
 by_name2_name1 |>
   group_by(ID_1, ID_2, .add = TRUE) |>
   group_vars()
@@ -119,7 +122,7 @@ p |>
 }
 }
 \seealso{
-\code{\link[dplyr:group_by]{dplyr::group_by()}}, \code{\link[dplyr:ungroup]{dplyr::ungroup()}}
+\code{\link[dplyr:group_by]{dplyr::group_by()}}, \code{\link[dplyr:ungroup]{dplyr::ungroup()}}.
 
 Other \CRANpkg{dplyr} verbs that operate on groups of rows:
 \code{\link[=count.SpatVector]{count.SpatVector()}},
@@ -127,30 +130,8 @@ Other \CRANpkg{dplyr} verbs that operate on groups of rows:
 \code{\link[=rowwise.SpatVector]{rowwise.SpatVector()}},
 \code{\link[=summarise.SpatVector]{summarise.SpatVector()}}
 
-Other \CRANpkg{dplyr} methods:
-\code{\link[=arrange.SpatVector]{arrange.SpatVector()}},
-\code{\link{bind_cols.SpatVector}},
-\code{\link{bind_rows.SpatVector}},
-\code{\link[=count.SpatVector]{count.SpatVector()}},
-\code{\link[=cross_join.SpatVector]{cross_join.SpatVector()}},
-\code{\link[=distinct.SpatVector]{distinct.SpatVector()}},
-\code{\link{filter-joins.SpatVector}},
-\code{\link{filter.Spat}},
-\code{\link{glimpse.Spat}},
-\code{\link{mutate-joins.SpatVector}},
-\code{\link{mutate.Spat}},
-\code{\link[=nest_join.SpatVector]{nest_join.SpatVector()}},
-\code{\link{pull.Spat}},
-\code{\link[=reframe.SpatVector]{reframe.SpatVector()}},
-\code{\link{relocate.Spat}},
-\code{\link{rename.Spat}},
-\code{\link{rows.SpatVector}},
-\code{\link[=rowwise.SpatVector]{rowwise.SpatVector()}},
-\code{\link{select.Spat}},
-\code{\link{slice.Spat}},
-\code{\link[=summarise.SpatVector]{summarise.SpatVector()}}
-
 Other \CRANpkg{dplyr} grouping methods:
+\code{\link[=group_data.SpatVector]{group_data.SpatVector()}},
 \code{\link[=group_map.SpatVector]{group_map.SpatVector()}},
 \code{\link[=group_nest.SpatVector]{group_nest.SpatVector()}},
 \code{\link[=group_split.SpatVector]{group_split.SpatVector()}},
@@ -158,4 +139,3 @@ Other \CRANpkg{dplyr} grouping methods:
 }
 \concept{dplyr.group_functions}
 \concept{dplyr.groups}
-\concept{dplyr.methods}

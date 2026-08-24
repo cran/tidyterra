@@ -4,16 +4,12 @@
 #' `arrange.SpatVector()` orders the geometries of a `SpatVector` by the
 #' values of selected columns.
 #'
-#' @export
-#' @encoding UTF-8
 #' @rdname arrange.SpatVector
 #' @name arrange.SpatVector
 #'
-#' @seealso [dplyr::arrange()]
+#' @seealso [dplyr::arrange()].
 #'
-#' @family dplyr.single_table
 #' @family dplyr.rows
-#' @family dplyr.methods
 #'
 #' @importFrom dplyr arrange
 #'
@@ -26,13 +22,15 @@
 #'
 #' @section \CRANpkg{terra} equivalent:
 #'
-#' [terra::sort()]
+#' [terra::sort()].
 #'
 #' @section Methods:
 #'
-#' Implementation of the **generic** [dplyr::arrange()] function for
-#' `SpatVector` class.
+#' Implementation of the **generic** [dplyr::arrange()] method for
+#' `SpatVector` objects.
 #'
+#' @encoding UTF-8
+#' @export
 #' @examples
 #'
 #' library(terra)
@@ -64,7 +62,7 @@ arrange.SpatVector <- function(.data, ..., .by_group = FALSE, .locale = NULL) {
 
   arranged <- dplyr::arrange(tbl, ..., .by_group = .by_group, .locale = .locale)
 
-  # Regenerate
+  # Regenerate the `SpatVector`.
   vend <- .data
   vend <- vend[arranged[[indexvar]], ]
 

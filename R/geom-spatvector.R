@@ -14,12 +14,9 @@
 #'
 #' See [ggplot2::geom_sf()] for details on aesthetics, etc.
 #'
-#' @export
-#' @encoding UTF-8
-#'
 #' @name ggspatvector
 #'
-#' @seealso [ggplot2::geom_sf()]
+#' @seealso [ggplot2::geom_sf()].
 #'
 #' @family ggplot2.utils
 #'
@@ -27,15 +24,17 @@
 #'
 #' @param data A `SpatVector` object, see [terra::vect()].
 #'
-#' @param ... Other arguments passed on to [ggplot2::geom_sf()] functions.
+#' @param ... Other arguments passed to [ggplot2::geom_sf()] functions.
 #'   These are often aesthetics, used to set an aesthetic to a fixed value,
 #'   like `colour = "red"` or `linewidth = 3`.
 #'
 #' @returns A \CRANpkg{ggplot2} layer.
 #' @section \CRANpkg{terra} equivalent:
 #'
-#' [terra::plot()]
+#' [terra::plot()].
 #'
+#' @encoding UTF-8
+#' @export
 #' @examples
 #' \donttest{
 #' # Create a SpatVector
@@ -66,7 +65,7 @@
 #'   scale_fill_viridis_d(alpha = 0.4) +
 #'   coord_sf(crs = 3857)
 #'
-#' # You can use now geom_sf with SpatVectors!
+#' # You can now use geom_sf() with SpatVector objects.
 #'
 #' ggplot(cyl) +
 #'   geom_sf() +
@@ -91,33 +90,28 @@ geom_spatvector <- function(
   )
 }
 
+#' @rdname ggspatvector
 #' @export
-#' @encoding UTF-8
-#' @name ggspatvector
-#' @param linewidth Size of label border, in mm.
 geom_spatvector_label <- function(
   mapping = aes(),
   data = NULL,
   na.rm = FALSE,
   show.legend = NA,
   ...,
-  linewidth = 0.25,
   inherit.aes = TRUE
 ) {
   ggplot2::geom_sf_label(
     mapping = mapping,
     data = data,
     ...,
-    linewidth = linewidth,
     na.rm = na.rm,
     show.legend = show.legend,
     inherit.aes = inherit.aes
   )
 }
 
+#' @rdname ggspatvector
 #' @export
-#' @encoding UTF-8
-#' @name ggspatvector
 geom_spatvector_text <- function(
   mapping = aes(),
   data = NULL,
@@ -138,9 +132,8 @@ geom_spatvector_text <- function(
   )
 }
 
+#' @rdname ggspatvector
 #' @export
-#' @encoding UTF-8
-#' @name ggspatvector
 stat_spatvector <- function(
   mapping = NULL,
   data = NULL,

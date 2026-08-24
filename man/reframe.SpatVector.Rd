@@ -8,14 +8,16 @@
 \method{reframe}{SpatVector}(.data, ..., .by = NULL, .dissolve = TRUE)
 }
 \arguments{
-\item{.data}{A \code{SpatVector}.}
+\item{.data}{A \code{SpatVector} created with \code{\link[terra:vect]{terra::vect()}}.}
 
-\item{...}{<\code{\link[rlang:args_data_masking]{data-masking}}>
+\item{...}{<\code{\link[rlang:args_data_masking]{data-masking}}> Name-value pairs of
+summary functions. The name will be the name of the variable in the result.
 
-Name-value pairs of functions. The name will be the name of the variable in
-the result. The value can be a vector of any length.
-
-Unnamed data frame values add multiple columns from a single expression.}
+The value can be:
+\itemize{
+\item A vector of length 1, e.g. \code{min(x)}, \code{n()}, or \code{sum(is.na(y))}.
+\item A data frame with 1 row, to add multiple columns from a single expression.
+}}
 
 \item{.by}{<\code{\link[dplyr:dplyr_tidy_select]{tidy-select}}> Optionally, a selection of columns to
 group by for just this operation, functioning as an alternative to \code{\link[dplyr:group_by]{group_by()}}. For
@@ -28,19 +30,20 @@ geometries.}
 A \code{SpatVector}.
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+
 \code{reframe()} can return any number of rows per group. The geometry of each
 group is aggregated and repeated for each row created for that group.
 }
 \section{Methods}{
 
 
-Implementation of the \strong{generic} \code{\link[dplyr:reframe]{dplyr::reframe()}} method.
-\subsection{\code{SpatVector}}{
+Implementation of the \strong{generic} \code{\link[dplyr:reframe]{dplyr::reframe()}} method for
+\code{SpatVector} objects.
 
-For grouped inputs, and for calls using \code{.by}, geometries are aggregated per
+For grouped inputs and calls using \code{.by}, geometries are aggregated per
 group. If a group produces more than one row, the aggregated group geometry
 is repeated for each output row.
-}
 }
 
 \examples{
@@ -55,46 +58,12 @@ v |>
   reframe(value = 1:2)
 }
 \seealso{
-\code{\link[dplyr:reframe]{dplyr::reframe()}}, \code{\link[=summarise.SpatVector]{summarise.SpatVector()}}
-
-Other \CRANpkg{dplyr} single-table verbs:
-\code{\link[=arrange.SpatVector]{arrange.SpatVector()}},
-\code{\link{filter.Spat}},
-\code{\link{mutate.Spat}},
-\code{\link{rename.Spat}},
-\code{\link{select.Spat}},
-\code{\link{slice.Spat}},
-\code{\link[=summarise.SpatVector]{summarise.SpatVector()}}
+\code{\link[dplyr:reframe]{dplyr::reframe()}}.
 
 Other \CRANpkg{dplyr} verbs that operate on groups of rows:
 \code{\link[=count.SpatVector]{count.SpatVector()}},
 \code{\link[=group_by.SpatVector]{group_by.SpatVector()}},
 \code{\link[=rowwise.SpatVector]{rowwise.SpatVector()}},
 \code{\link[=summarise.SpatVector]{summarise.SpatVector()}}
-
-Other \CRANpkg{dplyr} methods:
-\code{\link[=arrange.SpatVector]{arrange.SpatVector()}},
-\code{\link{bind_cols.SpatVector}},
-\code{\link{bind_rows.SpatVector}},
-\code{\link[=count.SpatVector]{count.SpatVector()}},
-\code{\link[=cross_join.SpatVector]{cross_join.SpatVector()}},
-\code{\link[=distinct.SpatVector]{distinct.SpatVector()}},
-\code{\link{filter-joins.SpatVector}},
-\code{\link{filter.Spat}},
-\code{\link{glimpse.Spat}},
-\code{\link[=group_by.SpatVector]{group_by.SpatVector()}},
-\code{\link{mutate-joins.SpatVector}},
-\code{\link{mutate.Spat}},
-\code{\link[=nest_join.SpatVector]{nest_join.SpatVector()}},
-\code{\link{pull.Spat}},
-\code{\link{relocate.Spat}},
-\code{\link{rename.Spat}},
-\code{\link{rows.SpatVector}},
-\code{\link[=rowwise.SpatVector]{rowwise.SpatVector()}},
-\code{\link{select.Spat}},
-\code{\link{slice.Spat}},
-\code{\link[=summarise.SpatVector]{summarise.SpatVector()}}
 }
 \concept{dplyr.groups}
-\concept{dplyr.methods}
-\concept{dplyr.single_table}

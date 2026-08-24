@@ -47,6 +47,8 @@ outer names with \code{names_sep} automatically stripped. This makes
 A tibble with one or more list-columns of \code{SpatVector} objects.
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+
 \code{nest()} creates list-columns of \code{SpatVector} objects.
 }
 \section{\CRANpkg{terra} equivalent}{
@@ -58,13 +60,12 @@ A tibble with one or more list-columns of \code{SpatVector} objects.
 \section{Methods}{
 
 
-Implementation of the \strong{generic} \code{\link[tidyr:nest]{tidyr::nest()}} method.
-\subsection{\code{SpatVector}}{
+Implementation of the \strong{generic} \code{\link[tidyr:nest]{tidyr::nest()}} method for \code{SpatVector}
+objects.
 
 The geometry column must be nested with the other attributes that form each
 nested \code{SpatVector}. These nested list-columns contain \code{SpatVector} objects
 and cannot be passed directly to \code{\link[tidyr:unnest]{tidyr::unnest()}}.
-}
 }
 
 \examples{
@@ -84,18 +85,6 @@ terra::svc(sv)
 
 }
 \seealso{
-\code{\link[tidyr:nest]{tidyr::nest()}}, \code{\link[terra:svc]{terra::svc()}}
-
-Other \CRANpkg{tidyr} methods:
-\code{\link[=complete.SpatVector]{complete.SpatVector()}},
-\code{\link{drop_na.Spat}},
-\code{\link[=expand.SpatVector]{expand.SpatVector()}},
-\code{\link[=fill.SpatVector]{fill.SpatVector()}},
-\code{\link[=pivot_longer.SpatVector]{pivot_longer.SpatVector()}},
-\code{\link[=pivot_wider.SpatVector]{pivot_wider.SpatVector()}},
-\code{\link{replace_na.Spat}},
-\code{\link[=uncount.SpatVector]{uncount.SpatVector()}},
-\code{\link{unite.Spat}}
+\code{\link[tidyr:nest]{tidyr::nest()}}, \code{\link[terra:svc]{terra::svc()}}.
 }
-\concept{tidyr.methods}
 \concept{tidyr.nest}

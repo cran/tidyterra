@@ -42,7 +42,8 @@ together.
 \section{Methods}{
 
 
-Implementation of the \strong{generic} \code{\link[tidyr:unite]{tidyr::unite()}} method.
+Implementation of the \strong{generic} \code{\link[tidyr:unite]{tidyr::unite()}} methods for \verb{Spat*}
+objects.
 \subsection{\code{SpatRaster}}{
 
 The selected layers are united cell by cell. The new layer is categorical
@@ -68,18 +69,6 @@ unite(r, "label", tavg_04, tavg_05, sep = "-", remove = FALSE)
 
 }
 \seealso{
-\code{\link[tidyr:unite]{tidyr::unite()}}
-
-Other \CRANpkg{tidyr} methods:
-\code{\link[=complete.SpatVector]{complete.SpatVector()}},
-\code{\link{drop_na.Spat}},
-\code{\link[=expand.SpatVector]{expand.SpatVector()}},
-\code{\link[=fill.SpatVector]{fill.SpatVector()}},
-\code{\link[=nest.SpatVector]{nest.SpatVector()}},
-\code{\link[=pivot_longer.SpatVector]{pivot_longer.SpatVector()}},
-\code{\link[=pivot_wider.SpatVector]{pivot_wider.SpatVector()}},
-\code{\link{replace_na.Spat}},
-\code{\link[=uncount.SpatVector]{uncount.SpatVector()}}
+\code{\link[tidyr:unite]{tidyr::unite()}}.
 }
 \concept{tidyr.character}
-\concept{tidyr.methods}

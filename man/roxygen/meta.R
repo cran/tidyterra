@@ -6,11 +6,9 @@ list(
   # Keep these names aligned with `@family` tags and pkgdown `has_concept()`.
   rd_family_title = list(
     coerce = "Coercing objects:",
-    helpers = "Other helpers:",
     datasets = "Other datasets:",
     tibble.methods = "Other \\CRANpkg{tibble} methods:",
     generics.methods = "Other \\CRANpkg{generics} methods:",
-    dplyr.methods = "Other \\CRANpkg{dplyr} methods:",
     dplyr.rows = "Other \\CRANpkg{dplyr} verbs that operate on rows:",
     dplyr.cols = "Other \\CRANpkg{dplyr} verbs that operate on columns:",
     dplyr.groups = paste0(
@@ -22,8 +20,6 @@ list(
       "Other \\CRANpkg{dplyr} verbs that operate on ",
       "pairs of \\code{SpatVector} and data frame objects:"
     ),
-    dplyr.single_table = "Other \\CRANpkg{dplyr} single-table verbs:",
-    tidyr.methods = "Other \\CRANpkg{tidyr} methods:",
     tidyr.character = "Other \\CRANpkg{tidyr} character methods:",
     tidyr.nest = "Other \\CRANpkg{tidyr} nesting methods:",
     tidyr.pivot = "Other \\CRANpkg{tidyr} verbs for pivoting:",
@@ -34,8 +30,6 @@ list(
     ),
     ggplot2.utils = "Other \\CRANpkg{ggplot2} helpers:",
     ggplot2.methods = "Other \\CRANpkg{ggplot2} methods:",
-    joins = "Other joins:",
-    grouping = "Other grouping methods:",
     gradients = "Other color scales, palettes and hypsometric tints:"
   )
 )

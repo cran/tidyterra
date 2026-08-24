@@ -5,6 +5,7 @@
 \alias{scale_coltab}
 \alias{scale_fill_coltab}
 \alias{scale_colour_coltab}
+\alias{scale_color_coltab}
 \alias{get_coltab_pal}
 \title{Discrete scales based on \code{SpatRaster} color tables}
 \usage{
@@ -29,7 +30,7 @@ scale_colour_coltab(
 get_coltab_pal(x)
 }
 \arguments{
-\item{data, x}{A \code{SpatRaster} with one or several color tables.
+\item{data, x}{A \code{SpatRaster} with one or more color tables.
 See \code{\link[terra:has.colors]{terra::has.colors()}}.}
 
 \item{...}{
@@ -149,5 +150,15 @@ gg +
 }
 \seealso{
 \code{\link[terra:coltab]{terra::coltab()}}, \code{\link[ggplot2:discrete_scale]{ggplot2::discrete_scale()}},
-\code{\link[ggplot2:scale_fill_manual]{ggplot2::scale_fill_manual()}},
+\code{\link[ggplot2:scale_fill_manual]{ggplot2::scale_fill_manual()}}.
+
+Other color scales, palettes and hypsometric tints:
+\code{\link{scale_cross_blended}},
+\code{\link{scale_grass}},
+\code{\link{scale_hypso}},
+\code{\link{scale_princess}},
+\code{\link{scale_terrain}},
+\code{\link{scale_whitebox}},
+\code{\link{scale_wiki}}
 }
+\concept{gradients}

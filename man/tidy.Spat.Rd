@@ -49,15 +49,15 @@ This argument is passed on as \code{repair} to \code{\link[vctrs:vec_as_names]{v
 See there for more details on these terms and the strategies used
 to enforce them.}
 
-\item{maxcell}{Positive integer. Maximum number of cells to use for
-the plot.}
+\item{maxcell}{Positive integer or \code{Inf}. Maximum number of raster cells to
+use. Use \code{Inf} to use all cells.}
 
 \item{pivot}{Logical. When \code{TRUE}, a \code{SpatRaster} is returned in \link[tidyr:pivot_longer]{long format}. When \code{FALSE} (the default), it is returned
 as a data frame with one column per layer. See \strong{Details}.}
 
-\item{crs}{Input that includes or represents a CRS. It can be an \code{sf/sfc}
-object, a \code{SpatRaster/SpatVector} object, a \code{crs} object from
-\code{\link[sf:st_crs]{sf::st_crs()}}, a character string (for example a \href{https://proj.org/en/9.3/operations/projections/index.html}{proj4 string}), or
+\item{crs}{Input that includes or represents a CRS. It can be an \code{sf} or
+\code{sfc} object, a \code{SpatRaster} or \code{SpatVector} object, a \code{crs} object from
+\code{\link[sf:st_crs]{sf::st_crs()}}, a character string (for example a \href{https://proj.org/en/9.3/operations/projections/index.html}{PROJ string}), or
 an integer representing an \href{https://epsg.io/}{EPSG} code.}
 }
 \value{
@@ -76,7 +76,8 @@ is deprecated in the future.
 \section{Methods}{
 
 
-Implementation of the \strong{generic} \code{\link[generics:tidy]{generics::tidy()}} method.
+Implementation of the \strong{generic} \code{\link[generics:tidy]{generics::tidy()}} methods for \verb{Spat*}
+objects.
 \subsection{\code{SpatRaster}}{
 
 Returns a tibble that can be used with \verb{ggplot2::geom_*}, such as
@@ -140,7 +141,7 @@ ex
 
 tidy(ex)
 
-# With crs
+# With a CRS
 tidy(ex, crs = pull_crs(cyl))
 
 # SpatGraticule
@@ -151,8 +152,7 @@ tidy(grat)
 }
 }
 \seealso{
-\code{\link[sf:st_as_sf]{sf::st_as_sf()}}, \code{\link{as_tibble.Spat}}, \code{\link[=as_spatraster]{as_spatraster()}}, \code{\link{fortify.Spat}},
-\code{\link[generics:tidy]{generics::tidy()}}.
+\code{\link[sf:st_as_sf]{sf::st_as_sf()}}, \code{\link[generics:tidy]{generics::tidy()}}.
 
 Other \CRANpkg{generics} methods:
 \code{\link{glance.Spat}},

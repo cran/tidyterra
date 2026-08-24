@@ -1,32 +1,28 @@
-#' Bind multiple `SpatVector`, `sf/sfc` and data frame objects by row
+#' Bind multiple `SpatVector`, `sf`, `sfc` and data frame objects by row
 #'
 #' @description
-#' Bind any number of `SpatVector`, data frames and `sf/sfc` objects by row,
+#' Bind any number of `SpatVector`, data frames, `sf` and `sfc` objects by row,
 #' making a longer result. This is similar to `do.call(rbind, data_frames)`,
 #' but the output will contain all columns that appear in any of the inputs.
-#'
-#' @export
-#' @encoding UTF-8
 #'
 #' @rdname bind_rows.SpatVector
 #' @name bind_rows.SpatVector
 #'
 #' @aliases bind.Spat
-#' @seealso [dplyr::bind_rows()]
+#' @seealso [dplyr::bind_rows()].
 #'
 #' @family dplyr.pairs
-#' @family dplyr.methods
 #'
 #' @inheritParams dplyr::bind_rows
 #'
 #' @param ... Objects to combine. The first argument must be a `SpatVector`.
-#'   Each subsequent argument can be a `SpatVector`, `sf/sfc` object or data
-#'   frame. Columns are matched by name and any missing columns are filled with
-#'   `NA`.
+#'   Each subsequent argument can be a `SpatVector`, `sf` or `sfc` object or a
+#'   data frame. Columns are matched by name and any missing columns are filled
+#'   with `NA`.
 #' @returns A `SpatVector` of the same type as the first element of `...`.
 #' @section \CRANpkg{terra} equivalent:
 #'
-#' `rbind()` method
+#' `rbind()` method.
 #'
 #' @section Methods:
 #'
@@ -34,14 +30,15 @@
 #' `SpatVector` objects.
 #'
 #' The first argument should be a `SpatVector`. Each subsequent argument can be
-#' a `SpatVector`, `sf/sfc` object or data frame:
+#' a `SpatVector`, an `sf` or `sfc` object or a data frame:
 #'
-#' - If subsequent `SpatVector/sf/sfc` objects have a different CRS than the
-#'   first element, those elements are reprojected to the CRS of the
-#'   first element with a message.
+#' - If subsequent spatial objects have a different CRS from the first element,
+#'   they are reprojected to the CRS of the first element with a message.
 #' - If any element of `...` is a tibble/data frame, the rows are column-bound
 #'   with empty geometries with a message.
 #'
+#' @encoding UTF-8
+#' @export
 #' @examples
 #'
 #' library(terra)
@@ -50,7 +47,7 @@
 #' v1 <- v[1, "cpro"]
 #' v2 <- v[3:5, c("name", "iso2")]
 #'
-#' # You can supply individual SpatVector as arguments:
+#' # You can supply individual SpatVector objects as arguments.
 #' bind_spat_rows(v1, v2)
 #'
 #' # When you supply a column name with the `.id` argument, a new column is
@@ -58,26 +55,26 @@
 #' bind_spat_rows(v1, v2, .id = "id")
 #'
 #' \donttest{
-#' # Use with sf
+#' # Use with sf objects.
 #' sfobj <- sf::st_as_sf(v2[1, ])
 #'
 #' sfobj
 #'
 #' bind_spat_rows(v1, sfobj)
 #'
-#' # Would reproject with a message on different CRS
+#' # Reproject with a message when the CRS differs.
 #' sfobj_3857 <- as_spatvector(sfobj) |> project("EPSG:3857")
 #'
 #' bind_spat_rows(v1, sfobj_3857)
 #'
-#' # And with data frames with a message
+#' # Bind data frames with a message.
 #' data("mtcars")
 #' bind_spat_rows(v1, sfobj, mtcars, .id = "id2")
 #'
 #' # Use lists
 #' bind_spat_rows(list(v1[1, ], sfobj[1:2, ]))
 #'
-#' # Or named list combined with .id
+#' # Use a named list with `.id`.
 #' bind_spat_rows(list(
 #'   SpatVector = v1[1, ], sf = sfobj[1, ],
 #'   mtcars = mtcars[1, ]
@@ -91,7 +88,7 @@ bind_spat_rows <- function(..., .id = NULL) {
   }
 
   # Support list input.
-  if (length(dots) == 1 && is.list(dots[[1]])) {
+  if (length(dots) == 1 && is_list(dots[[1]])) {
     # Unlist the first level.
     dots <- dots[[1]]
   }
@@ -99,7 +96,7 @@ bind_spat_rows <- function(..., .id = NULL) {
   named_list <- as.character(seq_along(dots))
 
   # Preserve names from named lists.
-  if (!is.null(names(dots))) {
+  if (!is_null(names(dots))) {
     maybe_names <- names(dots)
     maybe_names <- maybe_names[nzchar(maybe_names)]
     maybe_names <- maybe_names[!is.na(maybe_names)]
@@ -210,7 +207,7 @@ crs_compare <- function(a, b, index) {
     a <- as_spatvector(a)
   }
 
-  if (is.na(pull_crs(b))) {
+  if (is_na(pull_crs(b))) {
     terra::crs(a) <- pull_crs(b)
   } else {
     a <- terra::project(a, pull_crs(b))

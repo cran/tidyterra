@@ -2,8 +2,8 @@
 #'
 #' @description
 #'
-#' `as_spatvector()` turns an existing object into a `SpatVector`. It wraps the
-#' [terra::vect()] S4 method for the `data.frame` signature.
+#' `as_spatvector()` turns an existing object into a `SpatVector`. It wraps
+#' the [terra::vect()] S4 method for the `data.frame` signature.
 #'
 #' @details
 #'
@@ -13,31 +13,28 @@
 #' - If `x` is a grouped data frame (see [dplyr::group_by()]), the grouping
 #'   variables are transferred and a grouped `SpatVector` is created (see
 #'   [group_by.SpatVector()]).
-#' - If no `crs` is provided and the tibble has been created with the method
+#' - If no `crs` is provided and the tibble was created with
 #'   [as_tibble.SpatVector()], the `crs` is inferred from
 #'   [`attr(x, "crs")`][attr()].
 #' - It handles the conversion of `EMPTY` geometries between
 #'   \CRANpkg{sf} and \CRANpkg{terra}.
 #'
-#' @export
-#' @encoding UTF-8
-#'
 #' @rdname as_spatvector
 #'
 #' @name as_spatvector
-#' @seealso
 #'
+#' @seealso
 #' [pull_crs()] for retrieving CRS and the corresponding utilities
 #' [sf::st_crs()] and [terra::crs()].
 #'
 #' @family coerce
 #'
-#' @inheritParams as_spatraster
+#' @inheritParams as_spatraster crs
 #'
 #' @param x A [tibble][tibble::tbl_df], data frame or \CRANpkg{sf} object of
 #'   class [`sf`][sf::st_sf] or [`sfc`][sf::st_sfc].
 #'
-#' @param ... Additional arguments passed on to [terra::vect()].
+#' @param ... Additional arguments passed to [terra::vect()].
 #'
 #' @param geom Character vector naming the fields that contain the geometry
 #'   data. Use two names for point coordinates (`x` and `y`) or one name for a
@@ -48,8 +45,10 @@
 #'
 #' @section \CRANpkg{terra} equivalent:
 #'
-#' [terra::vect()]
+#' [terra::vect()].
 #'
+#' @encoding UTF-8
+#' @export
 #' @examples
 #' library(terra)
 #'
@@ -72,21 +71,15 @@ as_spatvector <- function(x, ...) {
   UseMethod("as_spatvector")
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname as_spatvector
+#' @export
 as_spatvector.data.frame <- function(x, ..., geom = c("lon", "lat"), crs = "") {
+  check_character_vector(geom, allow_na = FALSE)
+
   if (!length(geom) %in% c(1, 2)) {
     cli::cli_abort(paste(
       "{.arg geom} must have length {.val {as.integer(1)}} or",
       "{.val {as.integer(2)}}, not {.val {length(geom)}}."
-    ))
-  }
-
-  if (!is.character(geom)) {
-    cli::cli_abort(paste(
-      "{.arg geom} must be a {.cls character} vector, not",
-      "{.cls {class(geom)}}."
     ))
   }
 
@@ -129,7 +122,7 @@ as_spatvector.data.frame <- function(x, ..., geom = c("lon", "lat"), crs = "") {
   crs <- pull_crs(crs)
 
   # Fall back to the CRS stored in the input attributes.
-  if (is.na(crs)) {
+  if (is_na(crs)) {
     crs <- crs_attr
   }
 
@@ -152,9 +145,8 @@ as_spatvector.data.frame <- function(x, ..., geom = c("lon", "lat"), crs = "") {
   v
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname as_spatvector
+#' @export
 as_spatvector.sf <- function(x, ...) {
   # Convert directly when there are no empty geometries.
 
@@ -210,18 +202,16 @@ as_spatvector.sf <- function(x, ...) {
   as_spatvector(final_tibble, geom = sf_col, crs = pull_crs(attr_template$crs))
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname as_spatvector
+#' @export
 as_spatvector.sfc <- function(x, ...) {
   x_df <- sf::st_as_sf(x)
 
   as_spatvector(x_df)
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname as_spatvector
+#' @export
 as_spatvector.SpatVector <- function(x, ...) {
   x
 }

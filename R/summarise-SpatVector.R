@@ -10,16 +10,12 @@
 #'
 #' `summarise.SpatVector()` and `summarize.SpatVector()` are synonyms.
 #'
-#' @export
-#' @encoding UTF-8
 #' @rdname summarise.SpatVector
 #' @name summarise.SpatVector
 #'
-#' @seealso [dplyr::summarise()], [terra::aggregate()]
+#' @seealso [dplyr::summarise()], [terra::aggregate()].
 #'
-#' @family dplyr.single_table
 #' @family dplyr.groups
-#' @family dplyr.methods
 #'
 #' @importFrom dplyr summarise
 #'
@@ -33,18 +29,19 @@
 #'
 #' @section \CRANpkg{terra} equivalent:
 #'
-#' [terra::aggregate()]
+#' [terra::aggregate()].
 #'
 #' @section Methods:
 #'
-#' Implementation of the **generic** [dplyr::summarise()] method.
+#' Implementation of the **generic** [dplyr::summarise()] method for
+#' `SpatVector` objects.
 #'
-#' ## `SpatVector`
+#' As in the \CRANpkg{sf} implementation, this function can dissolve geometries
+#' with `.dissolve = TRUE` or create `MULTI` geometries with
+#' `.dissolve = FALSE`. See **Examples**.
 #'
-#' Similarly to the implementation on \CRANpkg{sf} this function can be used to
-#' dissolve geometries (with `.dissolve = TRUE`) or create `MULTI` versions of
-#' geometries (with `.dissolve = FALSE`). See **Examples**.
-#'
+#' @encoding UTF-8
+#' @export
 #' @examples
 #' library(terra)
 #' library(ggplot2)
@@ -81,6 +78,8 @@ summarise.SpatVector <- function(
   .groups = NULL,
   .dissolve = TRUE
 ) {
+  check_bool(.dissolve)
+
   # Resolve `.by` groups.
   by_groups <- group_by(.data, {{ .by }})
 
@@ -113,7 +112,7 @@ summarise.SpatVector <- function(
 
   v_summ <- cbind(newgeom[, 0], df_summ)
 
-  # Ensure groups
+  # Restore groups.
   v_summ <- group_prepare_spat(v_summ, df_summ)
 
   v_summ
@@ -122,10 +121,9 @@ summarise.SpatVector <- function(
 #' @export
 dplyr::summarise
 
-#' @export
-#' @encoding UTF-8
 #' @rdname summarise.SpatVector
 #' @importFrom dplyr summarize
+#' @export
 summarize.SpatVector <- summarise.SpatVector
 
 #' @export

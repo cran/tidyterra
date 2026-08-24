@@ -20,16 +20,12 @@
 #'
 #' See **Examples** and section **About layer names** on [as_tibble.Spat()].
 #'
-#' @export
-#' @encoding UTF-8
 #' @rdname filter.Spat
 #' @name filter.Spat
 #'
-#' @seealso [dplyr::filter()]
+#' @seealso [dplyr::filter()].
 #'
-#' @family dplyr.single_table
 #' @family dplyr.rows
-#' @family dplyr.methods
 #'
 #' @importFrom dplyr filter
 #' @inherit select.Spat return
@@ -48,28 +44,30 @@
 #'
 #' @section Methods:
 #'
-#' Implementation of the **generic** [dplyr::filter()] method.
+#' Implementation of the **generic** [dplyr::filter()] methods for `Spat*`
+#' objects.
 #'
 #' ## `SpatRaster`
 #'
-#' Cells that do not meet the conditions on `...` are returned with value
-#' `NA`. On a multi-layer `SpatRaster` the `NA` is propagated across all the
-#' layers.
+#' Cells that do not meet the conditions in `...` are returned as `NA`. On a
+#' multi-layer `SpatRaster`, `NA` is propagated across all layers.
 #'
-#' If `.keep_extent = TRUE` the returned `SpatRaster` has the same CRS, extent,
-#' resolution and number of cells as `.data`. If
-#' `.keep_extent = FALSE` the outer `NA` cells are trimmed with [terra::trim()],
-#' so the extent and number of cells may differ. The output will still have
-#' the same CRS and resolution as `.data`.
+#' If `.keep_extent = TRUE`, the returned `SpatRaster` has the same CRS,
+#' extent, resolution and number of cells as `.data`. If
+#' `.keep_extent = FALSE`, the outer `NA` cells are trimmed with
+#' [terra::trim()], so the extent and number of cells may differ. The output
+#' still has the same CRS and resolution as `.data`.
 #'
-#' `x` and `y` variables, the longitude and latitude of the `SpatRaster`,
-#' are also available internally for filtering. See **Examples**.
+#' The `x` and `y` coordinates of the `SpatRaster` are also available
+#' internally for filtering. See **Examples**.
 #'
 #' ## `SpatVector`
 #'
-#' The result is a `SpatVector` with all the geometries that produce a value of
-#' `TRUE` for all conditions.
+#' The result is a `SpatVector` containing the geometries whose attributes
+#' satisfy all conditions.
 #'
+#' @encoding UTF-8
+#' @export
 #' @examples
 #'
 #' library(terra)
@@ -109,6 +107,8 @@ filter.SpatRaster <- function(
   .preserve = FALSE,
   .keep_extent = TRUE
 ) {
+  check_bool(.keep_extent)
+
   df <- as_tbl_internal(.data)
   xy <- dplyr::select(df, 1:2)
   values <- df
@@ -135,9 +135,8 @@ filter.SpatRaster <- function(
   newrast
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname filter.Spat
+#' @export
 #' @examples
 #' v <- terra::vect(system.file("extdata/cyl.gpkg", package = "tidyterra"))
 #' glimpse(v)
@@ -146,7 +145,7 @@ filter.SpatRaster <- function(
 #' # Same as
 #' v |> filter_out(cpro >= 10)
 filter.SpatVector <- function(.data, ..., .by = NULL, .preserve = FALSE) {
-  # Use own method
+  # Use the package method.
   tbl <- as_tibble(.data)
 
   var_index <- make_safe_index("tterra_index", tbl)
@@ -164,12 +163,11 @@ filter.SpatVector <- function(.data, ..., .by = NULL, .preserve = FALSE) {
 #' @export
 dplyr::filter
 
-#' @export
-#' @encoding UTF-8
 #' @rdname filter.Spat
 #' @importFrom dplyr filter_out
+#' @export
 filter_out.SpatVector <- function(.data, ..., .by = NULL, .preserve = FALSE) {
-  # Use own method
+  # Use the package method.
   tbl <- as_tibble(.data)
 
   var_index <- make_safe_index("tterra_index", tbl)

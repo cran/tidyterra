@@ -2,38 +2,37 @@
 #'
 #' @description
 #'
-#' Two `SpatRaster` objects are compatible (in terms of combining layers) if the
-#' CRS, extent and resolution are similar. In those cases you can combine the
-#' objects simply as `c(x, y)`.
+#' Two `SpatRaster` objects are compatible (in terms of combining layers) if
+#' the CRS, extent and resolution are similar. In those cases you can combine
+#' the objects simply as `c(x, y)`.
 #'
 #' This function compares those attributes and reports the results. See
-#' **Solving issues** for minimal guidance.
+#' **Resolving differences** for minimal guidance.
 #'
-#' @export
-#' @encoding UTF-8
-#'
-#' @seealso [terra::identical()]
-#' @family helpers
+#' @seealso [terra::identical()].
+#' @concept helpers
 #' @param x,y `SpatRaster` objects.
 #' @param digits Integer to set the precision for comparing the extent and
 #'   the resolution.
 #'
 #' @returns
-#' An invisible logical `TRUE/FALSE` indicating whether the `SpatRaster`
+#' An invisible logical value indicating whether the `SpatRaster`
 #' objects are compatible, plus an informative message flagging any issues
 #' found.
 #'
 #' @section \CRANpkg{terra} equivalent:
 #'
-#' [terra::identical()]
+#' [terra::compareGeom()].
 #'
-#' @section Solving issues:
+#' @section Resolving differences:
 #'
-#' - On **non-equal CRS**, try [terra::project()].
-#' - On **non-equal extent**, try [terra::resample()].
-#' - On **non-equal resolution** you can try [terra::resample()],
+#' - For a **different CRS**, try [terra::project()].
+#' - For a **different extent**, try [terra::resample()].
+#' - For a **different resolution**, try [terra::resample()],
 #'   [terra::aggregate()] or [terra::disagg()].
 #'
+#' @encoding UTF-8
+#' @export
 #' @examples
 #' library(terra)
 #'
@@ -42,7 +41,7 @@
 #' # Nothing
 #' compare_spatrasters(x, x)
 #'
-#' # Different crs
+#' # Different CRS
 #' y_nocrs <- x
 #' crs(y_nocrs) <- NA
 #'
@@ -62,12 +61,9 @@
 #' compare_spatrasters(x, project(x, "epsg:3035"))
 #'
 compare_spatrasters <- function(x, y, digits = 6) {
-  if (!all(inherits(x, "SpatRaster"), inherits(y, "SpatRaster"))) {
-    cli::cli_abort(paste(
-      "{.arg x} and {.arg y} must be {.cls SpatRaster} objects.",
-      "{.arg x} is {.cls {class(x)}}, {.arg y} is {.cls {class(y)}}."
-    ))
-  }
+  check_spat_class(x, "SpatRaster")
+  check_spat_class(y, "SpatRaster")
+  check_number_whole(digits)
 
   # Check CRS.
   equal_crs <- terra::crs(x) == terra::crs(y)

@@ -32,12 +32,10 @@
 #' arguments, so check the \CRANpkg{ggplot2} functions listed above to see the
 #' full range of arguments accepted by these scales.
 #'
-#' @export
-#' @encoding UTF-8
-#'
 #' @name scale_wiki
 #'
-#' @seealso [terra::plot()], [ggplot2::scale_fill_viridis_c()]
+#' @seealso
+#' [terra::plot()], [ggplot2::scale_fill_viridis_c()].
 #'
 #' See also \CRANpkg{ggplot2} docs on additional `...` arguments.
 #'
@@ -56,6 +54,8 @@
 #' The corresponding \CRANpkg{ggplot2} layer with the values applied to the
 #' `fill/colour` aesthetics.
 #'
+#' @encoding UTF-8
+#' @export
 #' @examples
 #' \donttest{
 #' filepath <- system.file("extdata/volcano2.tif", package = "tidyterra")
@@ -107,9 +107,8 @@ scale_fill_wiki_d <- function(
   )
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_wiki
+#' @export
 scale_colour_wiki_d <- function(
   ...,
   alpha = 1,
@@ -128,15 +127,13 @@ scale_colour_wiki_d <- function(
   )
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_wiki
 #' @usage NULL
+#' @export
 scale_color_wiki_d <- scale_colour_wiki_d
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_wiki
+#' @export
 scale_fill_wiki_c <- function(
   ...,
   alpha = 1,
@@ -157,9 +154,8 @@ scale_fill_wiki_c <- function(
   )
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_wiki
+#' @export
 scale_colour_wiki_c <- function(
   ...,
   alpha = 1,
@@ -180,15 +176,13 @@ scale_colour_wiki_c <- function(
   )
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_wiki
 #' @usage NULL
+#' @export
 scale_color_wiki_c <- scale_colour_wiki_c
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_wiki
+#' @export
 scale_fill_wiki_b <- function(
   ...,
   alpha = 1,
@@ -209,9 +203,8 @@ scale_fill_wiki_b <- function(
   )
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_wiki
+#' @export
 scale_colour_wiki_b <- function(
   ...,
   alpha = 1,
@@ -232,17 +225,17 @@ scale_colour_wiki_b <- function(
   )
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_wiki
 #' @usage NULL
+#' @export
 scale_color_wiki_b <- scale_colour_wiki_b
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_wiki
 #' @inheritParams grDevices::terrain.colors
+#' @export
 wiki.colors <- function(n, alpha = 1, rev = FALSE) {
+  check_color_args(n, alpha, rev)
+
   if ((n <- as.integer(n[1L])) > 0) {
     colors <- wiki_cols
     endcols <- tidyterra_ramp(colors, n, alpha, rev)

@@ -30,24 +30,63 @@ test_that("check_alpha validates alpha range", {
   expect_no_error(check_alpha(0.5))
   expect_no_error(check_alpha(1))
 
-  expect_error(check_alpha(-0.1), "alpha")
-  expect_error(check_alpha(1.1), "alpha")
+  expect_snapshot(check_alpha(-0.1), error = TRUE)
+  expect_snapshot(check_alpha(1.1), error = TRUE)
 })
 
 test_that("check_alpha_direction validates direction values", {
   expect_no_error(check_alpha_direction(1, -1))
   expect_no_error(check_alpha_direction(1, 1))
 
-  expect_error(check_alpha_direction(-0.1, 1), "alpha")
-  expect_error(check_alpha_direction(1, 0), "direction")
-  expect_error(check_alpha_direction(1, 2), "direction")
+  expect_snapshot(check_alpha_direction(-0.1, 1), error = TRUE)
+  expect_snapshot(check_alpha_direction(1, 0), error = TRUE)
+  expect_snapshot(check_alpha_direction(1, 2), error = TRUE)
+})
+
+test_that("check_number_whole_vector validates vectors", {
+  expect_no_error(check_number_whole_vector(c(1, 2), length = 2))
+  expect_snapshot(check_number_whole_vector(c(1, 2), length = 3), error = TRUE)
+  expect_snapshot(check_number_whole_vector(1.5), error = TRUE)
+})
+
+test_that("check_maxcell accepts Inf", {
+  expect_no_error(check_maxcell(1))
+  expect_no_error(check_maxcell(Inf))
+
+  expect_snapshot(check_maxcell(0), error = TRUE)
+  expect_snapshot(check_maxcell(-Inf), error = TRUE)
+})
+
+test_that("check_color_args validates color helper inputs", {
+  expect_no_error(check_color_args(-1, 1, FALSE))
+  expect_no_error(check_color_args(0, 1, FALSE))
+  expect_no_error(check_color_args(1, 0.5, TRUE))
+
+  expect_snapshot(check_color_args(1.5, 1, FALSE, n_arg = "n"), error = TRUE)
+  expect_snapshot(check_color_args(1, 1.1, FALSE), error = TRUE)
+  expect_snapshot(
+    check_color_args(1, 1, "FALSE", rev_arg = "rev"),
+    error = TRUE
+  )
 })
 
 test_that("check_spatraster validates SpatRaster inputs", {
   r <- terra::rast(nrows = 1, ncols = 1)
 
   expect_no_error(check_spatraster(r, "test_fn"))
-  expect_error(check_spatraster(data.frame(x = 1), "test_fn"), "test_fn")
+  expect_snapshot(check_spatraster(data.frame(x = 1), "test_fn"), error = TRUE)
+})
+
+test_that("warn_overlapping_layers warns on overlapping layers", {
+  data <- data.frame(PANEL = c(1, 1), lyr = c("a", "b"))
+
+  expect_snapshot(warn_overlapping_layers(data, "test_fn"))
+
+  data <- data.frame(PANEL = c(1, 2), lyr = c("a", "a"))
+  expect_no_error(warn_overlapping_layers(data, "test_fn"))
+
+  data <- data.frame(PANEL = c(1, 2), lyr = c("a", "b"))
+  expect_no_error(warn_overlapping_layers(data, "test_fn"))
 })
 
 test_that("gradient_pal creates a gradient from a palette function", {
@@ -84,7 +123,7 @@ test_that("pal_discrete_scale validates and creates a discrete scale", {
 
   expect_s3_class(scale, "ScaleDiscrete")
   expect_equal(scale$aesthetics, "colour")
-  expect_error(
+  expect_snapshot(
     pal_discrete_scale(
       "fill",
       function(n) grDevices::gray.colors(n),
@@ -93,7 +132,29 @@ test_that("pal_discrete_scale validates and creates a discrete scale", {
       na.translate = FALSE,
       drop = TRUE
     ),
-    "direction"
+    error = TRUE
+  )
+  expect_snapshot(
+    pal_discrete_scale(
+      "fill",
+      function(n) grDevices::gray.colors(n),
+      alpha = 1,
+      direction = 1,
+      na.translate = "yes",
+      drop = TRUE
+    ),
+    error = TRUE
+  )
+  expect_snapshot(
+    pal_discrete_scale(
+      "fill",
+      function(n) grDevices::gray.colors(n),
+      alpha = 1,
+      direction = 1,
+      na.translate = TRUE,
+      drop = "yes"
+    ),
+    error = TRUE
   )
 })
 
@@ -113,7 +174,7 @@ test_that("pal_gradient_scale validates and creates gradient scales", {
 
   expect_s3_class(scale, "ScaleContinuous")
   expect_equal(scale$aesthetics, "fill")
-  expect_error(
+  expect_snapshot(
     pal_gradient_scale(
       ggplot2::binned_scale,
       "fill",
@@ -124,7 +185,7 @@ test_that("pal_gradient_scale validates and creates gradient scales", {
       na.value = "transparent",
       guide = "coloursteps"
     ),
-    "alpha"
+    error = TRUE
   )
 })
 

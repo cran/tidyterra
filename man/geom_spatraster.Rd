@@ -36,7 +36,8 @@ stat_spatraster(
 }
 \arguments{
 \item{mapping}{Set of aesthetic mappings created by \code{\link[ggplot2:aes]{ggplot2::aes()}}. See
-\strong{Aesthetics}, especially in the use of the \code{fill} aesthetic.}
+\strong{Aesthetics}, especially the use of the \code{fill} and \code{alpha} aesthetics
+with \code{SpatRaster} layers.}
 
 \item{data}{A \code{SpatRaster} object.}
 
@@ -57,8 +58,8 @@ combining with them.}
 \item{interpolate}{If \code{TRUE} interpolate linearly, if \code{FALSE}
 (the default) don't interpolate.}
 
-\item{maxcell}{Positive integer. Maximum number of cells to use for
-the plot.}
+\item{maxcell}{Positive integer or \code{Inf}. Maximum number of raster cells to
+use. Use \code{Inf} to use all cells.}
 
 \item{use_coltab}{Logical. Only applicable to \code{SpatRaster} objects that have
 an associated color table from \code{\link[terra:coltab]{terra::coltab()}}. If \code{TRUE}, use that
@@ -120,10 +121,10 @@ the \code{geom}.
 \section{\CRANpkg{terra} equivalent}{
 
 
-\code{\link[terra:plot]{terra::plot()}}
+\code{\link[terra:plot]{terra::plot()}}.
 }
 
-\section{Coords}{
+\section{Coordinates}{
 
 
 When the \code{SpatRaster} does not have a CRS, that is,
@@ -151,7 +152,7 @@ layers.
 
 If \code{fill} is used, it should contain the name of one layer that is present
 on the \code{SpatRaster} (for example,
-\verb{geom_spatraster(data = rast, aes(fill = <name_of_lyr>)}). Layer names can
+\verb{geom_spatraster(data = rast, aes(fill = <name_of_lyr>))}). Layer names can
 be retrieved using \code{names(rast)}.
 
 Using \code{geom_spatraster(..., mapping = aes(fill = NULL))} or
@@ -160,7 +161,10 @@ mapped \code{fill} aesthetic.
 
 \code{fill} can use computed variables.
 
-For \code{alpha}, use a computed variable. See section \strong{Computed variables}.
+For \code{alpha}, use a computed variable or the name of one layer that is
+present on the \code{SpatRaster}. When \code{alpha} is a layer name, it can refer to
+the same layer as \code{fill} or to another layer in the \code{SpatRaster}. See section
+\strong{Computed variables}.
 
 
 \subsection{\code{stat_spatraster()}}{
@@ -172,10 +176,11 @@ when \code{geom = "raster"} (the default):
 \item \code{\link[ggplot2:aes_colour_fill_alpha]{alpha}}
 }
 
-When \code{geom = "raster"}, the \code{fill} argument behaves as in
-\code{geom_spatraster()}. If another \code{geom} is used, \code{stat_spatraster()}
-understands the aesthetics required by that \code{geom}, so
-\verb{aes(fill = <name_of_lyr>)} is not applicable.
+When \code{geom = "raster"}, the \code{fill} and \code{alpha} arguments behave as in
+\code{geom_spatraster()}, so they can be mapped to \code{SpatRaster} layer names. If
+another \code{geom} is used, \code{stat_spatraster()} understands the aesthetics
+required by that \code{geom}, so \verb{aes(fill = <name_of_lyr>)} and
+\verb{aes(alpha = <name_of_lyr>)} are not applicable.
 
 The \code{x} and \code{y} aesthetics are mapped by default, so you do not need to add
 them in \code{aes()}. In every case, aesthetics should be mapped with computed
@@ -186,25 +191,27 @@ variables. See \strong{Computed variables} and \strong{Examples}.
 \section{Facets}{
 
 
-You can use \code{facet_wrap(~lyr)} to create a faceted plot by each layer of the
-\code{SpatRaster} object. See \code{\link[ggplot2:facet_wrap]{ggplot2::facet_wrap()}} for details.
+You can use \code{facet_wrap(~lyr)} to create a faceted plot for each layer of
+the \code{SpatRaster} object. See \code{\link[ggplot2:facet_wrap]{ggplot2::facet_wrap()}} for details.
 }
 
 \section{Computed variables}{
 
 
-This geom computes internally some variables that are available for use as
+This geom computes variables internally that are available for use as
 aesthetics, using (for example) \code{aes(alpha = after_stat(value))} (see
 \code{\link[ggplot2:after_stat]{ggplot2::after_stat()}}).
 \itemize{
 \item \code{after_stat(value)}: Cell values of the \code{SpatRaster}.
+\item \code{after_stat(alpha)}: Cell values of the layer mapped to \code{alpha}, when
+\code{alpha} is the name of a layer.
 \item \code{after_stat(lyr)}: Name of the layer.
 }
 }
 
 \examples{
 \donttest{
-# Avg temperature on spring in Castile and Leon (Spain)
+# Average spring temperature in Castile and Leon (Spain)
 file_path <- system.file("extdata/cyl_temp.tif", package = "tidyterra")
 
 library(terra)
@@ -280,8 +287,7 @@ ggplot() +
 }
 }
 \seealso{
-\code{\link[ggplot2:geom_raster]{ggplot2::geom_raster()}}, \code{\link[ggplot2:coord_sf]{ggplot2::coord_sf()}},
-\code{\link[ggplot2:facet_wrap]{ggplot2::facet_wrap()}}
+\code{\link[ggplot2:geom_raster]{ggplot2::geom_raster()}}, \code{\link[ggplot2:coord_sf]{ggplot2::coord_sf()}}, \code{\link[ggplot2:facet_wrap]{ggplot2::facet_wrap()}}.
 
 Recommended \code{geoms}:
 \itemize{

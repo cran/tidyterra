@@ -17,8 +17,8 @@ created with \code{\link[terra:vect]{terra::vect()}}.}
 
 \item{replace}{A named list of values, with one value for each
 layer/attribute that has missing values to be replaced. Each value in
-\code{replace} will be cast to the type of the column in \code{data} that it is being
-used as a replacement in.}
+\code{replace} will be cast to the type of the column in \code{data} where it is
+used as a replacement.}
 
 \item{...}{Additional arguments for methods. Currently unused.}
 }
@@ -31,7 +31,7 @@ Replace \code{NA}s values on layers/attributes with specified values
 \section{\CRANpkg{terra} equivalent}{
 
 
-Use \verb{r[is.na(r)] <- <replacement>}
+Use \verb{r[is.na(r)] <- <replacement>}.
 }
 
 \examples{
@@ -49,24 +49,12 @@ r |>
 
 }
 \seealso{
-\code{\link[tidyr:replace_na]{tidyr::replace_na()}}
+\code{\link[tidyr:replace_na]{tidyr::replace_na()}}.
 
 Other \CRANpkg{tidyr} verbs for handling missing values:
 \code{\link[=complete.SpatVector]{complete.SpatVector()}},
 \code{\link{drop_na.Spat}},
 \code{\link[=expand.SpatVector]{expand.SpatVector()}},
 \code{\link[=fill.SpatVector]{fill.SpatVector()}}
-
-Other \CRANpkg{tidyr} methods:
-\code{\link[=complete.SpatVector]{complete.SpatVector()}},
-\code{\link{drop_na.Spat}},
-\code{\link[=expand.SpatVector]{expand.SpatVector()}},
-\code{\link[=fill.SpatVector]{fill.SpatVector()}},
-\code{\link[=nest.SpatVector]{nest.SpatVector()}},
-\code{\link[=pivot_longer.SpatVector]{pivot_longer.SpatVector()}},
-\code{\link[=pivot_wider.SpatVector]{pivot_wider.SpatVector()}},
-\code{\link[=uncount.SpatVector]{uncount.SpatVector()}},
-\code{\link{unite.Spat}}
 }
-\concept{tidyr.methods}
 \concept{tidyr.missing}

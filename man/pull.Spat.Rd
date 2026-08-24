@@ -32,10 +32,11 @@ column locations).}
 \item{name}{An optional parameter that specifies the column to be used
 as names for a named vector. Specified in a similar manner as \code{var}.}
 
-\item{...}{Arguments passed on to \code{\link[=as_tibble.Spat]{as_tibble.Spat()}}.}
+\item{...}{Arguments passed to \code{\link[=as_tibble.SpatRaster]{as_tibble.SpatRaster()}} or
+\code{\link[=as_tibble.SpatVector]{as_tibble.SpatVector()}} methods.}
 }
 \value{
-A vector the same number of cells/geometries as \code{.data}.
+A vector with the same number of cells/geometries as \code{.data}.
 
 On \code{SpatRaster} objects, note that the default (\code{na.rm = FALSE}) removes
 empty cells, so you may need to pass (\code{na.rm = FALSE}) to \code{...}. See
@@ -54,32 +55,32 @@ See \strong{Examples} and section \strong{About layer names} on \code{\link[=as_
 \section{\CRANpkg{terra} equivalent}{
 
 
-\code{\link[terra:values]{terra::values()}}
+\code{\link[terra:values]{terra::values()}}.
 }
 
 \section{Methods}{
 
 
-Implementation of the \strong{generic} \code{\link[dplyr:pull]{dplyr::pull()}} method. This is done
-by coercing the \verb{Spat*} object to a tibble first (see \link{as_tibble.Spat}) and
-then using \code{\link[dplyr:pull]{dplyr::pull()}} method over the tibble.
+Implementation of the \strong{generic} \code{\link[dplyr:pull]{dplyr::pull()}} methods. Each method first
+coerces the \verb{Spat*} object to a tibble (see \link{as_tibble.Spat}) and then
+applies \code{\link[dplyr:pull]{dplyr::pull()}} to the tibble.
 \subsection{\code{SpatRaster}}{
 
-When passing option \code{na.rm = TRUE} to \code{...}, only cells with a value
-distinct to \code{NA} are extracted. See \code{\link[terra:as.data.frame]{terra::as.data.frame()}}.
+When passing \code{na.rm = TRUE} to \code{...}, only cells with a value other than
+\code{NA} are extracted. See \code{\link[terra:as.data.frame]{terra::as.data.frame()}}.
 
-If \code{xy = TRUE} option is passed to \code{...}, two columns names \code{x} and \code{y}
+If \code{xy = TRUE} is passed to \code{...}, two columns named \code{x} and \code{y}
 (corresponding to the geographic coordinates of each cell) are available
-in position \code{1} and \code{2}. Hence, \code{pull(.data, 1)} and
-\code{pull(.data, 1, xy = TRUE)} return different result.
+in positions \code{1} and \code{2}. Therefore, \code{pull(.data, 1)} and
+\code{pull(.data, 1, xy = TRUE)} return different results.
 }
 
 \subsection{\code{SpatVector}}{
 
-When passing \code{geom = "WKT"/geom = "HEX"} to \code{...}, the geometry of the
-\code{SpatVector} can be pulled passing \code{var = geometry}. Similarly to
-\code{SpatRaster} method, when using \code{geom = "XY"} the \verb{x,y} coordinates can be
-pulled with \code{var = x/var = y}. See \code{\link[terra:as.data.frame]{terra::as.data.frame()}} options.
+When passing \code{geom = "WKT"} or \code{geom = "HEX"} to \code{...}, the geometry of the
+\code{SpatVector} can be extracted with \code{var = geometry}. Similarly, when using
+\code{geom = "XY"}, the coordinates can be extracted with \code{var = x} or
+\code{var = y}. See the options in \code{\link[terra:as.data.frame]{terra::as.data.frame()}}.
 }
 }
 
@@ -89,12 +90,12 @@ library(terra)
 f <- system.file("extdata/cyl_tile.tif", package = "tidyterra")
 r <- rast(f)
 
-# Extract second layer
+# Extract the second layer.
 r |>
   pull(2) |>
   head()
 
-# With xy the first two cols are `x` (longitude) and `y` (latitude)
+# With `xy`, the first two columns are `x` (longitude) and `y` (latitude).
 
 r |>
   pull(2, xy = TRUE) |>
@@ -109,7 +110,7 @@ r |>
 
 }
 \seealso{
-\code{\link[dplyr:pull]{dplyr::pull()}}
+\code{\link[dplyr:pull]{dplyr::pull()}}.
 
 Other \CRANpkg{dplyr} verbs that operate on columns:
 \code{\link{glimpse.Spat}},
@@ -117,29 +118,5 @@ Other \CRANpkg{dplyr} verbs that operate on columns:
 \code{\link{relocate.Spat}},
 \code{\link{rename.Spat}},
 \code{\link{select.Spat}}
-
-Other \CRANpkg{dplyr} methods:
-\code{\link[=arrange.SpatVector]{arrange.SpatVector()}},
-\code{\link{bind_cols.SpatVector}},
-\code{\link{bind_rows.SpatVector}},
-\code{\link[=count.SpatVector]{count.SpatVector()}},
-\code{\link[=cross_join.SpatVector]{cross_join.SpatVector()}},
-\code{\link[=distinct.SpatVector]{distinct.SpatVector()}},
-\code{\link{filter-joins.SpatVector}},
-\code{\link{filter.Spat}},
-\code{\link{glimpse.Spat}},
-\code{\link[=group_by.SpatVector]{group_by.SpatVector()}},
-\code{\link{mutate-joins.SpatVector}},
-\code{\link{mutate.Spat}},
-\code{\link[=nest_join.SpatVector]{nest_join.SpatVector()}},
-\code{\link[=reframe.SpatVector]{reframe.SpatVector()}},
-\code{\link{relocate.Spat}},
-\code{\link{rename.Spat}},
-\code{\link{rows.SpatVector}},
-\code{\link[=rowwise.SpatVector]{rowwise.SpatVector()}},
-\code{\link{select.Spat}},
-\code{\link{slice.Spat}},
-\code{\link[=summarise.SpatVector]{summarise.SpatVector()}}
 }
 \concept{dplyr.cols}
-\concept{dplyr.methods}

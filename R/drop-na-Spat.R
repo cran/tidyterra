@@ -6,15 +6,11 @@
 #' - `SpatRaster`: `drop_na()` method drops cells where any layer specified by
 #' `...` contains a missing value.
 #'
-#' @export
-#' @encoding UTF-8
-#'
 #' @rdname drop_na.Spat
 #' @name drop_na.Spat
 #'
-#' @seealso [tidyr::drop_na()]
+#' @seealso [tidyr::drop_na()].
 #' @family tidyr.missing
-#' @family tidyr.methods
 #'
 #' @importFrom tidyr drop_na
 #'
@@ -27,31 +23,30 @@
 #'
 #' @section \CRANpkg{terra} equivalent:
 #'
-#' [terra::trim()]
+#' [terra::trim()].
 #'
 #' @section Methods:
 #'
-#' Implementation of the **generic** [tidyr::drop_na()] method.
+#' Implementation of the **generic** [tidyr::drop_na()] methods for `Spat*`
+#' objects.
 #'
 #' ## `SpatVector`
 #'
-#' The implementation of this method is performed on a `by-attribute` basis,
-#' meaning that `NA` values are assessed on the attributes (columns) of each
-#' vector (rows). The result is a `SpatVector` with potentially fewer
+#' This method operates on attributes, meaning that `NA` values are assessed in
+#' the attributes (columns) of each geometry (row). The result is a
+#' `SpatVector` with potentially fewer
 #' geometries than the input.
 #'
 #' ## `SpatRaster`
 #'
 #' `r lifecycle::badge('questioning')`
 #'
-#' The implementation of `drop_na().SpatRaster` can be understood as a
-#' masking method based on the values of the layers (see
-#' [terra::mask()]).
+#' The implementation of [drop_na.SpatRaster()] can be understood as a
+#' masking method based on the values of the layers (see [terra::mask()]).
 #'
-#' `SpatRaster` layers are considered as columns and `SpatRaster` cells as rows,
-#' so rows (cells) with any `NA` value on any layer become `NA`. You can also
-#' mask the cells (rows) based on the values of specific
-#' layers (columns).
+#' `SpatRaster` layers are treated as columns and `SpatRaster` cells as
+#' rows, so rows (cells) with any `NA` value on any layer become `NA`. You can
+#' also mask the cells (rows) based on the values of specific layers (columns).
 #'
 #' `drop_na()` effectively removes outer cells that are `NA` (see
 #' [terra::trim()]), so the extent of the resulting object may differ from the
@@ -64,6 +59,8 @@
 #' Visit <https://github.com/dieghernan/tidyterra/issues>. The implementation
 #' of this method for `SpatRaster` may change in the future.
 #'
+#' @encoding UTF-8
+#' @export
 #' @examples
 #'
 #' library(terra)
@@ -86,7 +83,7 @@ drop_na.SpatVector <- function(data, ...) {
   tbl <- as_tbl_internal(data)
   dropped <- tidyr::drop_na(tbl, ...)
 
-  # Use own method, there is no way to avoid coercion.
+  # Use the package method, there is no way to avoid coercion.
   if (nrow(dropped) == 0) {
     cli::cli_alert_warning(paste0(
       cli::col_red("All geometries dropped."),
@@ -106,10 +103,9 @@ drop_na.SpatVector <- function(data, ...) {
   vend
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname drop_na.Spat
 #'
+#' @export
 #' @examples
 #' # SpatRaster method
 #'

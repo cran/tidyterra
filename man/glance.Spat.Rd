@@ -21,13 +21,13 @@ created with \code{\link[terra:vect]{terra::vect()}}.}
 \code{glance()} methods always return a one-row data frame. See \strong{Methods}.
 }
 \description{
-Glance accepts a model object and returns a \code{\link[tibble:tibble]{tibble::tibble()}} with exactly
-one row of \code{Spat}. The summaries are typically geographic information.
+\code{glance()} accepts a \verb{Spat*} object and returns a \code{\link[tibble:tibble]{tibble::tibble()}} with
+exactly one row. The summaries typically contain geographic information.
 }
 \section{Methods}{
 
 
-Implementation of the \strong{generic} \code{\link[generics:glance]{generics::glance()}} method for
+Implementation of the \strong{generic} \code{\link[generics:glance]{generics::glance()}} methods for
 \verb{Spat*} objects.
 }
 

@@ -16,20 +16,20 @@
 #' arguments, so check [ggplot2::discrete_scale()] to see the full range of
 #' arguments accepted.
 #'
-#' @export
-#' @encoding UTF-8
-#'
 #' @rdname scale_coltab
 #'
 #' @name scale_coltab
-#' @seealso [terra::coltab()], [ggplot2::discrete_scale()],
-#'   [ggplot2::scale_fill_manual()],
+#' @seealso
+#' [terra::coltab()], [ggplot2::discrete_scale()],
+#' [ggplot2::scale_fill_manual()].
+#'
+#' @family gradients
 #'
 #' @inheritParams scale_cross_blended
 #'
 #' @inheritDotParams ggplot2::discrete_scale breaks:drop
 #'
-#' @param data,x A `SpatRaster` with one or several color tables.
+#' @param data,x A `SpatRaster` with one or more color tables.
 #'   See [terra::has.colors()].
 #'
 #' @param alpha The alpha transparency: could be `NA` or a number in \[0,1\].
@@ -39,6 +39,8 @@
 #' The corresponding \CRANpkg{ggplot2} layer with the values applied to the
 #' `fill/colour` aesthetics.
 #'
+#' @encoding UTF-8
+#' @export
 #' @examples
 #' library(terra)
 #' # Geological Eras
@@ -75,11 +77,14 @@ scale_fill_coltab <- function(
   na.value = "transparent",
   drop = TRUE
 ) {
+  check_bool(na.translate)
+  check_bool(drop)
+
   getcols <- get_coltab_pal(data)
-  if (is.null(getcols)) {
+  if (is_null(getcols)) {
     return(ggplot2::geom_blank())
   }
-  if (!is.na(alpha)) {
+  if (!is_na(alpha)) {
     check_alpha(alpha)
     getcols <- ggplot2::alpha(getcols, alpha = alpha)
   }
@@ -98,9 +103,8 @@ scale_fill_coltab <- function(
   )
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_coltab
+#' @export
 scale_colour_coltab <- function(
   data,
   ...,
@@ -109,12 +113,15 @@ scale_colour_coltab <- function(
   na.value = "transparent",
   drop = TRUE
 ) {
+  check_bool(na.translate)
+  check_bool(drop)
+
   getcols <- get_coltab_pal(data)
-  if (is.null(getcols)) {
+  if (is_null(getcols)) {
     return(ggplot2::geom_blank())
   }
 
-  if (!is.na(alpha)) {
+  if (!is_na(alpha)) {
     check_alpha(alpha)
     getcols <- ggplot2::alpha(getcols, alpha = alpha)
   }
@@ -133,15 +140,13 @@ scale_colour_coltab <- function(
   )
 }
 
-#' @export
-#' @encoding UTF-8
-#' @rdname scale_wiki
+#' @rdname scale_coltab
 #' @usage NULL
+#' @export
 scale_color_coltab <- scale_colour_coltab
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_coltab
+#' @export
 get_coltab_pal <- function(x) {
   if (!inherits(x, "SpatRaster")) {
     cli::cli_alert_info(paste(
@@ -188,7 +193,7 @@ get_coltab_pal <- function(x) {
   # Prepare category data frames.
   lcats <- lapply(seq_len(terra::nlyr(x)), function(i) {
     i_df <- lcats[[i]]
-    if (is.null(i_df)) {
+    if (is_null(i_df)) {
       return(NULL)
     }
     actcat <- unlist(actcats[i])
@@ -205,9 +210,9 @@ get_coltab_pal <- function(x) {
   cats_end <- dplyr::bind_rows(lcats, .id = "layer")
 
   # Get cols
-  cols_alpha_l <- terra::coltab(x)
+  cols_alpha_l <- tt_terra_coltab(x)
   cols_alpha_l <- lapply(cols_alpha_l, function(j) {
-    if (is.null(j)) {
+    if (is_null(j)) {
       return(NULL)
     }
 
@@ -255,4 +260,8 @@ get_coltab_pal <- function(x) {
   names(namedpal) <- nms
 
   namedpal
+}
+
+tt_terra_coltab <- function(x) {
+  terra::coltab(x)
 }

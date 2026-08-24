@@ -37,13 +37,11 @@ A tibble with a list-column of \code{SpatVector} objects.
 \section{Methods}{
 
 
-Implementation of the \strong{generic} \code{\link[dplyr:group_nest]{dplyr::group_nest()}} family for
+Implementation of the \strong{generic} \code{\link[dplyr:group_nest]{dplyr::group_nest()}} method family for
 \code{SpatVector} objects.
-\subsection{\code{SpatVector}}{
 
 The nested list-column contains \code{SpatVector} objects, preserving the
 geometries for each group.
-}
 }
 
 \examples{
@@ -64,10 +62,11 @@ terra::svc(sv)
 }
 \seealso{
 \code{\link[dplyr:group_nest]{dplyr::group_nest()}}, \code{\link[dplyr:nest_by]{dplyr::nest_by()}}, \code{\link[=nest.SpatVector]{nest.SpatVector()}},
-\code{\link[terra:svc]{terra::svc()}}
+\code{\link[terra:svc]{terra::svc()}}.
 
 Other \CRANpkg{dplyr} grouping methods:
 \code{\link[=group_by.SpatVector]{group_by.SpatVector()}},
+\code{\link[=group_data.SpatVector]{group_data.SpatVector()}},
 \code{\link[=group_map.SpatVector]{group_map.SpatVector()}},
 \code{\link[=group_split.SpatVector]{group_split.SpatVector()}},
 \code{\link[=group_trim.SpatVector]{group_trim.SpatVector()}}

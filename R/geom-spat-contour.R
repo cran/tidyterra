@@ -2,23 +2,19 @@
 #'
 #' @description
 #'
-#' These geoms create contours of `SpatRaster` objects. To specify a valid
-#' surface, you should specify the layer on `aes(z = layer_name)`, otherwise all
-#' the layers are considered for creating contours. See also **Facets**
-#' section.
+#' These geoms create contours from `SpatRaster` objects. To create contours
+#' from a specific layer, map that layer to the `z` aesthetic with
+#' `aes(z = layer_name)`. Otherwise, all layers are used to create contours.
+#' See also the **Facets** section.
 #'
 #' The underlying implementation is based on [ggplot2::geom_contour()].
 #'
 #' `geom_spatraster_contour_text()` creates labeled contours and it is
 #' implemented on top of [isoband::isolines_grob()].
 #'
-#' @export
-#' @encoding UTF-8
-#'
 #' @rdname geom_spat_contour
 #' @name geom_spat_contour
-#' @seealso
-#' [ggplot2::geom_contour()].
+#' @seealso [ggplot2::geom_contour()].
 #'
 #' The \CRANpkg{metR} package also provides a set of alternative functions:
 #' - `metR::geom_contour2()`.
@@ -27,34 +23,41 @@
 #'
 #' @family ggplot2.utils
 #'
-#' @inheritSection geom_spatraster Coords
+#' @inheritSection geom_spatraster Coordinates
 #' @inheritSection geom_spatraster Facets
 #' @inheritParams geom_spatraster
 #' @inheritParams ggplot2::geom_contour
 #' @inheritParams ggplot2::geom_text
+#' @param mapping Set of aesthetic mappings created by [ggplot2::aes()]. See
+#'   **Aesthetics** for supported contour aesthetics.
 #'
 #' @returns A \CRANpkg{ggplot2} layer.
 #' @section \CRANpkg{terra} equivalent:
 #'
-#' [terra::contour()]
+#' [terra::contour()].
 #'
 #' @section Aesthetics:
 #'
-#' `geom_spatraster_contour()` / `geom_spatraster_contour_text()` understands
+#' `geom_spatraster_contour()` and `geom_spatraster_contour_text()` understand
 #' the following aesthetics:
+#'
 #' - [`alpha`][ggplot2::aes_colour_fill_alpha]
 #' - [`colour`][ggplot2::aes_colour_fill_alpha]
 #' - [`group`][ggplot2::aes_group_order]
 #' - [`linetype`][ggplot2::aes_linetype_size_shape]
 #' - [`linewidth`][ggplot2::aes_linetype_size_shape]
-#' `geom_spatraster_contour_text()` understands also:
+#' - `weight`
+#'
+#' `geom_spatraster_contour_text()` also understands:
+#'
 #' - [`size`][ggplot2::aes_linetype_size_shape]
 #' - `label`
 #' - `family`
 #' - `fontface`
 #'
-#' Additionally, `geom_spatraster_contour_filled()` understands also the
-#' following aesthetics, as well as the ones listed above:
+#' In addition to the aesthetics listed above,
+#' `geom_spatraster_contour_filled()` understands:
+#'
 #' - [`fill`][ggplot2::aes_colour_fill_alpha]
 #' - `subgroup`
 #'
@@ -64,24 +67,28 @@
 #'
 #' @section Computed variables:
 #'
-#' These geoms compute some variables internally that are available for use as
+#' These geoms compute variables internally that are available for use as
 #' aesthetics, using (for example) `aes(color = after_stat(<computed>))` (see
 #' [ggplot2::after_stat()]).
+#'
 #' - `after_stat(lyr)`: Name of the layer.
 #' - `after_stat(level)`: Height of contour. For contour lines, this is
 #'    a numeric vector that represents bin boundaries. For contour bands,
 #'    this is an ordered factor that represents bin ranges.
 #' - `after_stat(nlevel)`: Height of contour, scaled to maximum of 1.
-#' - `after_stat(level_low)`, `after_stat(level_high)`,
-#' - `after_stat(level_mid)`: (contour bands only) Lower and upper bin
-#'    boundaries for each band, as well as the midpoint between the boundaries.
+#' - `after_stat(level_low)`, `after_stat(level_high)` and
+#'   `after_stat(level_mid)`: For contour bands only, the lower and upper bin
+#'   boundaries and the midpoint between them.
 #'
 #' @section Dropped variables:
+#'
 #' - `z`: After contouring, the `z` values of individual data points are no
 #'   longer available.
 #'
 #' @order 1
 #'
+#' @encoding UTF-8
+#' @export
 #' @examples
 #' \donttest{
 #'
@@ -148,6 +155,10 @@ geom_spatraster_contour <- function(
   mask_projection = FALSE
 ) {
   check_spatraster(data, "geom_spatraster_contour")
+  check_maxcell(maxcell)
+  check_bool(na.rm)
+  check_bool(inherit.aes)
+  check_bool(mask_projection)
 
   contour_data <- prepare_spatraster_contour_data(mapping, data, maxcell)
   mapping <- contour_data$mapping
@@ -179,7 +190,7 @@ geom_spatraster_contour <- function(
   # If the SpatRaster has a CRS, add an empty geom_sf() to train scales. This
   # Mimic using the first layer CRS as the base CRS for `coord_sf()`.
 
-  if (!is.na(crs_terra)) {
+  if (!is_na(crs_terra)) {
     layer_spatrast <- c(
       layer_spatrast,
       ggplot2::geom_sf(
@@ -197,7 +208,7 @@ prepare_spatraster_contour_data <- function(
   mapping,
   data,
   maxcell,
-  call = rlang::caller_env()
+  call = caller_env()
 ) {
   mapping <- override_aesthetics(
     mapping,
@@ -241,9 +252,9 @@ GeomSpatRasterContour <- ggplot2::ggproto(
   ggplot2::GeomPath,
   default_aes = aes(
     weight = 1,
-    colour = "grey35",
-    linewidth = 0.2,
-    linetype = 1,
+    colour = "#595959",
+    linewidth = from_theme(linewidth),
+    linetype = from_theme(linetype),
     alpha = NA
   ),
   # Allow using `size` in ggplot2 < 3.4.0.
@@ -339,7 +350,7 @@ StatTerraSpatRasterContour <- ggplot2::ggproto(
 
 # From ggplot2.
 allow_lambda <- function(x) {
-  if (rlang::is_formula(x)) rlang::as_function(x) else x
+  if (is_formula(x)) rlang::as_function(x) else x
 }
 
 # From ggplot2.
@@ -356,18 +367,18 @@ contour_breaks <- function(
   }
 
   breaks_fun <- scales::fullseq
-  if (is.function(breaks)) {
+  if (is_function(breaks)) {
     breaks_fun <- breaks
   }
 
   # Use pretty bins when no arguments are set.
-  if (is.null(bins) && is.null(binwidth)) {
+  if (is_null(bins) && is_null(binwidth)) {
     breaks <- pretty(z_range, 10)
     return(breaks)
   }
 
   # Use `bins` to calculate `binwidth` when provided.
-  if (!is.null(bins)) {
+  if (!is_null(bins)) {
     # Round limits outward so bins span the data range.
     accuracy <- signif(diff(z_range), 1) / 10
     z_range[1] <- floor(z_range[1] / accuracy) * accuracy

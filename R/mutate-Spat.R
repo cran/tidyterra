@@ -5,13 +5,10 @@
 #' `mutate()` adds new layers/attributes and preserves existing ones on a
 #' `Spat*` object.
 #'
-#' @export
-#' @encoding UTF-8
 #' @rdname mutate.Spat
 #' @name mutate.Spat
 #'
 #' @seealso
-#'
 #' [dplyr::mutate()] methods.
 #'
 #' \CRANpkg{terra} provides several ways to modify `Spat*` objects:
@@ -21,9 +18,7 @@
 #' - [terra::clamp()].
 #' - [terra::app()], [terra::lapp()], [terra::tapp()].
 #'
-#' @family dplyr.single_table
 #' @family dplyr.cols
-#' @family dplyr.methods
 #'
 #' @importFrom dplyr mutate
 #'
@@ -38,23 +33,26 @@
 #'
 #' Some \CRANpkg{terra} methods for modifying cell values:
 #' [terra::ifel()], [terra::classify()], [terra::clamp()], [terra::app()],
-#' [terra::lapp()], [terra::tapp()]
+#' [terra::lapp()] and [terra::tapp()].
 #'
 #' @section Methods:
 #'
-#' Implementation of the **generic** [dplyr::mutate()] method.
+#' Implementation of the **generic** [dplyr::mutate()] methods for `Spat*`
+#' objects.
 #'
 #' ## `SpatRaster`
 #'
-#' Add new layers and preserves existing ones. The result is a
+#' Adds new layers and preserves existing ones. The result is a
 #' `SpatRaster` with the same extent, resolution and CRS as `.data`. Only the
-#' values (and possibly the number) of layers is modified.
+#' values and possibly the number of layers are modified.
 #'
 #' ## `SpatVector`
 #'
-#' The result is a `SpatVector` with the modified (and possibly renamed)
-#' attributes on the function call.
+#' The result is a `SpatVector` with the attributes modified and possibly
+#' renamed as specified in the function call.
 #'
+#' @encoding UTF-8
+#' @export
 #' @examples
 #'
 #' library(terra)
@@ -104,7 +102,7 @@ mutate.SpatRaster <- function(
 
   final_df <- dplyr::bind_cols(xy, values_mutate)
 
-  # Convert to data.table and rearrange attributes.
+  # Convert to data.table and restore spatial attributes.
   final_df <- data.table::as.data.table(final_df)
 
   # Spatial attributes.
@@ -115,7 +113,7 @@ mutate.SpatRaster <- function(
 
   attributes(final_df) <- c(final_att, spat_attrs)
 
-  # Rearrange number of layers
+  # Update the number of layers.
   dims <- attributes(df)$dims
   dims[3] <- ncol(values_mutate)
   attr(final_df, "dims") <- dims
@@ -143,9 +141,8 @@ mutate.SpatRaster <- function(
 
   final_rast
 }
-#' @export
-#' @encoding UTF-8
 #' @rdname mutate.Spat
+#' @export
 mutate.SpatVector <- function(
   .data,
   ...,
@@ -154,7 +151,7 @@ mutate.SpatVector <- function(
   .before = NULL,
   .after = NULL
 ) {
-  # Use own method
+  # Use the package method.
   tbl <- as_tibble(.data)
   mutated <- dplyr::mutate(
     tbl,
@@ -169,11 +166,11 @@ mutate.SpatVector <- function(
   if (ncol(mutated) == 0) {
     vend <- .data[, 0]
   } else {
-    # Bind
+    # Bind attributes.
     vend <- cbind(.data[, 0], mutated)
   }
 
-  # Prepare groups
+  # Restore groups.
   vend <- group_prepare_spat(vend, mutated)
 
   vend

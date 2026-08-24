@@ -121,14 +121,14 @@ See \code{\link[dplyr:inner_join]{dplyr::inner_join()}} for details.
 \section{\CRANpkg{terra} equivalent}{
 
 
-\code{\link[terra:merge]{terra::merge()}}
+\code{\link[terra:merge]{terra::merge()}}.
 }
 
 \section{Methods}{
 
 
-Implementation of the \strong{generic} \code{\link[dplyr:inner_join]{dplyr::inner_join()}} family
-\subsection{\code{SpatVector}}{
+Implementation of the \strong{generic} \code{\link[dplyr:inner_join]{dplyr::inner_join()}} method family for
+\code{SpatVector} objects.
 
 The geometry column has sticky behavior. This means that the result always
 has the geometry of \code{x} for the records that match the join conditions.
@@ -138,7 +138,6 @@ For \code{\link[=right_join]{right_join()}} and \code{\link[=full_join]{full_joi
 geometries). Although these join operations are not common in spatial
 workflows, the function may crash because handling of \code{EMPTY}
 geometries differs between \CRANpkg{terra} and \CRANpkg{sf}.
-}
 }
 
 \examples{
@@ -175,7 +174,7 @@ nrow(right)
 
 autoplot(right, aes(fill = letter)) + labs(title = "Right Join")
 
-# There are empty geometries, check with data from df
+# Check empty geometries against data from the data frame.
 ggplot(right, aes(x, y)) +
   geom_point(aes(color = letter))
 
@@ -185,14 +184,14 @@ nrow(full)
 
 autoplot(full, aes(fill = letter)) + labs(title = "Full Join")
 
-# Check with data from df
+# Check against data from the data frame.
 ggplot(full, aes(x, y)) +
   geom_point(aes(color = letter))
 }
 }
 \seealso{
 \code{\link[dplyr:inner_join]{dplyr::inner_join()}}, \code{\link[dplyr:left_join]{dplyr::left_join()}}, \code{\link[dplyr:right_join]{dplyr::right_join()}},
-\code{\link[dplyr:full_join]{dplyr::full_join()}}, \code{\link[terra:merge]{terra::merge()}}
+\code{\link[dplyr:full_join]{dplyr::full_join()}}, \code{\link[terra:merge]{terra::merge()}}.
 
 Other \CRANpkg{dplyr} verbs that operate on pairs of \code{SpatVector} and data frame objects:
 \code{\link{bind_cols.SpatVector}},
@@ -201,29 +200,5 @@ Other \CRANpkg{dplyr} verbs that operate on pairs of \code{SpatVector} and data 
 \code{\link{filter-joins.SpatVector}},
 \code{\link[=nest_join.SpatVector]{nest_join.SpatVector()}},
 \code{\link{rows.SpatVector}}
-
-Other \CRANpkg{dplyr} methods:
-\code{\link[=arrange.SpatVector]{arrange.SpatVector()}},
-\code{\link{bind_cols.SpatVector}},
-\code{\link{bind_rows.SpatVector}},
-\code{\link[=count.SpatVector]{count.SpatVector()}},
-\code{\link[=cross_join.SpatVector]{cross_join.SpatVector()}},
-\code{\link[=distinct.SpatVector]{distinct.SpatVector()}},
-\code{\link{filter-joins.SpatVector}},
-\code{\link{filter.Spat}},
-\code{\link{glimpse.Spat}},
-\code{\link[=group_by.SpatVector]{group_by.SpatVector()}},
-\code{\link{mutate.Spat}},
-\code{\link[=nest_join.SpatVector]{nest_join.SpatVector()}},
-\code{\link{pull.Spat}},
-\code{\link[=reframe.SpatVector]{reframe.SpatVector()}},
-\code{\link{relocate.Spat}},
-\code{\link{rename.Spat}},
-\code{\link{rows.SpatVector}},
-\code{\link[=rowwise.SpatVector]{rowwise.SpatVector()}},
-\code{\link{select.Spat}},
-\code{\link{slice.Spat}},
-\code{\link[=summarise.SpatVector]{summarise.SpatVector()}}
 }
-\concept{dplyr.methods}
 \concept{dplyr.pairs}

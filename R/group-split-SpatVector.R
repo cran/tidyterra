@@ -17,13 +17,11 @@
 #' @details
 #' See **Details** on [dplyr::group_split()].
 #'
-#' @export
-#' @encoding UTF-8
 #' @rdname group_split.SpatVector
 #'
 #' @name group_split.SpatVector
 #' @keywords internal
-#' @seealso [dplyr::group_split()], [terra::svc()]
+#' @seealso [dplyr::group_split()], [terra::svc()].
 #'
 #' @family dplyr.group_functions
 #'
@@ -39,8 +37,9 @@
 #'   the output includes the grouping variables.
 #'
 #' @section Lifecycle:
-#' `group_split()` is not stable because you can achieve very similar results by
-#' manipulating the nested column returned from
+#'
+#' `group_split()` is not stable because you can achieve very similar results
+#' by manipulating the nested column returned from
 #' [`nest(.by =)`][nest.SpatVector()]. That also retains the group keys all
 #' within a single data structure. `group_split()` may be deprecated in the
 #' future.
@@ -51,9 +50,11 @@
 #'
 #' @section Methods:
 #'
-#' Implementation of the **generic** [dplyr::group_split()] for `SpatVector`
-#' objects.
+#' Implementation of the **generic** [dplyr::group_split()] method for
+#' `SpatVector` objects.
 #'
+#' @encoding UTF-8
+#' @export
 #' @examples
 #' v <- terra::vect(system.file("extdata/cyl.gpkg", package = "tidyterra"))
 #'

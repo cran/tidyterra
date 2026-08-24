@@ -1,19 +1,18 @@
 #' Cross joins for `SpatVector` objects
 #'
 #' @description
+#' `r lifecycle::badge("experimental")`
+#'
 #' Cross joins match each row in `x` to every row in `y`.
 #'
 #' See [dplyr::cross_join()] for details.
 #'
-#' @export
-#' @encoding UTF-8
 #' @rdname cross_join.SpatVector
 #' @name cross_join.SpatVector
 #'
-#' @seealso [dplyr::cross_join()]
+#' @seealso [dplyr::cross_join()].
 #'
 #' @family dplyr.pairs
-#' @family dplyr.methods
 #'
 #' @importFrom dplyr cross_join
 #'
@@ -26,9 +25,8 @@
 #'
 #' @section Methods:
 #'
-#' Implementation of the **generic** [dplyr::cross_join()] method.
-#'
-#' ## `SpatVector`
+#' Implementation of the **generic** [dplyr::cross_join()] method for
+#' `SpatVector` objects.
 #'
 #' The geometry column has sticky behavior. The result repeats each geometry in
 #' `x` once for every row in `y`.
@@ -36,6 +34,8 @@
 #' If `y` has a column named `geometry`, it is treated as a regular attribute
 #' and receives the suffix from `suffix`.
 #'
+#' @encoding UTF-8
+#' @export
 #' @examples
 #' v <- terra::vect(system.file("extdata/cyl.gpkg", package = "tidyterra"))
 #'

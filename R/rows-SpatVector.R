@@ -1,18 +1,17 @@
 #' Row operations for `SpatVector` objects
 #'
 #' @description
+#' `r lifecycle::badge("experimental")`
+#'
 #' Methods for the [dplyr::rows_insert()] family on `SpatVector` objects.
 #'
-#' @export
-#' @encoding UTF-8
 #' @rdname rows.SpatVector
 #' @name rows.SpatVector
 #'
-#' @seealso [dplyr::rows_insert()]
+#' @seealso [dplyr::rows_insert()].
 #'
 #' @family dplyr.rows
 #' @family dplyr.pairs
-#' @family dplyr.methods
 #'
 #' @importFrom dplyr rows_insert
 #'
@@ -24,15 +23,15 @@
 #'
 #' @section Methods:
 #'
-#' Implementation of the **generic** [dplyr::rows_insert()] family for
+#' Implementation of the **generic** [dplyr::rows_insert()] method family for
 #' `SpatVector` objects.
-#'
-#' ## `SpatVector`
 #'
 #' Row operations update attributes while preserving the geometry column. When
 #' inserting data frame rows without geometry, the output contains empty
 #' geometries for the new rows.
 #'
+#' @encoding UTF-8
+#' @export
 #' @examples
 #' v <- terra::vect(system.file("extdata/cyl.gpkg", package = "tidyterra"))
 #'
@@ -72,10 +71,9 @@ rows_insert.SpatVector <- function(
 #' @export
 dplyr::rows_insert
 
-#' @export
-#' @encoding UTF-8
 #' @rdname rows.SpatVector
 #' @importFrom dplyr rows_append
+#' @export
 rows_append.SpatVector <- function(x, y, ..., copy = FALSE, in_place = FALSE) {
   rows_apply_spat(
     x,
@@ -91,10 +89,9 @@ rows_append.SpatVector <- function(x, y, ..., copy = FALSE, in_place = FALSE) {
 #' @export
 dplyr::rows_append
 
-#' @export
-#' @encoding UTF-8
 #' @rdname rows.SpatVector
 #' @importFrom dplyr rows_update
+#' @export
 rows_update.SpatVector <- function(
   x,
   y,
@@ -119,10 +116,9 @@ rows_update.SpatVector <- function(
 #' @export
 dplyr::rows_update
 
-#' @export
-#' @encoding UTF-8
 #' @rdname rows.SpatVector
 #' @importFrom dplyr rows_patch
+#' @export
 rows_patch.SpatVector <- function(
   x,
   y,
@@ -147,10 +143,9 @@ rows_patch.SpatVector <- function(
 #' @export
 dplyr::rows_patch
 
-#' @export
-#' @encoding UTF-8
 #' @rdname rows.SpatVector
 #' @importFrom dplyr rows_upsert
+#' @export
 rows_upsert.SpatVector <- function(
   x,
   y,
@@ -174,10 +169,9 @@ rows_upsert.SpatVector <- function(
 #' @export
 dplyr::rows_upsert
 
-#' @export
-#' @encoding UTF-8
 #' @rdname rows.SpatVector
 #' @importFrom dplyr rows_delete
+#' @export
 rows_delete.SpatVector <- function(
   x,
   y,

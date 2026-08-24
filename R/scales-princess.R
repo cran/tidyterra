@@ -23,12 +23,9 @@
 #'
 #' @source <https://github.com/LeahSmyth/Princess-Colour-Schemes>.
 #'
-#' @export
-#' @encoding UTF-8
-#'
 #' @name scale_princess
 #'
-#' @seealso [terra::plot()], [ggplot2::scale_fill_viridis_c()]
+#' @seealso [terra::plot()], [ggplot2::scale_fill_viridis_c()].
 #'
 #' See also \CRANpkg{ggplot2} docs on additional `...` arguments.
 #'
@@ -58,6 +55,8 @@
 #' The corresponding \CRANpkg{ggplot2} layer with the values applied to the
 #' `fill/colour` aesthetics.
 #'
+#' @encoding UTF-8
+#' @export
 #' @examples
 #' \donttest{
 #' filepath <- system.file("extdata/volcano2.tif", package = "tidyterra")
@@ -113,9 +112,8 @@ scale_fill_princess_d <- function(
     ...
   )
 }
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_princess
+#' @export
 scale_colour_princess_d <- function(
   palette = "snow",
   ...,
@@ -139,9 +137,8 @@ scale_colour_princess_d <- function(
   )
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_princess
+#' @export
 scale_fill_princess_c <- function(
   palette = "snow",
   ...,
@@ -167,9 +164,8 @@ scale_fill_princess_c <- function(
   )
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_princess
+#' @export
 scale_colour_princess_c <- function(
   palette = "snow",
   ...,
@@ -195,9 +191,8 @@ scale_colour_princess_c <- function(
   )
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_princess
+#' @export
 scale_fill_princess_b <- function(
   palette = "snow",
   ...,
@@ -223,9 +218,8 @@ scale_fill_princess_b <- function(
   )
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_princess
+#' @export
 scale_colour_princess_b <- function(
   palette = "snow",
   ...,
@@ -251,11 +245,10 @@ scale_colour_princess_b <- function(
   )
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_princess
 #'
 #' @inheritParams wiki.colors
+#' @export
 #' @examples
 #'
 #' # Display all the princess palettes
@@ -279,6 +272,8 @@ scale_colour_princess_b <- function(
 #' }
 #' par(opar)
 princess.colors <- function(n, palette = "snow", alpha = 1, rev = FALSE) {
+  check_color_args(n, alpha, rev)
+
   if ((n <- as.integer(n[1L])) > 0) {
     paltab <- extract_pal(tidyterra::princess_db, palette = palette)
     colors <- as.character(paltab$hex)
@@ -302,20 +297,17 @@ princess_pal <- function(alpha = 1, direction = 1, palette) {
   }
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_princess
 #' @usage NULL
+#' @export
 scale_color_princess_d <- scale_colour_princess_d
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_princess
 #' @usage NULL
+#' @export
 scale_color_princess_c <- scale_colour_princess_c
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_princess
 #' @usage NULL
+#' @export
 scale_color_princess_b <- scale_colour_princess_b

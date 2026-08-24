@@ -8,21 +8,19 @@
 #'
 #' @details
 #' Each conceptual group is exposed to `.f` with two pieces of information:
-#' `.x`, the subset of rows for the group as a `SpatVector`, and `.y`, a one-row
-#' tibble with one column per grouping variable that identifies the group.
+#' `.x`, the subset of rows for the group as a `SpatVector`, and `.y`, a
+#' one-row tibble with one column per grouping variable that identifies the
+#' group.
 #'
 #' These methods also work on ungrouped `SpatVector` objects. In that case,
 #' `.f` is applied to the entire object and `.y` is a one-row tibble with no
 #' columns.
 #'
-#' @export
-#' @encoding UTF-8
 #' @rdname group_map.SpatVector
 #' @name group_map.SpatVector
 #'
 #' @keywords internal
-#' @seealso
-#' [dplyr::group_map()] and [dplyr::group_modify()].
+#' @seealso [dplyr::group_map()], [dplyr::group_modify()].
 #'
 #' @family dplyr.group_functions
 #'
@@ -40,15 +38,15 @@
 #'
 #' @section Methods:
 #'
-#' Implementation of the **generic** [dplyr::group_map()] family for
+#' Implementation of the **generic** [dplyr::group_map()] method family for
 #' `SpatVector` objects.
-#'
-#' ## `SpatVector`
 #'
 #' `group_map()` applies `.f` to each group and returns a list.
 #' `group_modify()` requires `.f` to return `SpatVector` objects and binds the
 #' results.
 #'
+#' @encoding UTF-8
+#' @export
 #' @examples
 #' v <- terra::vect(system.file("extdata/cyl.gpkg", package = "tidyterra"))
 #' v$grp <- rep(c("A", "B"), length.out = nrow(v))
@@ -68,10 +66,9 @@ group_map.SpatVector <- function(.data, .f, ..., .keep = FALSE) {
 #' @export
 dplyr::group_map
 
-#' @export
-#' @encoding UTF-8
 #' @rdname group_map.SpatVector
 #' @importFrom dplyr group_modify
+#' @export
 group_modify.SpatVector <- function(.data, .f, ..., .keep = FALSE) {
   mapped <- group_map(.data, .f, ..., .keep = .keep)
 

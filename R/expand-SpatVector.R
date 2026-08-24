@@ -6,15 +6,12 @@
 #' have a well-defined geometry. Use [complete.SpatVector()] when empty
 #' geometries should be added explicitly.
 #'
-#' @export
-#' @encoding UTF-8
 #' @rdname expand.SpatVector
 #' @name expand.SpatVector
 #'
-#' @seealso [tidyr::expand()], [complete.SpatVector()]
+#' @seealso [tidyr::expand()], [complete.SpatVector()].
 #'
 #' @family tidyr.missing
-#' @family tidyr.methods
 #'
 #' @importFrom tidyr expand
 #'
@@ -25,13 +22,14 @@
 #'
 #' @section Methods:
 #'
-#' Implementation of the **generic** [tidyr::expand()] method.
-#'
-#' ## `SpatVector`
+#' Implementation of the **generic** [tidyr::expand()] method for `SpatVector`
+#' objects.
 #'
 #' The output is a tibble with attribute combinations. Geometry is not
 #' preserved because new combinations do not have a well-defined geometry.
 #'
+#' @encoding UTF-8
+#' @export
 #' @examples
 #' v <- terra::vect(system.file("extdata/cyl.gpkg", package = "tidyterra"))
 #' v$grp <- rep(c("A", "B"), length.out = nrow(v))

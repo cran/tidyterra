@@ -4,11 +4,8 @@
 #' `r lifecycle::badge("superseded")`
 #'
 #' `transmute()` creates a new object containing only the specified
-#' computations. It's superseded because you can perform the same job
+#' computations. It is superseded because you can perform the same job
 #' with `mutate(.keep = "none")`.
-#'
-#' @export
-#' @encoding UTF-8
 #'
 #' @rdname transmute.Spat
 #' @name transmute.Spat
@@ -23,8 +20,12 @@
 #' @inheritParams mutate.Spat
 #'
 #' @section Methods:
-#' Implementation of the **generic** [dplyr::transmute()] method.
 #'
+#' Implementation of the **generic** [dplyr::transmute()] method for `Spat*`
+#' objects.
+#'
+#' @encoding UTF-8
+#' @export
 #' @examples
 #' library(terra)
 #'
@@ -49,7 +50,7 @@ transmute.SpatRaster <- function(.data, ...) {
 
   final_df <- dplyr::bind_cols(xy, values_transm)
 
-  # Convert to data.table and rearrange attributes.
+  # Convert to data.table and restore spatial attributes.
   final_df <- data.table::as.data.table(final_df)
 
   # Spatial attributes.
@@ -60,14 +61,14 @@ transmute.SpatRaster <- function(.data, ...) {
 
   attributes(final_df) <- c(final_att, spat_attrs)
 
-  # Rearrange number of layers
+  # Update the number of layers.
   dims <- attributes(df)$dims
   dims[3] <- ncol(values_transm)
   attr(final_df, "dims") <- dims
 
   final_rast <- as_spat_internal(final_df)
 
-  # Check coltab
+  # Check color tables.
   if (
     any(terra::has.colors(.data)) && any(names(final_rast) %in% names(.data))
   ) {
@@ -94,22 +95,21 @@ transmute.SpatRaster <- function(.data, ...) {
 
   final_rast
 }
-#' @export
-#' @encoding UTF-8
 #' @rdname transmute.Spat
+#' @export
 transmute.SpatVector <- function(.data, ...) {
-  # Use own method
+  # Use the package method.
   tbl <- as_tibble(.data)
   transm <- dplyr::transmute(tbl, ...)
 
   if (ncol(transm) > 0) {
-    # Bind
+    # Bind attributes.
     vend <- cbind(.data[, 0], transm)
   } else {
     vend <- .data[, 0]
   }
 
-  # Prepare groups
+  # Restore groups.
   vend <- group_prepare_spat(vend, transm)
 
   vend

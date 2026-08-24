@@ -14,30 +14,30 @@ compare_spatrasters(x, y, digits = 6)
 the resolution.}
 }
 \value{
-An invisible logical \code{TRUE/FALSE} indicating whether the \code{SpatRaster}
+An invisible logical value indicating whether the \code{SpatRaster}
 objects are compatible, plus an informative message flagging any issues
 found.
 }
 \description{
-Two \code{SpatRaster} objects are compatible (in terms of combining layers) if the
-CRS, extent and resolution are similar. In those cases you can combine the
-objects simply as \code{c(x, y)}.
+Two \code{SpatRaster} objects are compatible (in terms of combining layers) if
+the CRS, extent and resolution are similar. In those cases you can combine
+the objects simply as \code{c(x, y)}.
 
 This function compares those attributes and reports the results. See
-\strong{Solving issues} for minimal guidance.
+\strong{Resolving differences} for minimal guidance.
 }
 \section{\CRANpkg{terra} equivalent}{
 
 
-\code{\link[terra:identical]{terra::identical()}}
+\code{\link[terra:compareGeom]{terra::compareGeom()}}.
 }
 
-\section{Solving issues}{
+\section{Resolving differences}{
 
 \itemize{
-\item On \strong{non-equal CRS}, try \code{\link[terra:project]{terra::project()}}.
-\item On \strong{non-equal extent}, try \code{\link[terra:resample]{terra::resample()}}.
-\item On \strong{non-equal resolution} you can try \code{\link[terra:resample]{terra::resample()}},
+\item For a \strong{different CRS}, try \code{\link[terra:project]{terra::project()}}.
+\item For a \strong{different extent}, try \code{\link[terra:resample]{terra::resample()}}.
+\item For a \strong{different resolution}, try \code{\link[terra:resample]{terra::resample()}},
 \code{\link[terra:aggregate]{terra::aggregate()}} or \code{\link[terra:disagg]{terra::disagg()}}.
 }
 }
@@ -50,7 +50,7 @@ x <- rast(matrix(1:90, ncol = 3), crs = "EPSG:3857")
 # Nothing
 compare_spatrasters(x, x)
 
-# Different crs
+# Different CRS
 y_nocrs <- x
 crs(y_nocrs) <- NA
 
@@ -71,11 +71,6 @@ compare_spatrasters(x, project(x, "epsg:3035"))
 
 }
 \seealso{
-\code{\link[terra:identical]{terra::identical()}}
-
-Other helpers:
-\code{\link[=is_grouped_spatvector]{is_grouped_spatvector()}},
-\code{\link[=is_regular_grid]{is_regular_grid()}},
-\code{\link[=pull_crs]{pull_crs()}}
+\code{\link[terra:identical]{terra::identical()}}.
 }
 \concept{helpers}

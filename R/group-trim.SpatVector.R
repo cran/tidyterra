@@ -12,8 +12,6 @@
 #' @details
 #' See **Details** on [dplyr::group_trim()].
 #'
-#' @export
-#' @encoding UTF-8
 #' @rdname group_trim.SpatVector
 #' @name group_trim.SpatVector
 #'
@@ -31,9 +29,11 @@
 #'
 #' @section Methods:
 #'
-#' Implementation of the **generic** [dplyr::group_trim()] for `SpatVector`
-#' objects.
+#' Implementation of the **generic** [dplyr::group_trim()] method for
+#' `SpatVector` objects.
 #'
+#' @encoding UTF-8
+#' @export
 #' @examples
 #' v <- terra::vect(system.file("extdata/cyl.gpkg", package = "tidyterra"))
 #'

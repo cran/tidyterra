@@ -10,8 +10,8 @@
 \arguments{
 \item{.data}{A \code{SpatVector} created with \code{\link[terra:vect]{terra::vect()}}.}
 
-\item{...}{<\code{\link[rlang:args_data_masking]{data-masking}}> Optional variables to
-use when determining uniqueness. If there are multiple rows for a given
+\item{...}{<\code{\link[rlang:args_data_masking]{data-masking}}> Optional variables
+to use when determining uniqueness. If there are multiple rows for a given
 combination of inputs, only the first row will be preserved. If omitted,
 all variables in the data frame are used. There is a reserved variable
 name, \code{geometry}, that removes duplicate geometries. See \strong{Methods}.}
@@ -29,18 +29,17 @@ Keep only unique/distinct rows and geometries from a \code{SpatVector}.
 \section{\CRANpkg{terra} equivalent}{
 
 
-\code{\link[terra:unique]{terra::unique()}}
+\code{\link[terra:unique]{terra::unique()}}.
 }
 
 \section{Methods}{
 
 
-Implementation of the \strong{generic} \code{\link[dplyr:distinct]{dplyr::distinct()}} method.
-\subsection{\code{SpatVector}}{
+Implementation of the \strong{generic} \code{\link[dplyr:distinct]{dplyr::distinct()}} method for
+\code{SpatVector} objects.
 
 You can remove duplicate geometries by passing the reserved name
 \code{geometry} to \code{...}. See \strong{Examples}.
-}
 }
 
 \examples{
@@ -49,7 +48,7 @@ library(terra)
 
 v <- vect(system.file("ex/lux.shp", package = "terra"))
 
-# Create a vector with dups
+# Create a vector with duplicates.
 v <- v[sample(seq_len(nrow(v)), 100, replace = TRUE), ]
 v$gr <- sample(LETTERS[1:3], 100, replace = TRUE)
 
@@ -64,7 +63,7 @@ ex2 <- distinct(v, gr)
 ex2
 nrow(ex2)
 
-# Same but keeping all cols
+# Keep all columns.
 ex2b <- distinct(v, gr, .keep_all = TRUE)
 ex2b
 nrow(ex2b)
@@ -77,40 +76,16 @@ nrow(ex3)
 # Same as terra::unique()
 terra::unique(ex3)
 
-# Unique keeping info
+# Keep information for unique values.
 distinct(v, geometry, .keep_all = TRUE)
 }
 \seealso{
-\code{\link[dplyr:distinct]{dplyr::distinct()}}, \code{\link[terra:unique]{terra::unique()}}
+\code{\link[dplyr:distinct]{dplyr::distinct()}}, \code{\link[terra:unique]{terra::unique()}}.
 
 Other \CRANpkg{dplyr} verbs that operate on rows:
 \code{\link[=arrange.SpatVector]{arrange.SpatVector()}},
 \code{\link{filter.Spat}},
 \code{\link{rows.SpatVector}},
 \code{\link{slice.Spat}}
-
-Other \CRANpkg{dplyr} methods:
-\code{\link[=arrange.SpatVector]{arrange.SpatVector()}},
-\code{\link{bind_cols.SpatVector}},
-\code{\link{bind_rows.SpatVector}},
-\code{\link[=count.SpatVector]{count.SpatVector()}},
-\code{\link[=cross_join.SpatVector]{cross_join.SpatVector()}},
-\code{\link{filter-joins.SpatVector}},
-\code{\link{filter.Spat}},
-\code{\link{glimpse.Spat}},
-\code{\link[=group_by.SpatVector]{group_by.SpatVector()}},
-\code{\link{mutate-joins.SpatVector}},
-\code{\link{mutate.Spat}},
-\code{\link[=nest_join.SpatVector]{nest_join.SpatVector()}},
-\code{\link{pull.Spat}},
-\code{\link[=reframe.SpatVector]{reframe.SpatVector()}},
-\code{\link{relocate.Spat}},
-\code{\link{rename.Spat}},
-\code{\link{rows.SpatVector}},
-\code{\link[=rowwise.SpatVector]{rowwise.SpatVector()}},
-\code{\link{select.Spat}},
-\code{\link{slice.Spat}},
-\code{\link[=summarise.SpatVector]{summarise.SpatVector()}}
 }
-\concept{dplyr.methods}
 \concept{dplyr.rows}

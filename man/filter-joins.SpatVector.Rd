@@ -70,18 +70,17 @@ See \code{\link[dplyr:semi_join]{dplyr::semi_join()}} for details.
 \section{\CRANpkg{terra} equivalent}{
 
 
-\code{\link[terra:merge]{terra::merge()}}
+\code{\link[terra:merge]{terra::merge()}}.
 }
 
 \section{Methods}{
 
 
-Implementation of the \strong{generic} \code{\link[dplyr:semi_join]{dplyr::semi_join()}} family
-\subsection{\code{SpatVector}}{
+Implementation of the \strong{generic} \code{\link[dplyr:semi_join]{dplyr::semi_join()}} method family for
+\code{SpatVector} objects.
 
 The geometry column has sticky behavior. This means that the result always
 has the geometry of \code{x} for the records that match the join conditions.
-}
 }
 
 \examples{
@@ -118,7 +117,7 @@ autoplot(anti, aes(fill = iso2)) + labs(title = "Anti Join")
 
 }
 \seealso{
-\code{\link[dplyr:semi_join]{dplyr::semi_join()}}, \code{\link[dplyr:anti_join]{dplyr::anti_join()}}, \code{\link[terra:merge]{terra::merge()}}
+\code{\link[dplyr:semi_join]{dplyr::semi_join()}}, \code{\link[dplyr:anti_join]{dplyr::anti_join()}}, \code{\link[terra:merge]{terra::merge()}}.
 
 Other \CRANpkg{dplyr} verbs that operate on pairs of \code{SpatVector} and data frame objects:
 \code{\link{bind_cols.SpatVector}},
@@ -127,29 +126,5 @@ Other \CRANpkg{dplyr} verbs that operate on pairs of \code{SpatVector} and data 
 \code{\link{mutate-joins.SpatVector}},
 \code{\link[=nest_join.SpatVector]{nest_join.SpatVector()}},
 \code{\link{rows.SpatVector}}
-
-Other \CRANpkg{dplyr} methods:
-\code{\link[=arrange.SpatVector]{arrange.SpatVector()}},
-\code{\link{bind_cols.SpatVector}},
-\code{\link{bind_rows.SpatVector}},
-\code{\link[=count.SpatVector]{count.SpatVector()}},
-\code{\link[=cross_join.SpatVector]{cross_join.SpatVector()}},
-\code{\link[=distinct.SpatVector]{distinct.SpatVector()}},
-\code{\link{filter.Spat}},
-\code{\link{glimpse.Spat}},
-\code{\link[=group_by.SpatVector]{group_by.SpatVector()}},
-\code{\link{mutate-joins.SpatVector}},
-\code{\link{mutate.Spat}},
-\code{\link[=nest_join.SpatVector]{nest_join.SpatVector()}},
-\code{\link{pull.Spat}},
-\code{\link[=reframe.SpatVector]{reframe.SpatVector()}},
-\code{\link{relocate.Spat}},
-\code{\link{rename.Spat}},
-\code{\link{rows.SpatVector}},
-\code{\link[=rowwise.SpatVector]{rowwise.SpatVector()}},
-\code{\link{select.Spat}},
-\code{\link{slice.Spat}},
-\code{\link[=summarise.SpatVector]{summarise.SpatVector()}}
 }
-\concept{dplyr.methods}
 \concept{dplyr.pairs}

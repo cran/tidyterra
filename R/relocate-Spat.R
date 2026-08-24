@@ -6,15 +6,12 @@
 #' as [`select.Spat`][select.Spat] to make it easy to move blocks of
 #' layers/attributes at once.
 #'
-#' @export
-#' @encoding UTF-8
 #' @rdname relocate.Spat
 #' @name relocate.Spat
 #'
-#' @seealso [dplyr::relocate()]
+#' @seealso [dplyr::relocate()].
 #'
 #' @family dplyr.cols
-#' @family dplyr.methods
 #'
 #' @importFrom dplyr relocate
 #'
@@ -24,26 +21,30 @@
 #' @param ... <[`tidy-select`][dplyr::dplyr_tidy_select]> layers/attributes to
 #'   move.
 #'
-#' @param .before,.after <[`tidy-select`][dplyr::dplyr_tidy_select]> Destination
-#'   of layers/attributes selected by `...`. Supplying neither will move
-#'   layers/attributes to the left-hand side. Specifying both is an error.
+#' @param .before,.after <[`tidy-select`][dplyr::dplyr_tidy_select]>
+#'   Destination of layers/attributes selected by `...`. Supplying neither
+#'   will move layers/attributes to the left-hand side. Specifying both is an
+#'   error.
 #'
 #' @section \CRANpkg{terra} equivalent:
 #'
-#' `terra::subset(data, c("name_layer", "name_other_layer"))`
+#' `terra::subset(data, c("name_layer", "name_other_layer"))`.
 #'
 #' @section Methods:
 #'
-#' Implementation of the **generic** [dplyr::relocate()] method.
+#' Implementation of the **generic** [dplyr::relocate()] methods for `Spat*`
+#' objects.
 #'
 #' ## `SpatRaster`
 #'
-#' Relocate layers of a `SpatRaster`.
+#' Relocates layers of a `SpatRaster`.
 #'
 #' ## `SpatVector`
 #'
-#' The result is a `SpatVector` with the attributes on a different order.
+#' The result is a `SpatVector` with the attributes in a different order.
 #'
+#' @encoding UTF-8
+#' @export
 #' @examples
 #'
 #' library(terra)
@@ -74,11 +75,10 @@ relocate.SpatRaster <- function(.data, ..., .before = NULL, .after = NULL) {
   finalrast
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname relocate.Spat
+#' @export
 relocate.SpatVector <- function(.data, ..., .before = NULL, .after = NULL) {
-  # Use own method
+  # Use the package method.
   # With template
   df <- as_tibble(.data[1, ])
 

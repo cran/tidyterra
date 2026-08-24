@@ -19,8 +19,8 @@ created with \code{\link[terra:vect]{terra::vect()}}.}
 \code{width} \link[pillar:pillar_options]{option} (if finite)
 or the width of the console.}
 
-\item{...}{Arguments passed on to \code{\link[=as_tibble.Spat]{as_tibble()}} methods
-for \code{SpatRaster} and \code{SpatVector}.}
+\item{...}{Arguments passed to \code{\link[=as_tibble.SpatRaster]{as_tibble.SpatRaster()}} or
+\code{\link[=as_tibble.SpatVector]{as_tibble.SpatVector()}} methods.}
 
 \item{n}{Maximum number of rows to show.}
 
@@ -39,13 +39,13 @@ layer/column in a \verb{Spat*} object.
 \section{\CRANpkg{terra} equivalent}{
 
 
-\code{print()}
+\code{print()}.
 }
 
 \section{Methods}{
 
 
-Implementation of the \strong{generic} \code{\link[dplyr:glimpse]{dplyr::glimpse()}} function for
+Implementation of the \strong{generic} \code{\link[dplyr:glimpse]{dplyr::glimpse()}} methods for
 \verb{Spat*} objects.
 }
 
@@ -58,7 +58,7 @@ v <- vect(system.file("extdata/cyl.gpkg", package = "tidyterra"))
 
 v |> glimpse(n = 2)
 
-# Use on a pipeline
+# Use in a pipeline.
 v |>
   glimpse() |>
   mutate(a = 30) |>
@@ -70,7 +70,7 @@ r <- rast(system.file("extdata/cyl_elev.tif", package = "tidyterra"))
 
 r |> glimpse()
 
-# Use on a pipeline
+# Use in a pipeline.
 r |>
   glimpse() |>
   mutate(b = elevation_m / 100) |>
@@ -86,29 +86,5 @@ Other \CRANpkg{dplyr} verbs that operate on columns:
 \code{\link{relocate.Spat}},
 \code{\link{rename.Spat}},
 \code{\link{select.Spat}}
-
-Other \CRANpkg{dplyr} methods:
-\code{\link[=arrange.SpatVector]{arrange.SpatVector()}},
-\code{\link{bind_cols.SpatVector}},
-\code{\link{bind_rows.SpatVector}},
-\code{\link[=count.SpatVector]{count.SpatVector()}},
-\code{\link[=cross_join.SpatVector]{cross_join.SpatVector()}},
-\code{\link[=distinct.SpatVector]{distinct.SpatVector()}},
-\code{\link{filter-joins.SpatVector}},
-\code{\link{filter.Spat}},
-\code{\link[=group_by.SpatVector]{group_by.SpatVector()}},
-\code{\link{mutate-joins.SpatVector}},
-\code{\link{mutate.Spat}},
-\code{\link[=nest_join.SpatVector]{nest_join.SpatVector()}},
-\code{\link{pull.Spat}},
-\code{\link[=reframe.SpatVector]{reframe.SpatVector()}},
-\code{\link{relocate.Spat}},
-\code{\link{rename.Spat}},
-\code{\link{rows.SpatVector}},
-\code{\link[=rowwise.SpatVector]{rowwise.SpatVector()}},
-\code{\link{select.Spat}},
-\code{\link{slice.Spat}},
-\code{\link[=summarise.SpatVector]{summarise.SpatVector()}}
 }
 \concept{dplyr.cols}
-\concept{dplyr.methods}

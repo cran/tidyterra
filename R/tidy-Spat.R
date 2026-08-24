@@ -6,15 +6,10 @@
 #' to [`fortify.Spat`] and is provided in case the [ggplot2::fortify()] method
 #' is deprecated in the future.
 #'
-#' @export
-#' @encoding UTF-8
-#'
 #' @rdname tidy.Spat
 #' @name tidy.Spat
 #'
-#' @seealso
-#' [sf::st_as_sf()], [`as_tibble.Spat`], [as_spatraster()], [`fortify.Spat`],
-#' [generics::tidy()].
+#' @seealso [sf::st_as_sf()], [generics::tidy()].
 #'
 #' @family generics.methods
 #' @family coerce
@@ -22,7 +17,6 @@
 #' @importFrom generics tidy
 #' @inheritParams geom_spatraster
 #' @inheritParams as_tibble.Spat
-#' @inheritParams generics::tidy
 #'
 #' @param x A `SpatRaster` created with [terra::rast()], a `SpatVector`
 #'   created with [terra::vect()], a `SpatGraticule` (see [terra::graticule()])
@@ -40,7 +34,8 @@
 #'
 #' @section Methods:
 #'
-#' Implementation of the **generic** [generics::tidy()] method.
+#' Implementation of the **generic** [generics::tidy()] methods for `Spat*`
+#' objects.
 #'
 #' ## `SpatRaster`
 #'
@@ -59,6 +54,7 @@
 #'
 #' When `pivot = TRUE`, the `SpatRaster` is returned in long format (see
 #' [tidyr::pivot_longer()]). The tidy object has the following columns:
+#'
 #' - `x`, `y`: Coordinates of the cell center in the corresponding CRS.
 #' - `lyr`: Name of the `SpatRaster` layer associated with `value`.
 #' - `value`: Cell value for the corresponding `lyr`.
@@ -71,6 +67,8 @@
 #' Returns an [`sf`][sf::st_sf] object that can be used with
 #' [ggplot2::geom_sf()].
 #'
+#' @encoding UTF-8
+#' @export
 #' @examples
 #' \donttest{
 #'
@@ -100,7 +98,7 @@
 #'
 #' tidy(ex)
 #'
-#' # With crs
+#' # With a CRS
 #' tidy(ex, crs = pull_crs(cyl))
 #'
 #' # SpatGraticule
@@ -123,11 +121,18 @@ tidy.SpatRaster <- function(
   maxcell = terra::ncell(x) * 1.1,
   pivot = FALSE
 ) {
+  if (missing(maxcell)) {
+    maxcell <- ceiling(maxcell)
+  }
+
+  check_maxcell(maxcell)
+  check_bool(pivot)
+
   x <- resample_spat(x, maxcell)
 
   crs <- pull_crs(x)
 
-  if (is.na(crs)) {
+  if (is_na(crs)) {
     crs <- ""
   }
 
@@ -144,16 +149,14 @@ tidy.SpatRaster <- function(
   x
 }
 
+#' @rdname tidy.Spat
 #' @export
-#' @encoding UTF-8
-#' @name tidy.Spat
 tidy.SpatVector <- function(x, ...) {
   as_sf(x)
 }
 
+#' @rdname tidy.Spat
 #' @export
-#' @encoding UTF-8
-#' @name tidy.Spat
 tidy.SpatGraticule <- function(x, ...) {
   # nocov start
   tvers <- packageVersion("terra")
@@ -169,14 +172,13 @@ tidy.SpatGraticule <- function(x, ...) {
   as_sf(terra::vect(x))
 }
 
-#' @export
-#' @encoding UTF-8
-#' @name tidy.Spat
-#' @param crs Input that includes or represents a CRS. It can be an `sf/sfc`
-#'   object, a `SpatRaster/SpatVector` object, a `crs` object from
-#'   [sf::st_crs()], a character string (for example a [proj4
+#' @rdname tidy.Spat
+#' @param crs Input that includes or represents a CRS. It can be an `sf` or
+#'   `sfc` object, a `SpatRaster` or `SpatVector` object, a `crs` object from
+#'   [sf::st_crs()], a character string (for example a [PROJ
 #'   string](https://proj.org/en/9.3/operations/projections/index.html)), or
 #'   an integer representing an [EPSG](https://epsg.io/) code.
+#' @export
 tidy.SpatExtent <- function(x, ..., crs = "") {
   as_sf(terra::vect(x, crs = pull_crs(crs)))
 }

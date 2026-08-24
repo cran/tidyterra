@@ -7,17 +7,14 @@
 #'
 #' See [dplyr::inner_join()] for details.
 #'
-#' @export
-#' @encoding UTF-8
 #' @rdname mutate-joins.SpatVector
 #' @name mutate-joins.SpatVector
 #'
 #' @seealso
 #' [dplyr::inner_join()], [dplyr::left_join()], [dplyr::right_join()],
-#' [dplyr::full_join()], [terra::merge()]
+#' [dplyr::full_join()], [terra::merge()].
 #'
 #' @family dplyr.pairs
-#' @family dplyr.methods
 #'
 #' @importFrom dplyr inner_join
 #'
@@ -32,13 +29,12 @@
 #'
 #' @section \CRANpkg{terra} equivalent:
 #'
-#' [terra::merge()]
+#' [terra::merge()].
 #'
 #' @section Methods:
 #'
-#' Implementation of the **generic** [dplyr::inner_join()] family
-#'
-#' ## `SpatVector`
+#' Implementation of the **generic** [dplyr::inner_join()] method family for
+#' `SpatVector` objects.
 #'
 #' The geometry column has sticky behavior. This means that the result always
 #' has the geometry of `x` for the records that match the join conditions.
@@ -49,6 +45,8 @@
 #' workflows, the function may crash because handling of `EMPTY`
 #' geometries differs between \CRANpkg{terra} and \CRANpkg{sf}.
 #'
+#' @encoding UTF-8
+#' @export
 #' @examples
 #' library(terra)
 #' library(ggplot2)
@@ -83,7 +81,7 @@
 #'
 #' autoplot(right, aes(fill = letter)) + labs(title = "Right Join")
 #'
-#' # There are empty geometries, check with data from df
+#' # Check empty geometries against data from the data frame.
 #' ggplot(right, aes(x, y)) +
 #'   geom_point(aes(color = letter))
 #'
@@ -93,7 +91,7 @@
 #'
 #' autoplot(full, aes(fill = letter)) + labs(title = "Full Join")
 #'
-#' # Check with data from df
+#' # Check against data from the data frame.
 #' ggplot(full, aes(x, y)) +
 #'   geom_point(aes(color = letter))
 #' }
@@ -107,7 +105,7 @@ inner_join.SpatVector <- function(
   keep = NULL
 ) {
   error_spat_join(y)
-  # Use own method
+  # Use the package method.
   x_tbl <- as_tbl_internal(x)
   y <- as.data.frame(y)
 
@@ -131,10 +129,9 @@ inner_join.SpatVector <- function(
 #' @export
 dplyr::inner_join
 
-#' @export
-#' @encoding UTF-8
-#' @name mutate-joins.SpatVector
+#' @rdname mutate-joins.SpatVector
 #' @importFrom dplyr left_join
+#' @export
 left_join.SpatVector <- function(
   x,
   y,
@@ -145,7 +142,7 @@ left_join.SpatVector <- function(
   keep = NULL
 ) {
   error_spat_join(y)
-  # Use own method
+  # Use the package method.
   x_tbl <- as_tbl_internal(x)
   y <- as.data.frame(y)
 
@@ -169,10 +166,9 @@ left_join.SpatVector <- function(
 #' @export
 dplyr::left_join
 
-#' @export
-#' @encoding UTF-8
-#' @name mutate-joins.SpatVector
+#' @rdname mutate-joins.SpatVector
 #' @importFrom dplyr right_join
+#' @export
 right_join.SpatVector <- function(
   x,
   y,
@@ -183,7 +179,7 @@ right_join.SpatVector <- function(
   keep = NULL
 ) {
   error_spat_join(y)
-  # Use own method
+  # Use the package method.
   x_tbl <- as_tbl_internal(x)
   y <- as.data.frame(y)
 
@@ -207,10 +203,9 @@ right_join.SpatVector <- function(
 #' @export
 dplyr::right_join
 
-#' @export
-#' @encoding UTF-8
-#' @name mutate-joins.SpatVector
+#' @rdname mutate-joins.SpatVector
 #' @importFrom dplyr full_join
+#' @export
 full_join.SpatVector <- function(
   x,
   y,
@@ -221,7 +216,7 @@ full_join.SpatVector <- function(
   keep = NULL
 ) {
   error_spat_join(y)
-  # Use own method
+  # Use the package method.
   x_tbl <- as_tbl_internal(x)
   y <- as.data.frame(y)
 
@@ -255,15 +250,12 @@ dplyr::full_join
 #'
 #' See [dplyr::semi_join()] for details.
 #'
-#' @export
-#' @encoding UTF-8
 #' @rdname filter-joins.SpatVector
 #' @name filter-joins.SpatVector
 #'
-#' @seealso [dplyr::semi_join()], [dplyr::anti_join()], [terra::merge()]
+#' @seealso [dplyr::semi_join()], [dplyr::anti_join()], [terra::merge()].
 #'
 #' @family dplyr.pairs
-#' @family dplyr.methods
 #'
 #' @importFrom dplyr semi_join
 #'
@@ -273,17 +265,18 @@ dplyr::full_join
 #'
 #' @section \CRANpkg{terra} equivalent:
 #'
-#' [terra::merge()]
+#' [terra::merge()].
 #'
 #' @section Methods:
 #'
-#' Implementation of the **generic** [dplyr::semi_join()] family
-#'
-#' ## `SpatVector`
+#' Implementation of the **generic** [dplyr::semi_join()] method family for
+#' `SpatVector` objects.
 #'
 #' The geometry column has sticky behavior. This means that the result always
 #' has the geometry of `x` for the records that match the join conditions.
 #'
+#' @encoding UTF-8
+#' @export
 #' @examples
 #' library(terra)
 #' library(ggplot2)
@@ -318,7 +311,7 @@ dplyr::full_join
 #'
 semi_join.SpatVector <- function(x, y, by = NULL, copy = FALSE, ...) {
   error_spat_join(y)
-  # Use own method
+  # Use the package method.
   x_tbl <- as_tbl_internal(x)
   y <- as.data.frame(y)
 
@@ -334,13 +327,12 @@ semi_join.SpatVector <- function(x, y, by = NULL, copy = FALSE, ...) {
 #' @export
 dplyr::semi_join
 
-#' @export
-#' @encoding UTF-8
-#' @name filter-joins.SpatVector
+#' @rdname filter-joins.SpatVector
 #' @importFrom dplyr anti_join
+#' @export
 anti_join.SpatVector <- function(x, y, by = NULL, copy = FALSE, ...) {
   error_spat_join(y)
-  # Use own method
+  # Use the package method.
   x_tbl <- as_tbl_internal(x)
   y <- as.data.frame(y)
 

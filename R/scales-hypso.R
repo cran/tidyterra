@@ -38,12 +38,10 @@
 #'
 #' cpt-city: <https://phillips.shef.ac.uk/pub/cpt-city/>.
 #'
-#' @export
-#' @encoding UTF-8
-#'
 #' @name scale_hypso
 #'
-#' @seealso [hypsometric_tints_db], [terra::plot()], [terra::minmax()],
+#' @seealso
+#' [hypsometric_tints_db], [terra::plot()], [terra::minmax()],
 #' [ggplot2::scale_fill_viridis_c()]
 #'
 #' See also \CRANpkg{ggplot2} docs on additional `...` arguments.
@@ -74,6 +72,8 @@
 #' The corresponding \CRANpkg{ggplot2} layer with the values applied to the
 #' `fill/colour` aesthetics.
 #'
+#' @encoding UTF-8
+#' @export
 #' @examples
 #' \donttest{
 #' filepath <- system.file("extdata/volcano2.tif", package = "tidyterra")
@@ -168,9 +168,8 @@ scale_fill_hypso_d <- function(
   )
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_hypso
+#' @export
 scale_colour_hypso_d <- function(
   palette = "etopo1_hypso",
   ...,
@@ -194,9 +193,8 @@ scale_colour_hypso_d <- function(
   )
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_hypso
+#' @export
 scale_fill_hypso_c <- function(
   palette = "etopo1_hypso",
   ...,
@@ -226,9 +224,8 @@ scale_fill_hypso_c <- function(
     ...
   )
 }
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_hypso
+#' @export
 scale_colour_hypso_c <- function(
   palette = "etopo1_hypso",
   ...,
@@ -258,9 +255,8 @@ scale_colour_hypso_c <- function(
     ...
   )
 }
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_hypso
+#' @export
 scale_fill_hypso_b <- function(
   palette = "etopo1_hypso",
   ...,
@@ -290,9 +286,8 @@ scale_fill_hypso_b <- function(
     ...
   )
 }
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_hypso
+#' @export
 scale_colour_hypso_b <- function(
   palette = "etopo1_hypso",
   ...,
@@ -323,11 +318,10 @@ scale_colour_hypso_b <- function(
   )
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_hypso
 #'
 #' @inheritParams wiki.colors
+#' @export
 #' @examples
 #' # Display all the cpt-city palettes
 #'
@@ -350,6 +344,8 @@ scale_colour_hypso_b <- function(
 #' }
 #' par(opar)
 hypso.colors <- function(n, palette = "etopo1_hypso", alpha = 1, rev = FALSE) {
+  check_color_args(n, alpha, rev)
+
   if ((n <- as.integer(n[1L])) > 0) {
     paltab <- extract_pal(tidyterra::hypsometric_tints_db, palette = palette)
     colors <- as.character(paltab$hex)
@@ -387,13 +383,12 @@ hypso.colors <- function(n, palette = "etopo1_hypso", alpha = 1, rev = FALSE) {
 #' `oob = scales::oob_squish`, to avoid blank pixels in the plot.
 #'
 #' `hypso.colors2()` provides a gradient color palette where the distance
-#' between colors is different depending of the type of color. In contrast,
+#' between colors differs depending on the type of color. In contrast,
 #' `hypso.colors()` provides a uniform gradient across colors. See
 #' **Examples**.
 #'
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_hypso
+#' @export
 scale_fill_hypso_tint_d <- function(
   palette = "etopo1_hypso",
   ...,
@@ -416,9 +411,8 @@ scale_fill_hypso_tint_d <- function(
     ...
   )
 }
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_hypso
+#' @export
 scale_colour_hypso_tint_d <- function(
   palette = "etopo1_hypso",
   ...,
@@ -441,9 +435,8 @@ scale_colour_hypso_tint_d <- function(
     ...
   )
 }
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_hypso
+#' @export
 scale_fill_hypso_tint_c <- function(
   palette = "etopo1_hypso",
   ...,
@@ -475,9 +468,8 @@ scale_fill_hypso_tint_c <- function(
     guide = guide
   )
 }
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_hypso
+#' @export
 scale_colour_hypso_tint_c <- function(
   palette = "etopo1_hypso",
   ...,
@@ -510,9 +502,8 @@ scale_colour_hypso_tint_c <- function(
   )
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_hypso
+#' @export
 scale_fill_hypso_tint_b <- function(
   palette = "etopo1_hypso",
   ...,
@@ -544,9 +535,8 @@ scale_fill_hypso_tint_b <- function(
     guide = guide
   )
 }
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_hypso
+#' @export
 scale_colour_hypso_tint_b <- function(
   palette = "etopo1_hypso",
   ...,
@@ -578,11 +568,10 @@ scale_colour_hypso_tint_b <- function(
     guide = guide
   )
 }
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_hypso
+#' @export
 #' @examples
-#' # Display all the cpt-city palettes on version 2
+#' # Display all version 2 cpt-city palettes.
 #'
 #' pals <- unique(hypsometric_tints_db$pal)
 #'
@@ -603,6 +592,8 @@ scale_colour_hypso_tint_b <- function(
 #' }
 #' par(opar)
 hypso.colors2 <- function(n, palette = "etopo1_hypso", alpha = 1, rev = FALSE) {
+  check_color_args(n, alpha, rev)
+
   if ((n <- as.integer(n[1L])) > 0) {
     paltab <- extract_pal(tidyterra::hypsometric_tints_db, palette = palette)
     colors <- as.character(paltab$hex)
@@ -657,38 +648,32 @@ hypso_pal2 <- function(alpha = 1, direction = 1, palette) {
   }
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_hypso
 #' @usage NULL
+#' @export
 scale_color_hypso_d <- scale_colour_hypso_d
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_hypso
 #' @usage NULL
+#' @export
 scale_color_hypso_tint_d <- scale_colour_hypso_tint_d
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_hypso
 #' @usage NULL
+#' @export
 scale_color_hypso_c <- scale_colour_hypso_c
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_hypso
 #' @usage NULL
+#' @export
 scale_color_hypso_tint_c <- scale_colour_hypso_tint_c
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_hypso
 #' @usage NULL
+#' @export
 scale_color_hypso_b <- scale_colour_hypso_b
 
-#' @export
-#' @encoding UTF-8
 #' @rdname scale_hypso
 #' @usage NULL
+#' @export
 scale_color_hypso_tint_b <- scale_colour_hypso_tint_b

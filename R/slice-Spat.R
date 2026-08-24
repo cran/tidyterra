@@ -23,8 +23,6 @@
 #'
 #' See **Methods** for details.
 #'
-#' @export
-#' @encoding UTF-8
 #' @rdname slice.Spat
 #' @name slice.Spat
 #'
@@ -32,9 +30,7 @@
 #' [dplyr::slice()], [terra::spatSample()], [as_coordinates()],
 #' [filter.SpatRaster()].
 #'
-#' @family dplyr.single_table
 #' @family dplyr.rows
-#' @family dplyr.methods
 #'
 #' @importFrom dplyr slice
 #'
@@ -47,7 +43,6 @@
 #'   `SpatRaster`. See also [terra::trim()], [terra::extend()].
 #' @param ... <[`data-masking`][rlang::args_data_masking]> Integer row values.
 #'   Provide either positive values to keep or negative values to drop.
-#'
 #'   The values provided must be either all positive or all negative. Indices
 #'   beyond the number of rows in the input are silently ignored. See
 #'   **Methods**.
@@ -55,21 +50,22 @@
 #' @param cols,rows Integer column and row values of the `SpatRaster`.
 #' @param inverse If `TRUE`, `.data` is inverse-masked to the given selection.
 #'   See [terra::mask()].
-#' @param na.rm Logical. If `TRUE`, remove cells with `NA` values when computing
-#'   `slice_min()/slice_max()`. The default is `TRUE`.
+#' @param na.rm Logical. If `TRUE`, remove cells with `NA` values when
+#'   computing `slice_min()/slice_max()`. The default is `TRUE`.
 #'
 #' @section \CRANpkg{terra} equivalent:
 #'
-#' [terra::subset()], [terra::spatSample()]
+#' [terra::subset()] and [terra::spatSample()].
 #'
 #' @section Methods:
 #'
-#' Implementation of the **generic** [dplyr::slice()] method.
+#' Implementation of the **generic** [dplyr::slice()] methods for `Spat*`
+#' objects.
 #'
 #' ## `SpatRaster`
 #'
 #' The result is a `SpatRaster` with the CRS and resolution of the input and
-#' where cell values of the selected cells/columns/rows are preserved.
+#' the values of the selected cells, columns or rows.
 #'
 #' Use `.keep_extent = TRUE` to preserve the extent of `.data` on the output.
 #' The non-selected cells have a value of `NA`.
@@ -82,6 +78,8 @@
 #' performed on each group, so that (e.g.) `slice_head(df, n = 5)` will select
 #' the first five rows in each group.
 #'
+#' @encoding UTF-8
+#' @export
 #' @examples
 #'
 #' library(terra)
@@ -117,14 +115,15 @@
 #'   ) |>
 #'   plot()
 #'
-#' # Group wise operation with SpatVectors--------------------------------------
+#' # Group-wise operation with SpatVector objects
 #' v <- terra::vect(system.file("ex/lux.shp", package = "terra"))
 #'
 #' \donttest{
 #' glimpse(v) |> autoplot(aes(fill = NAME_1))
 #'
 #' gv <- v |> group_by(NAME_1)
-#' # All slice helpers operate per group, silently truncating to the group size
+#' # All slice helpers operate per group, silently truncating to the group
+#' # size.
 #' gv |>
 #'   slice_head(n = 1) |>
 #'   glimpse() |>
@@ -148,6 +147,8 @@ slice.SpatRaster <- function(
   .preserve = FALSE,
   .keep_extent = FALSE
 ) {
+  check_bool(.keep_extent)
+
   # Create skeleton
   skeleton <- as_coordinates(.data)
 
@@ -176,28 +177,28 @@ slice.SpatRaster <- function(
 
   newrast
 }
-#' @export
-#' @encoding UTF-8
 #' @rdname slice.Spat
+#' @export
 slice.SpatVector <- function(.data, ..., .by = NULL, .preserve = FALSE) {
-  # Use own method
+  # Use the package method.
   tbl <- as_tibble(.data)
   ind <- make_safe_index("tterra_index", tbl)
   tbl[[ind]] <- seq_len(nrow(tbl))
   sliced <- dplyr::slice(tbl, ..., .by = {{ .by }}, .preserve = .preserve)
 
-  # Regenerate
+  # Regenerate the `SpatVector`.
   vend <- .data[as.integer(sliced[[ind]]), ]
 
   vend <- group_prepare_spat(vend, sliced)
 
   vend
 }
-#' @export
-#' @encoding UTF-8
 #' @rdname slice.Spat
 #' @importFrom dplyr slice_head
+#' @export
 slice_head.SpatRaster <- function(.data, ..., n, prop, .keep_extent = FALSE) {
+  check_bool(.keep_extent)
+
   # Create skeleton
   skeleton <- as_coordinates(.data)
 
@@ -223,18 +224,17 @@ slice_head.SpatRaster <- function(.data, ..., n, prop, .keep_extent = FALSE) {
   newrast
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname slice.Spat
+#' @export
 slice_head.SpatVector <- function(.data, ..., n, prop, by = NULL) {
-  # Use own method
+  # Use the package method.
   tbl <- as_tibble(.data)
   ind <- make_safe_index("tterra_index", tbl)
   tbl[[ind]] <- seq_len(nrow(tbl))
 
   sliced <- dplyr::slice_head(tbl, ..., n = n, prop = prop, by = {{ by }})
 
-  # Regenerate
+  # Regenerate the `SpatVector`.
   vend <- .data[as.integer(sliced[[ind]]), ]
 
   vend <- group_prepare_spat(vend, sliced)
@@ -242,11 +242,12 @@ slice_head.SpatVector <- function(.data, ..., n, prop, by = NULL) {
   vend
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname slice.Spat
 #' @importFrom dplyr slice_tail
+#' @export
 slice_tail.SpatRaster <- function(.data, ..., n, prop, .keep_extent = FALSE) {
+  check_bool(.keep_extent)
+
   # Create skeleton
   skeleton <- as_coordinates(.data)
 
@@ -272,18 +273,17 @@ slice_tail.SpatRaster <- function(.data, ..., n, prop, .keep_extent = FALSE) {
   newrast
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname slice.Spat
+#' @export
 slice_tail.SpatVector <- function(.data, ..., n, prop, by = NULL) {
-  # Use own method
+  # Use the package method.
   tbl <- as_tibble(.data)
   ind <- make_safe_index("tterra_index", tbl)
   tbl[[ind]] <- seq_len(nrow(tbl))
 
   sliced <- dplyr::slice_tail(tbl, ..., n = n, prop = prop, by = {{ by }})
 
-  # Regenerate
+  # Regenerate the `SpatVector`.
   vend <- .data[as.integer(sliced[[ind]]), ]
 
   vend <- group_prepare_spat(vend, sliced)
@@ -291,10 +291,9 @@ slice_tail.SpatVector <- function(.data, ..., n, prop, by = NULL) {
   vend
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname slice.Spat
 #' @importFrom dplyr slice_min
+#' @export
 slice_min.SpatRaster <- function(
   .data,
   order_by,
@@ -305,6 +304,10 @@ slice_min.SpatRaster <- function(
   .keep_extent = FALSE,
   na.rm = TRUE
 ) {
+  check_bool(.keep_extent)
+  check_bool(with_ties)
+  check_bool(na.rm)
+
   # Create skeleton
   skeleton <- as_coordinates(.data)
   values <- as_tibble(.data, na.rm = FALSE, xy = FALSE)
@@ -352,9 +355,8 @@ slice_min.SpatRaster <- function(
   newrast
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname slice.Spat
+#' @export
 slice_min.SpatVector <- function(
   .data,
   order_by,
@@ -365,7 +367,7 @@ slice_min.SpatVector <- function(
   with_ties = TRUE,
   na_rm = FALSE
 ) {
-  # Use own method
+  # Use the package method.
   tbl <- as_tibble(.data)
   ind <- make_safe_index("tterra_index", tbl)
   tbl[[ind]] <- seq_len(nrow(tbl))
@@ -381,7 +383,7 @@ slice_min.SpatVector <- function(
     na_rm = na_rm
   )
 
-  # Regenerate
+  # Regenerate the `SpatVector`.
   vend <- .data[as.integer(sliced[[ind]]), ]
 
   vend <- group_prepare_spat(vend, sliced)
@@ -389,10 +391,9 @@ slice_min.SpatVector <- function(
   vend
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname slice.Spat
 #' @importFrom dplyr slice_max
+#' @export
 slice_max.SpatRaster <- function(
   .data,
   order_by,
@@ -403,6 +404,10 @@ slice_max.SpatRaster <- function(
   .keep_extent = FALSE,
   na.rm = TRUE
 ) {
+  check_bool(.keep_extent)
+  check_bool(with_ties)
+  check_bool(na.rm)
+
   # Create skeleton
   skeleton <- as_coordinates(.data)
   values <- as_tibble(.data, na.rm = FALSE, xy = FALSE)
@@ -450,9 +455,8 @@ slice_max.SpatRaster <- function(
   newrast
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname slice.Spat
+#' @export
 slice_max.SpatVector <- function(
   .data,
   order_by,
@@ -463,7 +467,7 @@ slice_max.SpatVector <- function(
   with_ties = TRUE,
   na_rm = FALSE
 ) {
-  # Use own method
+  # Use the package method.
   tbl <- as_tibble(.data)
   ind <- make_safe_index("tterra_index", tbl)
   tbl[[ind]] <- seq_len(nrow(tbl))
@@ -480,7 +484,7 @@ slice_max.SpatVector <- function(
     na_rm = na_rm
   )
 
-  # Regenerate
+  # Regenerate the `SpatVector`.
   vend <- .data[as.integer(sliced[[ind]]), ]
 
   vend <- group_prepare_spat(vend, sliced)
@@ -488,10 +492,9 @@ slice_max.SpatVector <- function(
   vend
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname slice.Spat
 #' @importFrom dplyr slice_sample
+#' @export
 slice_sample.SpatRaster <- function(
   .data,
   ...,
@@ -501,6 +504,9 @@ slice_sample.SpatRaster <- function(
   replace = FALSE,
   .keep_extent = FALSE
 ) {
+  check_bool(.keep_extent)
+  check_bool(replace)
+
   # Create skeleton
   skeleton <- as_coordinates(.data)
   values <- as_tibble(.data, na.rm = FALSE, xy = FALSE)
@@ -543,9 +549,8 @@ slice_sample.SpatRaster <- function(
   newrast
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname slice.Spat
+#' @export
 slice_sample.SpatVector <- function(
   .data,
   ...,
@@ -555,7 +560,7 @@ slice_sample.SpatVector <- function(
   weight_by = NULL,
   replace = FALSE
 ) {
-  # Use own method
+  # Use the package method.
   tbl <- as_tibble(.data)
   ind <- make_safe_index("tterra_index", tbl)
   tbl[[ind]] <- seq_len(nrow(tbl))
@@ -570,24 +575,24 @@ slice_sample.SpatVector <- function(
     replace = replace
   )
 
-  # Regenerate
+  # Regenerate the `SpatVector`.
   vend <- .data[as.integer(sliced[[ind]]), ]
 
   vend <- group_prepare_spat(vend, sliced)
 
   vend
 }
-#' @export
-#' @encoding UTF-8
 #' @rdname slice.Spat
+#' @export
 slice_rows <- function(.data, ...) {
   UseMethod("slice_rows")
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname slice.Spat
+#' @export
 slice_rows.SpatRaster <- function(.data, ..., .keep_extent = FALSE) {
+  check_bool(.keep_extent)
+
   # Create skeleton
   skeleton <- as_coordinates(.data)
 
@@ -623,17 +628,17 @@ slice_rows.SpatRaster <- function(.data, ..., .keep_extent = FALSE) {
   newrast
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname slice.Spat
+#' @export
 slice_cols <- function(.data, ...) {
   UseMethod("slice_cols")
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname slice.Spat
+#' @export
 slice_cols.SpatRaster <- function(.data, ..., .keep_extent = FALSE) {
+  check_bool(.keep_extent)
+
   # Create skeleton
   skeleton <- as_coordinates(.data)
 
@@ -669,16 +674,14 @@ slice_cols.SpatRaster <- function(.data, ..., .keep_extent = FALSE) {
   newrast
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname slice.Spat
+#' @export
 slice_colrows <- function(.data, ...) {
   UseMethod("slice_colrows")
 }
 
-#' @export
-#' @encoding UTF-8
 #' @rdname slice.Spat
+#' @export
 slice_colrows.SpatRaster <- function(
   .data,
   ...,
@@ -687,6 +690,9 @@ slice_colrows.SpatRaster <- function(
   .keep_extent = FALSE,
   inverse = FALSE
 ) {
+  check_bool(.keep_extent)
+  check_bool(inverse)
+
   # Create skeleton
   skeleton <- as_coordinates(.data)
 
@@ -713,7 +719,12 @@ slice_colrows.SpatRaster <- function(
 
   sliced <- dplyr::inner_join(sliced, slice_rows, by = "rowindex")
 
-  keepcells <- sliced$cellindex
+  selected_cells <- sliced$cellindex
+  keepcells <- if (inverse) {
+    setdiff(skeleton$cellindex, selected_cells)
+  } else {
+    selected_cells
+  }
 
   # Make NA cells
 
@@ -728,12 +739,14 @@ slice_colrows.SpatRaster <- function(
     return(newrast)
   }
 
+  kept <- skeleton[skeleton$cellindex %in% keepcells, ]
+
   # Crop to selected range
   # Columns.
-  range_col <- range(sliced$colindex)
+  range_col <- range(kept$colindex)
   keepindex_col <- seq(range_col[1], range_col[2], by = 1)
 
-  range_row <- range(sliced$rowindex)
+  range_row <- range(kept$rowindex)
   keepindex_row <- seq(range_row[1], range_row[2], by = 1)
 
   newrast <- newrast[keepindex_row, keepindex_col, drop = FALSE]

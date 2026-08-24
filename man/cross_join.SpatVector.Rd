@@ -13,7 +13,7 @@
 \item{y}{A data frame or other object coercible to a data frame. If a
 \code{SpatVector} or \code{sf} object is provided, this method returns an error.}
 
-\item{...}{Additional arguments passed on to \code{\link[sf:st_as_sf]{sf::st_as_sf()}}.}
+\item{...}{Additional arguments passed to \code{\link[sf:st_as_sf]{sf::st_as_sf()}}.}
 
 \item{copy}{If \code{x} and \code{y} are not from the same data source,
 and \code{copy} is \code{TRUE}, then \code{y} will be copied into the
@@ -28,6 +28,8 @@ Should be a character vector of length 2.}
 A \code{SpatVector} object.
 }
 \description{
+\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#experimental}{\figure{lifecycle-experimental.svg}{options: alt='[Experimental]'}}}{\strong{[Experimental]}}
+
 Cross joins match each row in \code{x} to every row in \code{y}.
 
 See \code{\link[dplyr:cross_join]{dplyr::cross_join()}} for details.
@@ -35,15 +37,14 @@ See \code{\link[dplyr:cross_join]{dplyr::cross_join()}} for details.
 \section{Methods}{
 
 
-Implementation of the \strong{generic} \code{\link[dplyr:cross_join]{dplyr::cross_join()}} method.
-\subsection{\code{SpatVector}}{
+Implementation of the \strong{generic} \code{\link[dplyr:cross_join]{dplyr::cross_join()}} method for
+\code{SpatVector} objects.
 
 The geometry column has sticky behavior. The result repeats each geometry in
 \code{x} once for every row in \code{y}.
 
 If \code{y} has a column named \code{geometry}, it is treated as a regular attribute
 and receives the suffix from \code{suffix}.
-}
 }
 
 \examples{
@@ -54,7 +55,7 @@ labels <- data.frame(period = c("past", "present"))
 cross_join(v, labels)
 }
 \seealso{
-\code{\link[dplyr:cross_join]{dplyr::cross_join()}}
+\code{\link[dplyr:cross_join]{dplyr::cross_join()}}.
 
 Other \CRANpkg{dplyr} verbs that operate on pairs of \code{SpatVector} and data frame objects:
 \code{\link{bind_cols.SpatVector}},
@@ -63,29 +64,5 @@ Other \CRANpkg{dplyr} verbs that operate on pairs of \code{SpatVector} and data 
 \code{\link{mutate-joins.SpatVector}},
 \code{\link[=nest_join.SpatVector]{nest_join.SpatVector()}},
 \code{\link{rows.SpatVector}}
-
-Other \CRANpkg{dplyr} methods:
-\code{\link[=arrange.SpatVector]{arrange.SpatVector()}},
-\code{\link{bind_cols.SpatVector}},
-\code{\link{bind_rows.SpatVector}},
-\code{\link[=count.SpatVector]{count.SpatVector()}},
-\code{\link[=distinct.SpatVector]{distinct.SpatVector()}},
-\code{\link{filter-joins.SpatVector}},
-\code{\link{filter.Spat}},
-\code{\link{glimpse.Spat}},
-\code{\link[=group_by.SpatVector]{group_by.SpatVector()}},
-\code{\link{mutate-joins.SpatVector}},
-\code{\link{mutate.Spat}},
-\code{\link[=nest_join.SpatVector]{nest_join.SpatVector()}},
-\code{\link{pull.Spat}},
-\code{\link[=reframe.SpatVector]{reframe.SpatVector()}},
-\code{\link{relocate.Spat}},
-\code{\link{rename.Spat}},
-\code{\link{rows.SpatVector}},
-\code{\link[=rowwise.SpatVector]{rowwise.SpatVector()}},
-\code{\link{select.Spat}},
-\code{\link{slice.Spat}},
-\code{\link[=summarise.SpatVector]{summarise.SpatVector()}}
 }
-\concept{dplyr.methods}
 \concept{dplyr.pairs}

@@ -3,22 +3,23 @@
 #' @description
 #' The easiest way to create a grouped `SpatVector` is to call the
 #' `group_by()` method on a `SpatVector`: this will take care of capturing
-#' the unevaluated expressions for you. See [group_by.SpatVector()] for details.
+#' the unevaluated expressions for you. See [group_by.SpatVector()] for
+#' details.
 #'
-#' This function is the adapted version of [dplyr::is_grouped_df()].
+#' This function is an adapted version of [dplyr::is_grouped_df()].
 #'
 #' See also [group_data.SpatVector()] for the accessory functions that retrieve
 #' various metadata from a grouped `SpatVector`.
 #'
-#' @export
-#' @encoding UTF-8
 #' @keywords internal
-#' @family helpers
+#' @concept helpers
 #'
-#' @inheritParams as_sf
+#' @inheritParams as_sf x
 #'
 #' @returns `TRUE` if `x` is a grouped `SpatVector`, otherwise `FALSE`.
 #'
+#' @encoding UTF-8
+#' @export
 #' @examples
 #' v <- terra::vect(system.file("extdata/cyl.gpkg", package = "tidyterra"))
 #'

@@ -4,12 +4,10 @@
 #'
 #' [as_tibble()] methods for `SpatRaster` and `SpatVector` objects.
 #'
-#' @export
-#' @encoding UTF-8
 #' @rdname as_tibble.Spat
 #' @name as_tibble.Spat
 #'
-#' @seealso [tibble::as_tibble()], [terra::as.data.frame()]
+#' @seealso [tibble::as_tibble()], [terra::as.data.frame()].
 #'
 #' @family coerce
 #' @family tibble.methods
@@ -23,25 +21,26 @@
 #'
 #' @param x A `SpatRaster` created with [terra::rast()] or a `SpatVector`
 #'   created with [terra::vect()].
-#' @param ... Arguments passed on to [terra::as.data.frame()].
+#' @param ... Arguments passed to [terra::as.data.frame()].
 #'
 #' @returns
 #' A [tibble][tibble::tbl_df].
 #'
 #' @section \CRANpkg{terra} equivalent:
 #'
-#' [terra::as.data.frame()]
+#' [terra::as.data.frame()].
 #'
 #' @section Methods:
 #'
-#' Implementation of the **generic** [tibble::as_tibble()] method.
+#' Implementation of the **generic** [tibble::as_tibble()] methods for `Spat*`
+#' objects.
 #'
 #' ## `SpatRaster` and `SpatVector`
 #'
 #' The returned tibble includes the CRS of the original object as an attribute
 #' in WKT format (see [pull_crs()]).
 #'
-#' @section About layer/column names:
+#' @section Layer and column names:
 #'
 #' When coercing `SpatRaster` objects to data frames, `x` and `y` are reserved
 #' names for the geographic coordinates of each cell. \CRANpkg{terra} also
@@ -64,6 +63,8 @@
 #' [terra::as.data.frame()]. If `geom` is not `NULL`, the same renaming logic
 #' described for `SpatRaster` also applies to `SpatVector` columns.
 #'
+#' @encoding UTF-8
+#' @export
 #' @examples
 #'
 #' library(terra)
@@ -114,8 +115,8 @@ as_tibble.SpatRaster <- function(
   df
 }
 
-#' @export
 #' @rdname as_tibble.Spat
+#' @export
 as_tibble.SpatVector <- function(
   x,
   ...,
@@ -129,7 +130,7 @@ as_tibble.SpatVector <- function(
     "universal_quiet"
   )
 ) {
-  if (!is.null(geom)) {
+  if (!is_null(geom)) {
     x <- make_safe_names(x, geom = geom)
   }
 
@@ -158,7 +159,7 @@ as_tibble.SpatVector <- function(
   df <- check_regroups(df)
 
   # Store the CRS when it is available.
-  if (!is.na(pull_crs(x))) {
+  if (!is_na(pull_crs(x))) {
     attr(df, "crs") <- pull_crs(x)
   }
 

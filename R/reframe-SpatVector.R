@@ -1,38 +1,36 @@
 #' Reframe each group of a `SpatVector`
 #'
 #' @description
+#' `r lifecycle::badge("experimental")`
+#'
 #' `reframe()` can return any number of rows per group. The geometry of each
 #' group is aggregated and repeated for each row created for that group.
 #'
-#' @export
-#' @encoding UTF-8
 #' @rdname reframe.SpatVector
 #' @name reframe.SpatVector
 #'
-#' @seealso [dplyr::reframe()], [summarise.SpatVector()]
+#' @seealso [dplyr::reframe()].
 #'
-#' @family dplyr.single_table
 #' @family dplyr.groups
-#' @family dplyr.methods
 #'
 #' @importFrom dplyr reframe
 #'
-#' @inheritParams dplyr::reframe
 #' @inheritParams summarise.SpatVector
+#' @inheritParams dplyr::reframe
 #'
-#' @param .data A `SpatVector`.
 #' @returns A `SpatVector`.
 #'
 #' @section Methods:
 #'
-#' Implementation of the **generic** [dplyr::reframe()] method.
+#' Implementation of the **generic** [dplyr::reframe()] method for
+#' `SpatVector` objects.
 #'
-#' ## `SpatVector`
-#'
-#' For grouped inputs, and for calls using `.by`, geometries are aggregated per
+#' For grouped inputs and calls using `.by`, geometries are aggregated per
 #' group. If a group produces more than one row, the aggregated group geometry
 #' is repeated for each output row.
 #'
+#' @encoding UTF-8
+#' @export
 #' @examples
 #' v <- terra::vect(system.file("extdata/cyl.gpkg", package = "tidyterra"))
 #' v$grp <- rep(c("A", "B"), length.out = nrow(v))
@@ -44,6 +42,8 @@
 #'   rowwise() |>
 #'   reframe(value = 1:2)
 reframe.SpatVector <- function(.data, ..., .by = NULL, .dissolve = TRUE) {
+  check_bool(.dissolve)
+
   tbl <- as_tibble(.data)
   by_groups <- group_by(.data, {{ .by }})
 
@@ -76,12 +76,12 @@ reframe.SpatVector <- function(.data, ..., .by = NULL, .dissolve = TRUE) {
 
   if (is_grouped_spatvector(.data)) {
     group_tbl <- dplyr::group_keys(tbl)
-    spatv <- .data[, ]
+    spatv <- .data[seq_len(nrow(.data)), ]
     spatv$tterra_index <- dplyr::group_indices(tbl)
     geom <- terra::aggregate(spatv, by = "tterra_index", dissolve = .dissolve)
   } else if (is_grouped_spatvector(by_groups)) {
     group_tbl <- dplyr::group_keys(as_tibble(by_groups))
-    spatv <- .data[, ]
+    spatv <- .data[seq_len(nrow(.data)), ]
     spatv$tterra_index <- dplyr::group_indices(as_tibble(by_groups))
     geom <- terra::aggregate(spatv, by = "tterra_index", dissolve = .dissolve)
   } else {

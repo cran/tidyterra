@@ -10,15 +10,12 @@
 #'
 #' See **Details** on [dplyr::group_by()].
 #'
-#' @export
-#' @encoding UTF-8
 #' @rdname group_by.SpatVector
 #' @name group_by.SpatVector
 #'
-#' @seealso [dplyr::group_by()], [dplyr::ungroup()]
+#' @seealso [dplyr::group_by()], [dplyr::ungroup()].
 #'
 #' @family dplyr.groups
-#' @family dplyr.methods
 #' @family dplyr.group_functions
 #'
 #' @importFrom dplyr group_by
@@ -29,19 +26,22 @@
 #'
 #' @section Methods:
 #'
-#' Implementation of the **generic** [dplyr::group_by()] family functions for
+#' Implementation of the **generic** [dplyr::group_by()] method family for
 #' `SpatVector` objects.
 #'
-#' **When mixing** \CRANpkg{terra} **and** \CRANpkg{dplyr} **syntax**
-#' on a grouped `SpatVector`, for example subsetting a `SpatVector` like
-#' `v[1:3,1:2]`, the `groups` attribute can be corrupted.
-#' \CRANpkg{tidyterra} tries to re-group the `SpatVector`. This is triggered
-#' the next time you use a \CRANpkg{dplyr} verb on your `SpatVector`.
+#' @section Grouping metadata:
 #'
-#' Some operations, such as `terra::spatSample()`, create a new `SpatVector`.
-#' In these cases, the result does not preserve the `groups` attribute. Use
-#' [group_by()] to re-group.
+#' Mixing \CRANpkg{terra} and \CRANpkg{dplyr} syntax on a grouped or row-wise
+#' `SpatVector`, for example by subsetting with `v[1:3, 1:2]`, can corrupt its
+#' grouping metadata. \CRANpkg{tidyterra} attempts to restore this metadata the
+#' next time you use a \CRANpkg{dplyr} verb on the object.
 #'
+#' Some operations, such as [terra::spatSample()], create a new `SpatVector`
+#' without preserving grouping metadata. Call [group_by.SpatVector()] or
+#' [rowwise.SpatVector()] again, as appropriate.
+#'
+#' @encoding UTF-8
+#' @export
 #' @examples
 #' \donttest{
 #'
@@ -92,7 +92,7 @@
 #'   group_by(ID_1, ID_2) |>
 #'   group_vars()
 #'
-#' # Use add = TRUE to append instead.
+#' # Use `.add = TRUE` to append instead.
 #' by_name2_name1 |>
 #'   group_by(ID_1, ID_2, .add = TRUE) |>
 #'   group_vars()
@@ -109,17 +109,17 @@ group_by.SpatVector <- function(
   .add = FALSE,
   .drop = group_by_drop_default(.data)
 ) {
-  # Use own method
+  # Use the package method.
   x <- .data
 
   .data <- as_tibble(.data)
 
-  # Add groups
+  # Add groups.
   newgroups <- dplyr::group_by(.data, ..., .add = .add, .drop = .drop)
 
   regen <- cbind(x[, 0], newgroups)
 
-  # Add groups metadata
+  # Add grouping metadata.
   regen <- group_prepare_spat(regen, newgroups)
 
   regen
@@ -128,23 +128,22 @@ group_by.SpatVector <- function(
 #' @export
 dplyr::group_by
 
-#' @export
-#' @encoding UTF-8
-#' @name group_by.SpatVector
+#' @rdname group_by.SpatVector
 #' @importFrom dplyr ungroup
+#' @export
 ungroup.SpatVector <- function(x, ...) {
-  # Use own method
+  # Use the package method.
   getattr <- attr(x, "tblclass")
-  if (is.null(getattr) || !getattr %in% c("grouped_df", "rowwise_df")) {
+  if (is_null(getattr) || !getattr %in% c("grouped_df", "rowwise_df")) {
     return(x)
   }
 
-  # Template
+  # Create a template.
   g_tbl <- as_tibble(x)
-  # Ungroup default method
+  # Use the default ungroup method.
   newgroups <- dplyr::ungroup(g_tbl, ...)
 
-  # Add groups metadata
+  # Add grouping metadata.
   x <- group_prepare_spat(x, newgroups)
 
   x
@@ -153,9 +152,8 @@ ungroup.SpatVector <- function(x, ...) {
 #' @export
 dplyr::ungroup
 
-#' @export
-#' @encoding UTF-8
 #' @importFrom dplyr group_by_drop_default
+#' @export
 dplyr::group_by_drop_default
 
 # Internal
@@ -167,7 +165,6 @@ group_prepare_spat <- function(x, template) {
   }
 
   # Check that the template is a data frame.
-  # Gives an error
   if (!inherits(template, "data.frame")) {
     cli::cli_abort("The grouping template must be a data frame.")
   }
@@ -179,7 +176,7 @@ group_prepare_spat <- function(x, template) {
     attr(x, "tblclass") <- "rowwise_df"
     attr(x, "groups") <- attr(template, "groups")
   } else {
-    # Ungroup
+    # Remove grouping metadata.
     attr(x, "tblclass") <- NULL
     attr(x, "groups") <- NULL
   }

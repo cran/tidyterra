@@ -14,8 +14,8 @@ bind_spat_cols(
 \arguments{
 \item{...}{Objects to combine. The first argument must be a \code{SpatVector}.
 Each subsequent argument can be a \code{SpatVector}, \code{sf} object or data frame.
-Inputs are \link[vctrs:theory-faq-recycling]{recycled} to the same length, then
-matched by position.}
+Inputs are \link[vctrs:theory-faq-recycling]{recycled} to the same length,
+then matched by position.}
 
 \item{.name_repair}{One of \code{"unique"}, \code{"universal"}, or
 \code{"check_unique"}. See \code{\link[vctrs:vec_as_names]{vctrs::vec_as_names()}} for the meaning of these
@@ -23,21 +23,21 @@ options.}
 }
 \value{
 A \code{SpatVector} with the corresponding columns. The geometry and CRS
-correspond to the first \code{SpatVector} of \code{...}.
+correspond to the first \code{SpatVector} in \code{...}.
 }
 \description{
 Bind any number of \code{SpatVector}, data frames and \code{sf} objects by column,
 making a wider result. This is similar to \code{do.call(cbind, data_frames)}.
 
-Where possible prefer using a \link[=mutate-joins.SpatVector]{join} to
+Where possible, prefer using a \link[=mutate-joins.SpatVector]{join} to
 combine \code{SpatVector} and data frame objects. \code{bind_spat_cols()}
-binds the rows in order in which they appear so it is easy to create
+binds rows in the order in which they appear, so it is easy to create
 meaningless results without realizing it.
 }
 \section{\CRANpkg{terra} equivalent}{
 
 
-\code{cbind()} method
+\code{cbind()} method.
 }
 
 \section{Methods}{
@@ -75,7 +75,7 @@ glimpse(end)
 try(bind_spat_cols(sv, sfobj))
 }
 \seealso{
-\code{\link[dplyr:bind_cols]{dplyr::bind_cols()}}
+\code{\link[dplyr:bind_cols]{dplyr::bind_cols()}}.
 
 Other \CRANpkg{dplyr} verbs that operate on pairs of \code{SpatVector} and data frame objects:
 \code{\link{bind_rows.SpatVector}},
@@ -84,29 +84,5 @@ Other \CRANpkg{dplyr} verbs that operate on pairs of \code{SpatVector} and data 
 \code{\link{mutate-joins.SpatVector}},
 \code{\link[=nest_join.SpatVector]{nest_join.SpatVector()}},
 \code{\link{rows.SpatVector}}
-
-Other \CRANpkg{dplyr} methods:
-\code{\link[=arrange.SpatVector]{arrange.SpatVector()}},
-\code{\link{bind_rows.SpatVector}},
-\code{\link[=count.SpatVector]{count.SpatVector()}},
-\code{\link[=cross_join.SpatVector]{cross_join.SpatVector()}},
-\code{\link[=distinct.SpatVector]{distinct.SpatVector()}},
-\code{\link{filter-joins.SpatVector}},
-\code{\link{filter.Spat}},
-\code{\link{glimpse.Spat}},
-\code{\link[=group_by.SpatVector]{group_by.SpatVector()}},
-\code{\link{mutate-joins.SpatVector}},
-\code{\link{mutate.Spat}},
-\code{\link[=nest_join.SpatVector]{nest_join.SpatVector()}},
-\code{\link{pull.Spat}},
-\code{\link[=reframe.SpatVector]{reframe.SpatVector()}},
-\code{\link{relocate.Spat}},
-\code{\link{rename.Spat}},
-\code{\link{rows.SpatVector}},
-\code{\link[=rowwise.SpatVector]{rowwise.SpatVector()}},
-\code{\link{select.Spat}},
-\code{\link{slice.Spat}},
-\code{\link[=summarise.SpatVector]{summarise.SpatVector()}}
 }
-\concept{dplyr.methods}
 \concept{dplyr.pairs}

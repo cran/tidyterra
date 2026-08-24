@@ -128,12 +128,11 @@ Learn more in \code{\link[tidyr:pivot_longer]{tidyr::pivot_longer()}}.
 \section{Methods}{
 
 
-Implementation of the \strong{generic} \code{\link[tidyr:pivot_longer]{tidyr::pivot_longer()}} method.
-\subsection{\code{SpatVector}}{
+Implementation of the \strong{generic} \code{\link[tidyr:pivot_longer]{tidyr::pivot_longer()}} method for
+\code{SpatVector} objects.
 
 The geometry column has sticky behavior. This means that the result always
 has the geometry of \code{data}.
-}
 }
 
 \examples{
@@ -148,13 +147,13 @@ temp <- rast((system.file("extdata/cyl_temp.tif", package = "tidyterra")))
 cyl <- vect(system.file("extdata/cyl.gpkg", package = "tidyterra")) |>
   project(temp)
 
-# Add average temp
+# Add average temperature.
 
 temps <- terra::extract(temp, cyl, fun = "mean", na.rm = TRUE, xy = TRUE)
 cyl_temp <- cbind(cyl, temps) |>
   glimpse()
 
-# And pivot long for plot
+# Pivot to long format for plotting.
 cyl_temp |>
   pivot_longer(
     cols = tavg_04:tavg_06,
@@ -168,21 +167,9 @@ cyl_temp |>
 }
 }
 \seealso{
-\code{\link[tidyr:pivot_longer]{tidyr::pivot_longer()}}
+\code{\link[tidyr:pivot_longer]{tidyr::pivot_longer()}}.
 
 Other \CRANpkg{tidyr} verbs for pivoting:
 \code{\link[=pivot_wider.SpatVector]{pivot_wider.SpatVector()}}
-
-Other \CRANpkg{tidyr} methods:
-\code{\link[=complete.SpatVector]{complete.SpatVector()}},
-\code{\link{drop_na.Spat}},
-\code{\link[=expand.SpatVector]{expand.SpatVector()}},
-\code{\link[=fill.SpatVector]{fill.SpatVector()}},
-\code{\link[=nest.SpatVector]{nest.SpatVector()}},
-\code{\link[=pivot_wider.SpatVector]{pivot_wider.SpatVector()}},
-\code{\link{replace_na.Spat}},
-\code{\link[=uncount.SpatVector]{uncount.SpatVector()}},
-\code{\link{unite.Spat}}
 }
-\concept{tidyr.methods}
 \concept{tidyr.pivot}

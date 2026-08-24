@@ -7,15 +7,12 @@
 #'
 #' Learn more in [tidyr::pivot_longer()].
 #'
-#' @export
-#' @encoding UTF-8
 #' @rdname pivot_longer.SpatVector
 #' @name pivot_longer.SpatVector
 #'
-#' @seealso [tidyr::pivot_longer()]
+#' @seealso [tidyr::pivot_longer()].
 #'
 #' @family tidyr.pivot
-#' @family tidyr.methods
 #'
 #' @importFrom tidyr pivot_longer
 #'
@@ -27,13 +24,14 @@
 #'
 #' @section Methods:
 #'
-#' Implementation of the **generic** [tidyr::pivot_longer()] method.
-#'
-#' ## `SpatVector`
+#' Implementation of the **generic** [tidyr::pivot_longer()] method for
+#' `SpatVector` objects.
 #'
 #' The geometry column has sticky behavior. This means that the result always
 #' has the geometry of `data`.
 #'
+#' @encoding UTF-8
+#' @export
 #' @examples
 #' \donttest{
 #'
@@ -46,13 +44,13 @@
 #' cyl <- vect(system.file("extdata/cyl.gpkg", package = "tidyterra")) |>
 #'   project(temp)
 #'
-#' # Add average temp
+#' # Add average temperature.
 #'
 #' temps <- terra::extract(temp, cyl, fun = "mean", na.rm = TRUE, xy = TRUE)
 #' cyl_temp <- cbind(cyl, temps) |>
 #'   glimpse()
 #'
-#' # And pivot long for plot
+#' # Pivot to long format for plotting.
 #' cyl_temp |>
 #'   pivot_longer(
 #'     cols = tavg_04:tavg_06,

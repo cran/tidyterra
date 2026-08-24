@@ -40,8 +40,9 @@ See \strong{Details} on \code{\link[dplyr:group_split]{dplyr::group_split()}}.
 }
 \section{Lifecycle}{
 
-\code{group_split()} is not stable because you can achieve very similar results by
-manipulating the nested column returned from
+
+\code{group_split()} is not stable because you can achieve very similar results
+by manipulating the nested column returned from
 \code{\link[=nest.SpatVector]{nest(.by =)}}. That also retains the group keys all
 within a single data structure. \code{group_split()} may be deprecated in the
 future.
@@ -56,8 +57,8 @@ future.
 \section{Methods}{
 
 
-Implementation of the \strong{generic} \code{\link[dplyr:group_split]{dplyr::group_split()}} for \code{SpatVector}
-objects.
+Implementation of the \strong{generic} \code{\link[dplyr:group_split]{dplyr::group_split()}} method for
+\code{SpatVector} objects.
 }
 
 \examples{
@@ -76,10 +77,11 @@ v |>
   terra::svc()
 }
 \seealso{
-\code{\link[dplyr:group_split]{dplyr::group_split()}}, \code{\link[terra:svc]{terra::svc()}}
+\code{\link[dplyr:group_split]{dplyr::group_split()}}, \code{\link[terra:svc]{terra::svc()}}.
 
 Other \CRANpkg{dplyr} grouping methods:
 \code{\link[=group_by.SpatVector]{group_by.SpatVector()}},
+\code{\link[=group_data.SpatVector]{group_data.SpatVector()}},
 \code{\link[=group_map.SpatVector]{group_map.SpatVector()}},
 \code{\link[=group_nest.SpatVector]{group_nest.SpatVector()}},
 \code{\link[=group_trim.SpatVector]{group_trim.SpatVector()}}

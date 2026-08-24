@@ -52,15 +52,15 @@ This argument is passed on as \code{repair} to \code{\link[vctrs:vec_as_names]{v
 See there for more details on these terms and the strategies used
 to enforce them.}
 
-\item{maxcell}{Positive integer. Maximum number of cells to use for
-the plot.}
+\item{maxcell}{Positive integer or \code{Inf}. Maximum number of raster cells to
+use. Use \code{Inf} to use all cells.}
 
 \item{pivot}{Logical. When \code{TRUE}, a \code{SpatRaster} is returned in \link[tidyr:pivot_longer]{long format}. When \code{FALSE} (the default), it is returned
 as a data frame with one column per layer. See \strong{Details}.}
 
-\item{crs}{Input that includes or represents a CRS. It can be an \code{sf/sfc}
-object, a \code{SpatRaster/SpatVector} object, a \code{crs} object from
-\code{\link[sf:st_crs]{sf::st_crs()}}, a character string (for example a \href{https://proj.org/en/9.3/operations/projections/index.html}{proj4 string}), or
+\item{crs}{Input that includes or represents a CRS. It can be an \code{sf} or
+\code{sfc} object, a \code{SpatRaster} or \code{SpatVector} object, a \code{crs} object from
+\code{\link[sf:st_crs]{sf::st_crs()}}, a character string (for example a \href{https://proj.org/en/9.3/operations/projections/index.html}{PROJ string}), or
 an integer representing an \href{https://epsg.io/}{EPSG} code.}
 }
 \value{
@@ -78,7 +78,8 @@ These methods are now implemented as wrappers around \code{\link{tidy.Spat}} met
 \section{Methods}{
 
 
-Implementation of the \strong{generic} \code{\link[ggplot2:fortify]{ggplot2::fortify()}} method.
+Implementation of the \strong{generic} \code{\link[ggplot2:fortify]{ggplot2::fortify()}} methods for \verb{Spat*}
+objects.
 \subsection{\code{SpatRaster}}{
 
 Returns a tibble that can be used with \verb{ggplot2::geom_*}, such as
@@ -162,8 +163,7 @@ ggplot(ex, crs = cyl) +
 
 }
 \seealso{
-\code{\link{tidy.Spat}}, \code{\link[sf:st_as_sf]{sf::st_as_sf()}}, \code{\link{as_tibble.Spat}},
-\code{\link[=as_spatraster]{as_spatraster()}}, \code{\link[ggplot2:fortify]{ggplot2::fortify()}}.
+\code{\link{tidy.Spat}}, \code{\link[sf:st_as_sf]{sf::st_as_sf()}}.
 
 Other \CRANpkg{ggplot2} helpers:
 \code{\link{autoplot.Spat}},

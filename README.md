@@ -76,8 +76,8 @@ type of `Spat*` object:
 
 - `SpatRaster`: Methods can be applied to layers or cells.
   **tidyterra**’s overall approach is to treat the layers as columns of
-  a tibble and the cells as rows. For example, `select(SpatRaster, 1)`
-  selects the first layer of a `SpatRaster`.
+  a tibble and the cells as rows. For example, `select(a_spatraster, 1)`
+  selects the first layer of a `SpatRaster` object.
 
 Implemented methods return the same type of object as the input, unless
 the method is expected to return another type of object. For example,
@@ -85,7 +85,7 @@ the method is expected to return another type of object. For example,
 
 Current methods and functions provided by **tidyterra** are:
 
-| tidyverse method | `SpatVector` | `SpatRaster` |
+| **tidyverse** method | `SpatVector` | `SpatRaster` |
 |----|----|----|
 | `tibble::as_tibble()` | ✔️ | ✔️ |
 | `dplyr::select()` | ✔️ | ✔️ Select layers |
@@ -133,12 +133,12 @@ Current methods and functions provided by **tidyterra** are:
 > ### A note on performance
 >
 > **tidyterra** is a user-friendly wrapper around **terra** that
-> provides tidyverse-style methods and verbs. This approach has a
+> provides **tidyverse**-style methods and verbs. This approach has a
 > **performance cost**.
 >
 > If you frequently use **terra** or work with large `SpatRaster`
 > objects, **terra** is usually much faster. Whenever possible, each
-> **tidyterra** function refers to its equivalent on **terra**.
+> **tidyterra** function refers to its equivalent in **terra**.
 >
 > As a rule of thumb, if your raster has fewer than 10,000,000 data
 > slots, for example
@@ -350,11 +350,11 @@ Check the
 [FAQs](https://dieghernan.github.io/tidyterra/articles/faqs.html) or
 open a new [issue](https://github.com/dieghernan/tidyterra/issues).
 
-You can also ask in [Stack Overflow](https://stackoverflow.com/) using
+You can also ask on [Stack Overflow](https://stackoverflow.com/) using
 the tag
 [\[tidyterra\]](https://stackoverflow.com/questions/tagged/tidyterra).
 
-## Acknowledgements
+## Acknowledgments
 
 **tidyterra**’s **ggplot2** geoms are based on the
 [**ggspatial**](https://github.com/paleolimbot/ggspatial) implementation

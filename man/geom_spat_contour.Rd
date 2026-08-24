@@ -56,7 +56,7 @@ geom_spatraster_contour_filled(
 }
 \arguments{
 \item{mapping}{Set of aesthetic mappings created by \code{\link[ggplot2:aes]{ggplot2::aes()}}. See
-\strong{Aesthetics}, especially in the use of the \code{fill} aesthetic.}
+\strong{Aesthetics} for supported contour aesthetics.}
 
 \item{data}{A \code{SpatRaster} object.}
 
@@ -88,8 +88,8 @@ lists which parameters it can accept.
 \link[ggplot2:draw_key]{key glyphs}, to change the display of the layer in the legend.
 }}
 
-\item{maxcell}{Positive integer. Maximum number of cells to use for
-the plot.}
+\item{maxcell}{Positive integer or \code{Inf}. Maximum number of raster cells to
+use. Use \code{Inf} to use all cells.}
 
 \item{bins}{Number of contour bins. Overridden by \code{breaks}.}
 
@@ -133,10 +133,10 @@ or picas (\code{"pc"}).}
 \itemize{
 \item \code{NULL} for no labels. This produces the same result as
 \code{geom_spatraster_contour()}.
-\item A character vector giving labels (must have the same length as the breaks
-produced by \code{bins}, \code{binwidth} or \code{breaks}).
+\item A character vector giving labels (must have the same length as the
+breaks produced by \code{bins}, \code{binwidth} or \code{breaks}).
 \item A function that takes the breaks as input and returns labels as output,
-as the default setup (\code{\link[scales:label_number]{scales::label_number()}}).
+as in the default setup (\code{\link[scales:label_number]{scales::label_number()}}).
 }}
 
 \item{label_placer}{Function that controls how labels are placed along
@@ -146,10 +146,10 @@ the isolines. Uses \code{\link[isoband:label_placer_minmax]{label_placer_minmax(
 A \CRANpkg{ggplot2} layer.
 }
 \description{
-These geoms create contours of \code{SpatRaster} objects. To specify a valid
-surface, you should specify the layer on \code{aes(z = layer_name)}, otherwise all
-the layers are considered for creating contours. See also \strong{Facets}
-section.
+These geoms create contours from \code{SpatRaster} objects. To create contours
+from a specific layer, map that layer to the \code{z} aesthetic with
+\code{aes(z = layer_name)}. Otherwise, all layers are used to create contours.
+See also the \strong{Facets} section.
 
 The underlying implementation is based on \code{\link[ggplot2:geom_contour]{ggplot2::geom_contour()}}.
 
@@ -159,13 +159,13 @@ implemented on top of \code{\link[isoband:isolines_grob]{isoband::isolines_grob(
 \section{\CRANpkg{terra} equivalent}{
 
 
-\code{\link[terra:contour]{terra::contour()}}
+\code{\link[terra:contour]{terra::contour()}}.
 }
 
 \section{Aesthetics}{
 
 
-\code{geom_spatraster_contour()} / \code{geom_spatraster_contour_text()} understands
+\code{geom_spatraster_contour()} and \code{geom_spatraster_contour_text()} understand
 the following aesthetics:
 \itemize{
 \item \code{\link[ggplot2:aes_colour_fill_alpha]{alpha}}
@@ -173,15 +173,19 @@ the following aesthetics:
 \item \code{\link[ggplot2:aes_group_order]{group}}
 \item \code{\link[ggplot2:aes_linetype_size_shape]{linetype}}
 \item \code{\link[ggplot2:aes_linetype_size_shape]{linewidth}}
-\code{geom_spatraster_contour_text()} understands also:
+\item \code{weight}
+}
+
+\code{geom_spatraster_contour_text()} also understands:
+\itemize{
 \item \code{\link[ggplot2:aes_linetype_size_shape]{size}}
 \item \code{label}
 \item \code{family}
 \item \code{fontface}
 }
 
-Additionally, \code{geom_spatraster_contour_filled()} understands also the
-following aesthetics, as well as the ones listed above:
+In addition to the aesthetics listed above,
+\code{geom_spatraster_contour_filled()} understands:
 \itemize{
 \item \code{\link[ggplot2:aes_colour_fill_alpha]{fill}}
 \item \code{subgroup}
@@ -195,7 +199,7 @@ aesthetics.
 \section{Computed variables}{
 
 
-These geoms compute some variables internally that are available for use as
+These geoms compute variables internally that are available for use as
 aesthetics, using (for example) \verb{aes(color = after_stat(<computed>))} (see
 \code{\link[ggplot2:after_stat]{ggplot2::after_stat()}}).
 \itemize{
@@ -204,9 +208,9 @@ aesthetics, using (for example) \verb{aes(color = after_stat(<computed>))} (see
 a numeric vector that represents bin boundaries. For contour bands,
 this is an ordered factor that represents bin ranges.
 \item \code{after_stat(nlevel)}: Height of contour, scaled to maximum of 1.
-\item \code{after_stat(level_low)}, \code{after_stat(level_high)},
-\item \code{after_stat(level_mid)}: (contour bands only) Lower and upper bin
-boundaries for each band, as well as the midpoint between the boundaries.
+\item \code{after_stat(level_low)}, \code{after_stat(level_high)} and
+\code{after_stat(level_mid)}: For contour bands only, the lower and upper bin
+boundaries and the midpoint between them.
 }
 }
 
@@ -218,7 +222,7 @@ longer available.
 }
 }
 
-\section{Coords}{
+\section{Coordinates}{
 
 
 When the \code{SpatRaster} does not have a CRS, that is,
@@ -233,8 +237,8 @@ On \code{SpatRaster} objects that have a CRS, the geom uses
 \section{Facets}{
 
 
-You can use \code{facet_wrap(~lyr)} to create a faceted plot by each layer of the
-\code{SpatRaster} object. See \code{\link[ggplot2:facet_wrap]{ggplot2::facet_wrap()}} for details.
+You can use \code{facet_wrap(~lyr)} to create a faceted plot for each layer of
+the \code{SpatRaster} object. See \code{\link[ggplot2:facet_wrap]{ggplot2::facet_wrap()}} for details.
 }
 
 \examples{

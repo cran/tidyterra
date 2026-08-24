@@ -1,17 +1,16 @@
-#' @export
-#' @encoding UTF-8
 #' @rdname geom_spat_contour
 #' @inheritParams isoband::isolines_grob
 #'
 #' @param label_format One of:
 #'   - `NULL` for no labels. This produces the same result as
 #'     `geom_spatraster_contour()`.
-#'   - A character vector giving labels (must have the same length as the breaks
-#'     produced by `bins`, `binwidth` or `breaks`).
+#'   - A character vector giving labels (must have the same length as the
+#'     breaks produced by `bins`, `binwidth` or `breaks`).
 #'   - A function that takes the breaks as input and returns labels as output,
-#'     as the default setup ([scales::label_number()]).
+#'     as in the default setup ([scales::label_number()]).
 #' @order 2
 #'
+#' @export
 geom_spatraster_contour_text <- function(
   mapping = NULL,
   data,
@@ -29,6 +28,10 @@ geom_spatraster_contour_text <- function(
   mask_projection = FALSE
 ) {
   check_spatraster(data, "geom_spatraster_contour_text")
+  check_maxcell(maxcell)
+  check_bool(na.rm)
+  check_bool(inherit.aes)
+  check_bool(mask_projection)
 
   contour_data <- prepare_spatraster_contour_data(mapping, data, maxcell)
   mapping <- contour_data$mapping
@@ -63,7 +66,7 @@ geom_spatraster_contour_text <- function(
   # If the `SpatRaster` has a CRS, add an empty `geom_sf()` to train scales.
   # This mimics using the first layer CRS as the base CRS for `coord_sf()`.
 
-  if (!is.na(crs_terra)) {
+  if (!is_na(crs_terra)) {
     layer_spatrast <- c(
       layer_spatrast,
       ggplot2::geom_sf(
@@ -84,13 +87,13 @@ GeomSpatRasterContourText <- ggplot2::ggproto(
   default_aes = aes(
     weight = 1,
     label = "a",
-    colour = "grey35",
-    linewidth = 0.2,
+    colour = "#595959",
+    linewidth = from_theme(linewidth),
+    linetype = from_theme(linetype),
+    family = from_theme(family),
     # Reduce base size and align with scales.
     size = 3.88 * 0.8,
-    linetype = 1,
     alpha = NA,
-    family = "sans",
     fontface = 1
   ),
   handle_na = function(self, data, params) {
@@ -120,8 +123,7 @@ GeomSpatRasterContourText <- ggplot2::ggproto(
     linejoin = "round",
     linemitre = 10,
     na.rm = FALSE,
-    colour = "grey35",
-    linetype = 1,
+    colour = "#595959",
     size.unit = "mm",
     label_format = scales::label_number(),
     label_placer = isoband::label_placer_minmax()
@@ -157,9 +159,9 @@ GeomSpatRasterContourText <- ggplot2::ggproto(
     # Get labels and format.
     lab <- get_aes_iso(data, "label")
 
-    if (rlang::is_function(label_format)) {
+    if (is_function(label_format)) {
       lab <- label_format(as.double(lab))
-    } else if (is.null(label_format)) {
+    } else if (is_null(label_format)) {
       # Do not plot labels when explicitly requested.
       label_placer <- isoband::label_placer_none()
     } else {
@@ -239,7 +241,7 @@ get_aes_iso <- function(x, aesx = "colour") {
 # `TRUE` to the last `TRUE`.
 keep_mid_true <- function(x) {
   first <- match(TRUE, x) - 1
-  if (is.na(first)) {
+  if (is_na(first)) {
     return(rep(FALSE, length(x)))
   }
 

@@ -3,22 +3,19 @@
 #' @description
 #' Keep only unique/distinct rows and geometries from a `SpatVector`.
 #'
-#' @export
-#' @encoding UTF-8
 #' @rdname distinct.SpatVector
 #' @name distinct.SpatVector
 #'
-#' @seealso [dplyr::distinct()], [terra::unique()]
+#' @seealso [dplyr::distinct()], [terra::unique()].
 #'
 #' @family dplyr.rows
-#' @family dplyr.methods
 #'
 #' @importFrom dplyr distinct
 #'
 #' @inheritParams arrange.SpatVector .data
 #' @inheritParams dplyr::distinct
-#' @param ... <[`data-masking`][rlang::args_data_masking]> Optional variables to
-#'   use when determining uniqueness. If there are multiple rows for a given
+#' @param ... <[`data-masking`][rlang::args_data_masking]> Optional variables
+#'   to use when determining uniqueness. If there are multiple rows for a given
 #'   combination of inputs, only the first row will be preserved. If omitted,
 #'   all variables in the data frame are used. There is a reserved variable
 #'   name, `geometry`, that removes duplicate geometries. See **Methods**.
@@ -27,24 +24,25 @@
 #'
 #' @section \CRANpkg{terra} equivalent:
 #'
-#' [terra::unique()]
+#' [terra::unique()].
 #'
 #' @section Methods:
 #'
-#' Implementation of the **generic** [dplyr::distinct()] method.
-#'
-#' ## `SpatVector`
+#' Implementation of the **generic** [dplyr::distinct()] method for
+#' `SpatVector` objects.
 #'
 #' You can remove duplicate geometries by passing the reserved name
 #' `geometry` to `...`. See **Examples**.
 #'
+#' @encoding UTF-8
+#' @export
 #' @examples
 #'
 #' library(terra)
 #'
 #' v <- vect(system.file("ex/lux.shp", package = "terra"))
 #'
-#' # Create a vector with dups
+#' # Create a vector with duplicates.
 #' v <- v[sample(seq_len(nrow(v)), 100, replace = TRUE), ]
 #' v$gr <- sample(LETTERS[1:3], 100, replace = TRUE)
 #'
@@ -59,7 +57,7 @@
 #' ex2
 #' nrow(ex2)
 #'
-#' # Same but keeping all cols
+#' # Keep all columns.
 #' ex2b <- distinct(v, gr, .keep_all = TRUE)
 #' ex2b
 #' nrow(ex2b)
@@ -72,7 +70,7 @@
 #' # Same as terra::unique()
 #' terra::unique(ex3)
 #'
-#' # Unique keeping info
+#' # Keep information for unique values.
 #' distinct(v, geometry, .keep_all = TRUE)
 distinct.SpatVector <- function(.data, ..., .keep_all = FALSE) {
   # Check whether `...` selects the geometry column.
@@ -85,7 +83,7 @@ distinct.SpatVector <- function(.data, ..., .keep_all = FALSE) {
     a_tbl <- as_tbl_internal(.data)
     dist <- dplyr::distinct(a_tbl, ..., .keep_all = .keep_all)
 
-    # Regenerate
+    # Regenerate the `SpatVector`.
     distin <- restore_attr(dist, a_tbl)
     vend <- as_spat_internal(distin)
     vend <- group_prepare_spat(vend, dist)
@@ -93,11 +91,11 @@ distinct.SpatVector <- function(.data, ..., .keep_all = FALSE) {
     return(vend)
   }
 
-  # If not use indexes on regular tibble
+  # Otherwise, use indices on a regular tibble.
   a_tbl <- as_tibble(.data)
   keepcopy <- a_tbl
 
-  # Add a index for identifying rows to extract
+  # Add an index for identifying rows to extract.
   index_var <- make_safe_index("tterra_index", a_tbl)
 
   a_tbl[[index_var]] <- seq_len(nrow(a_tbl))
@@ -106,12 +104,12 @@ distinct.SpatVector <- function(.data, ..., .keep_all = FALSE) {
 
   dist <- distinct(a_tbl[, topass], ..., .keep_all = TRUE)
 
-  # And return using indexes for subsetting
+  # Return using indices for subsetting.
   row_id <- as.integer(dist[[index_var]])
 
   dist <- dist[, names(dist) != index_var]
 
-  # Add rest of columns if requested
+  # Add the remaining columns if requested.
   if (isTRUE(.keep_all)) {
     misscol <- keepcopy[row_id, !names(keepcopy) %in% dots_labs]
     dist <- dplyr::bind_cols(dist, misscol)
@@ -119,7 +117,7 @@ distinct.SpatVector <- function(.data, ..., .keep_all = FALSE) {
 
   vend <- cbind(.data[row_id, 0], dist)
 
-  # Ensure groups
+  # Restore groups.
   vend <- group_prepare_spat(vend, dist)
 
   vend
