@@ -37,7 +37,7 @@
 #' @seealso
 #' [terra::plot()], [ggplot2::scale_fill_viridis_c()].
 #'
-#' See also \CRANpkg{ggplot2} docs on additional `...` arguments.
+#' See also \CRANpkg{ggplot2} documentation on additional `...` arguments.
 #'
 #' @family gradients
 #'
@@ -51,8 +51,8 @@
 #' @inheritDotParams ggplot2::continuous_scale breaks:labels
 #' @inheritDotParams ggplot2::binned_scale breaks:limits nice.breaks
 #' @returns
-#' The corresponding \CRANpkg{ggplot2} layer with the values applied to the
-#' `fill/colour` aesthetics.
+#' A \CRANpkg{ggplot2} scale for the `fill` or `colour` aesthetic.
+#' `wiki.colors()` returns a character vector of colors.
 #'
 #' @encoding UTF-8
 #' @export
@@ -236,7 +236,8 @@ scale_color_wiki_b <- scale_colour_wiki_b
 wiki.colors <- function(n, alpha = 1, rev = FALSE) {
   check_color_args(n, alpha, rev)
 
-  if ((n <- as.integer(n[1L])) > 0) {
+  n <- as.integer(n[1L])
+  if (n > 0) {
     colors <- wiki_cols
     endcols <- tidyterra_ramp(colors, n, alpha, rev)
     endcols

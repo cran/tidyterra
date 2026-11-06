@@ -1,11 +1,16 @@
-#' Plot `SpatRaster` objects as images
+#' Plot [`SpatRaster`][terra::rast] objects as images
 #'
 #' @description
 #'
-#' This geom plots `SpatRaster` objects (see [terra::rast()]) as RGB images.
+#' This geom plots [`SpatRaster`][terra::rast] objects (see [terra::rast()]) as
+#'   RGB images.
 #' The layers are combined so they represent the red, green and blue channels.
+#' Use `geom_spatraster_rgb(data = tile, r = 1, g = 2, b = 3)` to map layers
+#' 1, 2 and 3 to those channels. The package includes `extdata/cyl_tile.tif`
+#' as an example RGB raster.
 #'
-#' For plotting `SpatRaster` objects by layer values use [geom_spatraster()].
+#' For plotting [`SpatRaster`][terra::rast] objects by layer values use
+#'   [geom_spatraster()].
 #'
 #' The underlying implementation is based on [ggplot2::geom_raster()].
 #'
@@ -45,6 +50,13 @@
 #' @encoding UTF-8
 #' @export
 #' @examples
+#' library(ggplot2)
+#' library(tidyterra)
+#'
+#' rgb <- terra::rast(nrows = 2, ncols = 2, nlyrs = 3, vals = 1:12)
+#' ggplot() +
+#'   geom_spatraster_rgb(data = rgb, r = 1, g = 2, b = 3)
+#'
 #' \donttest{
 #'
 #' # Tile of Castile and Leon (Spain) from OpenStreetMap

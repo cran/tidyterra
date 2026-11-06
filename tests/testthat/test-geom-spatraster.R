@@ -78,18 +78,12 @@ test_that("geom_spatraster applies alpha layers", {
   expect_identical(unique(alpha_data$lyr), "fill_layer")
   alpha_values <- alpha_data[
     order(alpha_data$x, alpha_data$y),
-    c(
-      "value",
-      "alpha"
-    )
+    c("value", "alpha")
   ]
   row.names(alpha_values) <- NULL
   expect_equal(
     alpha_values,
-    data.frame(
-      value = c(3, 1, 4, 2),
-      alpha = c(0.6, 0.2, 0.8, 0.4)
-    )
+    data.frame(value = c(3, 1, 4, 2), alpha = c(0.6, 0.2, 0.8, 0.4))
   )
 
   stat_alpha_plot <- ggplot2::ggplot() +
@@ -130,14 +124,8 @@ test_that("geom_spatraster resamples and projects raster data", {
 
   tile_data <- ggplot2::layer_data(tile_plot)
   spat_data <- ggplot2::layer_data(spat_plot)
-  tile_alpha <- tile_data[
-    order(tile_data$x, tile_data$y),
-    c("x", "y", "alpha")
-  ]
-  spat_alpha <- spat_data[
-    order(spat_data$x, spat_data$y),
-    c("x", "y", "alpha")
-  ]
+  tile_alpha <- tile_data[order(tile_data$x, tile_data$y), c("x", "y", "alpha")]
+  spat_alpha <- spat_data[order(spat_data$x, spat_data$y), c("x", "y", "alpha")]
   row.names(tile_alpha) <- NULL
   row.names(spat_alpha) <- NULL
 
@@ -173,6 +161,86 @@ test_that("geom_spatraster resamples and projects raster data", {
   expect_equal(data_1, data_nocrs)
 })
 
+test_that("reprojection preserves extent, approximate size and layer values", {
+  r <- terra::rast(
+    nrows = 20,
+    ncols = 30,
+    nlyrs = 2,
+    xmin = -10,
+    xmax = 10,
+    ymin = 35,
+    ymax = 55,
+    crs = "EPSG:4326"
+  )
+  terra::values(r) <- cbind(rep(7, 600), rep(14, 600))
+  names(r) <- c("first", "second")
+  target <- "EPSG:3035"
+  projected_extent <- terra::ext(terra::project(terra::rast(r), target))
+
+  result <- reproject_raster_on_stat(r, target)
+
+  expect_equal(pull_crs(result), pull_crs(target))
+  expect_equal(as.vector(terra::ext(result)), as.vector(projected_extent))
+  expect_equal(terra::nlyr(result), 2)
+  expect_named(result, c("first", "second"))
+  expect_lt(abs(terra::ncell(result) / terra::ncell(r) - 1), 0.05)
+  values <- stats::na.omit(terra::values(result))
+  expect_gt(nrow(values), 0)
+  expect_equal(range(values[, 1]), c(7, 7))
+  expect_equal(range(values[, 2]), c(14, 14))
+})
+
+test_that("reprojection applies the requested mask to raster values", {
+  r <- terra::rast(
+    nrows = 20,
+    ncols = 30,
+    xmin = -10,
+    xmax = 10,
+    ymin = 35,
+    ymax = 55,
+    crs = "EPSG:4326",
+    vals = 7
+  )
+  unmasked <- reproject_raster_on_stat(r, "EPSG:3035")
+  expected <- terra::project(r, terra::rast(unmasked), mask = TRUE)
+
+  result <- reproject_raster_on_stat(r, "EPSG:3035", mask = TRUE)
+
+  expect_equal(terra::values(result), terra::values(expected))
+  expect_gt(sum(is.na(terra::values(result))), 0)
+})
+
+test_that("layer classes distinguish numeric, logical and categorical data", {
+  r <- terra::rast(nrows = 2, ncols = 2, vals = c(1, 2, NA, 1))
+  layers <- c(r, r > 1, terra::as.factor(r), r / 2)
+
+  result <- spat_layer_class(layers)
+
+  expect_identical(result, c("numeric", "logical", "factor", "numeric"))
+})
+
+test_that("layer classes can be checked without raster values", {
+  r <- terra::rast(nrows = 2, ncols = 2, nlyrs = 2)
+  names(r) <- c("first", "second")
+
+  result <- check_mixed_cols(r)
+
+  expect_identical(result, r)
+  expect_identical(spat_layer_class(result), c("numeric", "numeric"))
+})
+
+test_that("mixed layer checks retain all layers matching the first class", {
+  r <- terra::rast(nrows = 2, ncols = 2, vals = c(1, 2, NA, 1))
+  layers <- c(r > 1, r, terra::as.factor(r), r == 1)
+  names(layers) <- c("above_one", "numeric", "category", "equals_one")
+
+  expect_snapshot(result <- check_mixed_cols(layers))
+
+  expect_named(result, c("above_one", "equals_one"))
+  expect_identical(spat_layer_class(result), c("logical", "logical"))
+  expect_equal(terra::values(result), terra::values(layers[[c(1, 4)]]))
+})
+
 test_that("geom_spatraster reports mixed layer classes", {
   skip_on_cran()
 
@@ -206,7 +274,6 @@ test_that("Coltabs", {
   r <- terra::rast(ncols = 4, nrows = 4)
   terra::values(r) <- as.factor(rep_len(c("A", "B"), 16))
 
-  ll <- data.frame(id = 1:2, lev = c("A", "B"))
   coltb <- data.frame(value = 1:2, t(col2rgb(c("red", "yellow"), alpha = TRUE)))
   terra::coltab(r, layer = 1) <- coltb
 
@@ -273,4 +340,49 @@ test_that("Helpers", {
     template_rast,
     stopOnError = FALSE
   ))
+})
+test_that("geom_spatraster facets categorical layers with duplicated names", {
+  r <- terra::rast(nrows = 2, ncols = 2, nlyrs = 3)
+  terra::values(r) <- matrix(rep(0:2, each = 4), ncol = 3)
+  levels(r) <- replicate(
+    3,
+    data.frame(value = 0:2, passes = c("0", "1", "2")),
+    simplify = FALSE
+  )
+  r <- terra::combineLevels(r)
+
+  expect_snapshot(layer <- geom_spatraster(data = r))
+  p <- ggplot2::ggplot() +
+    layer +
+    ggplot2::facet_wrap(~lyr)
+  built <- ggplot2::ggplot_build(p)
+
+  expect_identical(
+    as.character(built$layout$layout$lyr),
+    c("passes", "passes.1", "passes.2")
+  )
+  expect_identical(
+    split(as.character(built$data[[1]]$value), built$data[[1]]$PANEL),
+    list(`1` = rep("0", 4), `2` = rep("1", 4), `3` = rep("2", 4))
+  )
+  expect_named(r, rep("passes", 3))
+})
+
+test_that("geom_spatraster maps repaired names without name collisions", {
+  r <- terra::rast(nrows = 2, ncols = 2, nlyrs = 3)
+  terra::values(r) <- matrix(1:12, ncol = 3)
+  names(r) <- c("layer", "layer", "layer.1")
+
+  expect_snapshot(
+    layer <- geom_spatraster(data = r, aes(fill = layer.2, alpha = layer.1))
+  )
+  p <- ggplot2::ggplot() +
+    layer +
+    ggplot2::scale_alpha_identity()
+  data <- ggplot2::layer_data(p)
+
+  expect_identical(unique(data$lyr), "layer.2")
+  expect_equal(data$value, 5:8)
+  expect_equal(data$alpha, 9:12)
+  expect_named(r, c("layer", "layer", "layer.1"))
 })

@@ -1,8 +1,9 @@
-#' Plot `SpatRaster` contours
+#' Plot [`SpatRaster`][terra::rast] contours
 #'
 #' @description
 #'
-#' These geoms create contours from `SpatRaster` objects. To create contours
+#' These geoms create contours from [`SpatRaster`][terra::rast] objects. To
+#'   create contours
 #' from a specific layer, map that layer to the `z` aesthetic with
 #' `aes(z = layer_name)`. Otherwise, all layers are used to create contours.
 #' See also the **Facets** section.
@@ -212,10 +213,7 @@ prepare_spatraster_contour_data <- function(
 ) {
   mapping <- override_aesthetics(
     mapping,
-    ggplot2::aes(
-      spatraster = .data$spatraster,
-      lyr = .data$lyr
-    )
+    ggplot2::aes(spatraster = .data$spatraster, lyr = .data$lyr)
   )
 
   selected <- select_spatraster_layer(mapping, data, call = call)
@@ -237,11 +235,7 @@ prepare_spatraster_contour_data <- function(
     data_tbl$spatraster[[i]] <- raster_list[[i]]
   }
 
-  list(
-    mapping = mapping,
-    data = data_tbl,
-    crs = pull_crs(data)
-  )
+  list(mapping = mapping, data = data_tbl, crs = pull_crs(data))
 }
 
 # Geom ----

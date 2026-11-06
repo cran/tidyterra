@@ -3,7 +3,7 @@
 \encoding{UTF-8}
 \name{geom_spatraster_rgb}
 \alias{geom_spatraster_rgb}
-\title{Plot \code{SpatRaster} objects as images}
+\title{Plot \code{\link[terra:rast]{SpatRaster}} objects as images}
 \source{
 Based on the \code{layer_spatial()} implementation in the \CRANpkg{ggspatial}
 package. Thanks to \href{https://github.com/paleolimbot}{Dewey Dunnington} and to
@@ -41,7 +41,9 @@ geom_spatraster_rgb(
 \code{\link[grDevices]{hsv}}.}
 
 \item{maxcell}{Positive integer or \code{Inf}. Maximum number of raster cells to
-use. Use \code{Inf} to use all cells.}
+use. Use \code{Inf} to remove this sampling limit.
+Reprojection for the plot can still change the grid, so \code{Inf} does not
+guarantee native plot resolution. The input raster is not modified.}
 
 \item{max_col_value}{Number giving the upper bound of the color value range.
 When this is \code{255} (the default), the result is computed most efficiently.
@@ -82,16 +84,21 @@ lists which parameters it can accept.
 \item{mask_projection}{Logical, defaults to \code{FALSE}. If \code{TRUE}, mask out
 areas outside the input extent. For example, to avoid data wrapping
 around the dateline in equal-area projections. This argument is passed
-to \code{\link[terra:project]{terra::project()}} when reprojecting the \code{SpatRaster}.}
+to \code{\link[terra:project]{terra::project()}} when reprojecting the \code{\link[terra:rast]{SpatRaster}}.}
 }
 \value{
 A \CRANpkg{ggplot2} layer.
 }
 \description{
-This geom plots \code{SpatRaster} objects (see \code{\link[terra:rast]{terra::rast()}}) as RGB images.
+This geom plots \code{\link[terra:rast]{SpatRaster}} objects (see \code{\link[terra:rast]{terra::rast()}}) as
+RGB images.
 The layers are combined so they represent the red, green and blue channels.
+Use \code{geom_spatraster_rgb(data = tile, r = 1, g = 2, b = 3)} to map layers
+1, 2 and 3 to those channels. The package includes \code{extdata/cyl_tile.tif}
+as an example RGB raster.
 
-For plotting \code{SpatRaster} objects by layer values use \code{\link[=geom_spatraster]{geom_spatraster()}}.
+For plotting \code{\link[terra:rast]{SpatRaster}} objects by layer values use
+\code{\link[=geom_spatraster]{geom_spatraster()}}.
 
 The underlying implementation is based on \code{\link[ggplot2:geom_raster]{ggplot2::geom_raster()}}.
 }
@@ -110,16 +117,23 @@ No \code{aes()} is required. In fact, \code{aes()} will be ignored.
 \section{Coordinates}{
 
 
-When the \code{SpatRaster} does not have a CRS, that is,
+When the \code{\link[terra:rast]{SpatRaster}} does not have a CRS, that is,
 \code{terra::crs(rast) == ""}, the geom does not make any assumption about the
 scales.
 
-On \code{SpatRaster} objects that have a CRS, the geom uses
+On \code{\link[terra:rast]{SpatRaster}} objects that have a CRS, the geom uses
 \code{\link[ggplot2:coord_sf]{ggplot2::coord_sf()}} to adjust the scales. This means that the
 \strong{\code{SpatRaster} may be reprojected}.
 }
 
 \examples{
+library(ggplot2)
+library(tidyterra)
+
+rgb <- terra::rast(nrows = 2, ncols = 2, nlyrs = 3, vals = 1:12)
+ggplot() +
+  geom_spatraster_rgb(data = rgb, r = 1, g = 2, b = 3)
+
 \donttest{
 
 # Tile of Castile and Leon (Spain) from OpenStreetMap

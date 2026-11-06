@@ -24,6 +24,8 @@
 #'   [grDevices::terrain.colors()] for details.
 #'
 #' See **Details**.
+#' Use `scale_fill_hypso_tint_c(palette = "gmt_globe")` for continuous
+#' hypsometric tints. Use `scale_fill_hypso_c()` for a continuous gradient.
 #'
 #' Additional arguments `...` are passed to:
 #' - Discrete values: [ggplot2::discrete_scale()].
@@ -44,7 +46,7 @@
 #' [hypsometric_tints_db], [terra::plot()], [terra::minmax()],
 #' [ggplot2::scale_fill_viridis_c()]
 #'
-#' See also \CRANpkg{ggplot2} docs on additional `...` arguments.
+#' See also \CRANpkg{ggplot2} documentation on additional `...` arguments.
 #'
 #' @family gradients
 #'
@@ -69,12 +71,20 @@
 #'
 #' ```
 #' @returns
-#' The corresponding \CRANpkg{ggplot2} layer with the values applied to the
-#' `fill/colour` aesthetics.
+#' A \CRANpkg{ggplot2} scale for the `fill` or `colour` aesthetic.
+#' `hypso.colors()` and `hypso.colors2()` return a character vector of colors.
 #'
 #' @encoding UTF-8
 #' @export
 #' @examples
+#' library(ggplot2)
+#' library(tidyterra)
+#'
+#' elevation <- terra::rast(nrows = 2, ncols = 2, vals = c(-100, 0, 500, 1000))
+#' ggplot() +
+#'   geom_spatraster(data = elevation) +
+#'   scale_fill_hypso_tint_c(palette = "gmt_globe")
+#'
 #' \donttest{
 #' filepath <- system.file("extdata/volcano2.tif", package = "tidyterra")
 #'
@@ -155,11 +165,7 @@ scale_fill_hypso_d <- function(
 ) {
   pal_discrete_scale(
     "fill",
-    hypso_pal(
-      alpha = alpha,
-      direction = direction,
-      palette = palette
-    ),
+    hypso_pal(alpha = alpha, direction = direction, palette = palette),
     alpha = alpha,
     direction = direction,
     na.translate = na.translate,
@@ -180,11 +186,7 @@ scale_colour_hypso_d <- function(
 ) {
   pal_discrete_scale(
     "colour",
-    hypso_pal(
-      alpha = alpha,
-      direction = direction,
-      palette = palette
-    ),
+    hypso_pal(alpha = alpha, direction = direction, palette = palette),
     alpha = alpha,
     direction = direction,
     na.translate = na.translate,
@@ -206,16 +208,9 @@ scale_fill_hypso_c <- function(
   pal_gradient_scale(
     ggplot2::continuous_scale,
     "fill",
-    hypso_pal(
-      alpha = alpha,
-      direction = direction,
-      palette = palette
-    ),
+    hypso_pal(alpha = alpha, direction = direction, palette = palette),
     n = function() {
-      nrow(extract_pal(
-        tidyterra::hypsometric_tints_db,
-        palette = palette
-      ))
+      nrow(extract_pal(tidyterra::hypsometric_tints_db, palette = palette))
     },
     alpha = alpha,
     direction = direction,
@@ -237,16 +232,9 @@ scale_colour_hypso_c <- function(
   pal_gradient_scale(
     ggplot2::continuous_scale,
     "colour",
-    hypso_pal(
-      alpha = alpha,
-      direction = direction,
-      palette = palette
-    ),
+    hypso_pal(alpha = alpha, direction = direction, palette = palette),
     n = function() {
-      nrow(extract_pal(
-        tidyterra::hypsometric_tints_db,
-        palette = palette
-      ))
+      nrow(extract_pal(tidyterra::hypsometric_tints_db, palette = palette))
     },
     alpha = alpha,
     direction = direction,
@@ -268,16 +256,9 @@ scale_fill_hypso_b <- function(
   pal_gradient_scale(
     ggplot2::binned_scale,
     "fill",
-    hypso_pal(
-      alpha = alpha,
-      direction = direction,
-      palette = palette
-    ),
+    hypso_pal(alpha = alpha, direction = direction, palette = palette),
     n = function() {
-      nrow(extract_pal(
-        tidyterra::hypsometric_tints_db,
-        palette = palette
-      ))
+      nrow(extract_pal(tidyterra::hypsometric_tints_db, palette = palette))
     },
     alpha = alpha,
     direction = direction,
@@ -299,16 +280,9 @@ scale_colour_hypso_b <- function(
   pal_gradient_scale(
     ggplot2::binned_scale,
     "colour",
-    hypso_pal(
-      alpha = alpha,
-      direction = direction,
-      palette = palette
-    ),
+    hypso_pal(alpha = alpha, direction = direction, palette = palette),
     n = function() {
-      nrow(extract_pal(
-        tidyterra::hypsometric_tints_db,
-        palette = palette
-      ))
+      nrow(extract_pal(tidyterra::hypsometric_tints_db, palette = palette))
     },
     alpha = alpha,
     direction = direction,
@@ -346,7 +320,8 @@ scale_colour_hypso_b <- function(
 hypso.colors <- function(n, palette = "etopo1_hypso", alpha = 1, rev = FALSE) {
   check_color_args(n, alpha, rev)
 
-  if ((n <- as.integer(n[1L])) > 0) {
+  n <- as.integer(n[1L])
+  if (n > 0) {
     paltab <- extract_pal(tidyterra::hypsometric_tints_db, palette = palette)
     colors <- as.character(paltab$hex)
     endcols <- tidyterra_ramp(colors, n, alpha, rev)
@@ -361,19 +336,19 @@ hypso.colors <- function(n, palette = "etopo1_hypso", alpha = 1, rev = FALSE) {
 #' On `scale_*_hypso_tint_*` palettes, the position of the gradients and
 #' the limits of the palette are redefined. Instead of treating the color
 #' palette as a continuous gradient, they are rescaled to act as a hypsometric
-#' tint. A rough description of these tints are:
+#' tint. These tints roughly correspond to the following values:
 #' - Blue colors: Negative values.
-#' - Green colors: 0 to 1.000 values.
-#' - Browns: 1000 to 4.000 values.
-#' - Whites: Values higher than 4.000.
+#' - Green colors: Values from 0 to 1,000.
+#' - Browns: Values from 1,000 to 4,000.
+#' - Whites: Values above 4,000.
 #'
-#' The following orientation varies depending on the palette definition (see
+#' These ranges vary depending on the palette definition (see
 #' [hypsometric_tints_db] for an example of how this can be achieved).
 #'
 #' The palette setup may not always be suitable for your specific data. For
-#' example, a `SpatRaster` of small parts of the globe (and
+#' example, a [`SpatRaster`][terra::rast] of small parts of the globe (and
 #' with a limited range of elevations) may not be well represented. As an
-#' example, a `SpatRaster` with a range of values on `[100, 200]` appears
+#' example, a `SpatRaster` with values in the range `[100, 200]` appears
 #' almost as a uniform color. This can be adjusted using the `limits`/`values`
 #' arguments.
 #'
@@ -399,11 +374,7 @@ scale_fill_hypso_tint_d <- function(
 ) {
   pal_discrete_scale(
     "fill",
-    hypso_pal2(
-      alpha = alpha,
-      direction = direction,
-      palette = palette
-    ),
+    hypso_pal2(alpha = alpha, direction = direction, palette = palette),
     alpha = alpha,
     direction = direction,
     na.translate = na.translate,
@@ -423,11 +394,7 @@ scale_colour_hypso_tint_d <- function(
 ) {
   pal_discrete_scale(
     "colour",
-    hypso_pal2(
-      alpha = alpha,
-      direction = direction,
-      palette = palette
-    ),
+    hypso_pal2(alpha = alpha, direction = direction, palette = palette),
     alpha = alpha,
     direction = direction,
     na.translate = na.translate,
@@ -594,7 +561,8 @@ scale_colour_hypso_tint_b <- function(
 hypso.colors2 <- function(n, palette = "etopo1_hypso", alpha = 1, rev = FALSE) {
   check_color_args(n, alpha, rev)
 
-  if ((n <- as.integer(n[1L])) > 0) {
+  n <- as.integer(n[1L])
+  if (n > 0) {
     paltab <- extract_pal(tidyterra::hypsometric_tints_db, palette = palette)
     colors <- as.character(paltab$hex)
     limits <- sort(as.integer(paltab$limit))

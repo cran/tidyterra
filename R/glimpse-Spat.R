@@ -18,12 +18,12 @@
 #' @inheritParams pillar::glimpse
 #'
 #' @param ... Arguments passed to [as_tibble.SpatRaster()] or
-#'   [as_tibble.SpatVector()] methods.
+#'   [as_tibble.Spat()] methods.
 #' @param max_extra_cols Number of extra columns or layers to print abbreviated
 #'   information for, if `n` is too small for the `Spat*` object.
 #' @param n Maximum number of rows to show.
 #'
-#' @returns Original `x` is invisibly returned, allowing `glimpse()` to
+#' @returns The input object `x`, returned invisibly so `glimpse()` can
 #' be used within a data pipeline.
 #'
 #' @section \CRANpkg{terra} equivalent:
@@ -105,10 +105,10 @@ glimpse.SpatRaster <- function(
   # Print body.
   cli::cat_line() # Blank line.
 
-  if (!terra::hasValues(x)) {
-    cli::cat_line("SpatRaster with no values")
-  } else {
+  if (terra::hasValues(x)) {
     tterra_body(x, ..., width = width, n = n, max_extra_cols = max_extra_cols)
+  } else {
+    cli::cat_line("SpatRaster with no values")
   }
 
   invisible(x)

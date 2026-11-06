@@ -2,7 +2,8 @@
 #'
 #' @description
 #'
-#' Extract the WKT version of the CRS associated with a string, number, `sf`
+#' Extract the WKT version of the CRS associated with a string, number,
+#'   [`sf`][sf::st_sf]
 #' object or `Spat*` object.
 #'
 #' ```{r, echo=FALSE, results='asis'}
@@ -31,6 +32,10 @@
 #'
 #' Knowing the WKT helps smooth workflows when working with different
 #' packages and object types.
+#' Assigning a CRS records how existing coordinates should be interpreted.
+#' Establish the source CRS from the data provider before assigning it.
+#' Reprojecting with [terra::project()] or [sf::st_transform()] transforms
+#' coordinates from a known source CRS to a target CRS.
 #'
 #' @seealso
 #' [terra::crs()] and [sf::st_crs()] to learn how these packages handle
@@ -38,14 +43,16 @@
 #'
 #' @concept helpers
 #' @param .data Input potentially including or representing a CRS. It could be
-#'   an `sf` or `sfc` object, a `SpatRaster` or `SpatVector` object, a `crs`
-#'   object from [sf::st_crs()], a character string (for example a [PROJ
-#'   string](https://proj.org/en/9.3/operations/projections/index.html)) or a
+#'   an [`sf`][sf::st_sf] or `sfc` object, a [`SpatRaster`][terra::rast] or
+#'   [`SpatVector`][terra::vect] object, a `crs` object from [sf::st_crs()],
+#'   a character string (for example a [PROJ
+#'   string](https://proj.org/en/9.3/operations/projections/index.html)) or an
 #'   integer (representing an [EPSG](https://epsg.io/) code).
 #'
 #' @param ... Ignored.
 #'
-#' @returns A WKT representation of the corresponding CRS.
+#' @returns A character string containing the CRS in WKT format, or `NA` if
+#' no CRS can be determined.
 #'
 #' @section Internals:
 #'

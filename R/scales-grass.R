@@ -45,7 +45,7 @@
 #' [grass_db], [terra::plot()], [terra::minmax()],
 #' [ggplot2::scale_fill_viridis_c()].
 #'
-#' See also \CRANpkg{ggplot2} docs on additional `...` arguments:
+#' See also \CRANpkg{ggplot2} documentation on additional `...` arguments.
 #'
 #' @family gradients
 #'
@@ -61,8 +61,8 @@
 #' @param use_grass_range Logical. If `TRUE`, use the suggested range when
 #'   plotting. See **Details**.
 #' @returns
-#' The corresponding \CRANpkg{ggplot2} layer with the values applied to the
-#' `fill/colour` `aes()`.
+#' A \CRANpkg{ggplot2} scale for the `fill` or `colour` aesthetic.
+#' `grass.colors()` returns a character vector of colors.
 #'
 #' @section \CRANpkg{terra} equivalent:
 #'
@@ -146,11 +146,7 @@ scale_fill_grass_d <- function(
 ) {
   pal_discrete_scale(
     "fill",
-    grass_pal(
-      alpha = alpha,
-      direction = direction,
-      palette = palette
-    ),
+    grass_pal(alpha = alpha, direction = direction, palette = palette),
     alpha = alpha,
     direction = direction,
     na.translate = na.translate,
@@ -170,11 +166,7 @@ scale_colour_grass_d <- function(
 ) {
   pal_discrete_scale(
     "colour",
-    grass_pal(
-      alpha = alpha,
-      direction = direction,
-      palette = palette
-    ),
+    grass_pal(alpha = alpha, direction = direction, palette = palette),
     alpha = alpha,
     direction = direction,
     na.translate = na.translate,
@@ -388,7 +380,8 @@ scale_color_grass_b <- scale_colour_grass_b
 grass.colors <- function(n, palette = "viridis", alpha = 1, rev = FALSE) {
   check_color_args(n, alpha, rev)
 
-  if ((n <- as.integer(n[1L])) > 0) {
+  n <- as.integer(n[1L])
+  if (n > 0) {
     paltab <- extract_pal(tidyterra::grass_db, palette = palette)
     colors <- as.character(paltab$hex)
     if (anyNA(paltab$limit)) {
@@ -447,11 +440,7 @@ grass_scale_params <- function(
     rescaled_values <- scales::rescale(values, from = limits)
   }
 
-  list(
-    colors = colors,
-    values = rescaled_values,
-    limits = limits
-  )
+  list(colors = colors, values = rescaled_values, limits = limits)
 }
 
 grass_pal <- function(alpha = 1, direction = 1, palette) {

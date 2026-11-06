@@ -1,6 +1,6 @@
 Package: tidyterra
 Title: 'tidyverse' Methods and 'ggplot2' Helpers for 'terra' Objects
-Version: 1.3.0
+Version: 1.3.1
 Authors@R: c(
     person("Diego", "Hernangómez", , "diego.hernangomezherrero@gmail.com", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "0000-0001-8457-4658")),
@@ -9,7 +9,9 @@ Authors@R: c(
     person("ggplot2 authors", role = "cph",
            comment = "for contour code"),
     person("Andrea", "Manica", role = "ctb",
-           comment = c(ORCID = "0000-0003-1895-450X"))
+           comment = c(ORCID = "0000-0003-1895-450X")),
+    person("Michael", "Sumner", role = "ctb",
+           comment = c(ORCID = "0000-0002-2471-7511"))
   )
 Description: Provides methods from 'tidyverse' packages for 'SpatRaster'
     and 'SpatVector' objects created with 'terra', plus 'ggplot2' 'geoms'
@@ -23,16 +25,17 @@ BugReports: https://github.com/dieghernan/tidyterra/issues
 Depends: R (>= 4.1.0)
 Imports: cli (>= 3.0.0), data.table, dplyr (>= 1.2.0), generics,
         ggplot2 (>= 4.0.0), grDevices, isoband, lifecycle, magrittr,
-        rlang (>= 1.1.0), scales, sf (>= 1.0.0), terra (>= 1.8-10),
+        rlang (>= 1.2.0), scales, sf (>= 1.0.0), terra (>= 1.8-10),
         tibble (>= 3.0.0), tidyr (>= 1.0.0), tools, utils, vctrs
 Suggests: dtplyr, hexbin, knitr, maptiles, quarto, s2, stringi,
         testthat (>= 3.0.0), withr
 VignetteBuilder: quarto
 Config/Needs/coverage: covr
 Config/Needs/website: geodata, dieghernan/gitdevr, ragg, styler, metR,
-        ggspatial, cpp11, remotes, gganimate, gifski, tidyverse, bibtex
+        ggspatial, cpp11, remotes, gganimate, gifski, tidyverse,
+        bibtex, ggblend
 Config/roxygen2/markdown: TRUE
-Config/roxygen2/version: 8.1.0
+Config/roxygen2/version: 8.1.1
 Config/testthat/edition: 3
 Config/testthat/parallel: true
 Encoding: UTF-8
@@ -40,13 +43,14 @@ LazyData: true
 X-schema.org-keywords: r, terra, ggplot-extension, r-spatial, rspatial,
         cran, cran-r, r-package, rstats, rstats-package
 NeedsCompilation: no
-Packaged: 2026-08-21 11:02:23 UTC; diego
+Packaged: 2026-11-06 17:00:29 UTC; diego
 Author: Diego Hernangómez [aut, cre, cph] (ORCID:
     <https://orcid.org/0000-0001-8457-4658>),
   Dewey Dunnington [ctb] (ORCID: <https://orcid.org/0000-0002-9415-4582>,
     for ggspatial code),
   ggplot2 authors [cph] (for contour code),
-  Andrea Manica [ctb] (ORCID: <https://orcid.org/0000-0003-1895-450X>)
+  Andrea Manica [ctb] (ORCID: <https://orcid.org/0000-0003-1895-450X>),
+  Michael Sumner [ctb] (ORCID: <https://orcid.org/0000-0002-2471-7511>)
 Maintainer: Diego Hernangómez <diego.hernangomezherrero@gmail.com>
 Repository: CRAN
-Date/Publication: 2026-08-24 08:30:02 UTC
+Date/Publication: 2026-11-06 17:50:02 UTC

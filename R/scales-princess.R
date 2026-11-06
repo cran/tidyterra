@@ -27,7 +27,7 @@
 #'
 #' @seealso [terra::plot()], [ggplot2::scale_fill_viridis_c()].
 #'
-#' See also \CRANpkg{ggplot2} docs on additional `...` arguments.
+#' See also \CRANpkg{ggplot2} documentation on additional `...` arguments.
 #'
 #' @family gradients
 #'
@@ -52,8 +52,8 @@
 #' ```
 #'
 #' @returns
-#' The corresponding \CRANpkg{ggplot2} layer with the values applied to the
-#' `fill/colour` aesthetics.
+#' A \CRANpkg{ggplot2} scale for the `fill` or `colour` aesthetic.
+#' `princess.colors()` returns a character vector of colors.
 #'
 #' @encoding UTF-8
 #' @export
@@ -100,11 +100,7 @@ scale_fill_princess_d <- function(
 ) {
   pal_discrete_scale(
     "fill",
-    princess_pal(
-      alpha = alpha,
-      direction = direction,
-      palette = palette
-    ),
+    princess_pal(alpha = alpha, direction = direction, palette = palette),
     alpha = alpha,
     direction = direction,
     na.translate = na.translate,
@@ -124,11 +120,7 @@ scale_colour_princess_d <- function(
 ) {
   pal_discrete_scale(
     "colour",
-    princess_pal(
-      alpha = alpha,
-      direction = direction,
-      palette = palette
-    ),
+    princess_pal(alpha = alpha, direction = direction, palette = palette),
     alpha = alpha,
     direction = direction,
     na.translate = na.translate,
@@ -150,11 +142,7 @@ scale_fill_princess_c <- function(
   pal_gradient_scale(
     ggplot2::continuous_scale,
     "fill",
-    princess_pal(
-      alpha = alpha,
-      direction = direction,
-      palette = palette
-    ),
+    princess_pal(alpha = alpha, direction = direction, palette = palette),
     n = function() nrow(extract_pal(tidyterra::princess_db, palette = palette)),
     alpha = alpha,
     direction = direction,
@@ -177,11 +165,7 @@ scale_colour_princess_c <- function(
   pal_gradient_scale(
     ggplot2::continuous_scale,
     "colour",
-    princess_pal(
-      alpha = alpha,
-      direction = direction,
-      palette = palette
-    ),
+    princess_pal(alpha = alpha, direction = direction, palette = palette),
     n = function() nrow(extract_pal(tidyterra::princess_db, palette = palette)),
     alpha = alpha,
     direction = direction,
@@ -204,11 +188,7 @@ scale_fill_princess_b <- function(
   pal_gradient_scale(
     ggplot2::binned_scale,
     "fill",
-    princess_pal(
-      alpha = alpha,
-      direction = direction,
-      palette = palette
-    ),
+    princess_pal(alpha = alpha, direction = direction, palette = palette),
     n = function() nrow(extract_pal(tidyterra::princess_db, palette = palette)),
     alpha = alpha,
     direction = direction,
@@ -231,11 +211,7 @@ scale_colour_princess_b <- function(
   pal_gradient_scale(
     ggplot2::binned_scale,
     "colour",
-    princess_pal(
-      alpha = alpha,
-      direction = direction,
-      palette = palette
-    ),
+    princess_pal(alpha = alpha, direction = direction, palette = palette),
     n = function() nrow(extract_pal(tidyterra::princess_db, palette = palette)),
     alpha = alpha,
     direction = direction,
@@ -274,7 +250,8 @@ scale_colour_princess_b <- function(
 princess.colors <- function(n, palette = "snow", alpha = 1, rev = FALSE) {
   check_color_args(n, alpha, rev)
 
-  if ((n <- as.integer(n[1L])) > 0) {
+  n <- as.integer(n[1L])
+  if (n > 0) {
     paltab <- extract_pal(tidyterra::princess_db, palette = palette)
     colors <- as.character(paltab$hex)
     endcols <- tidyterra_ramp(colors, n, alpha, rev)

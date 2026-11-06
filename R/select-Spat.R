@@ -4,6 +4,9 @@
 #'
 #' Select (and optionally rename) attributes/layers in `Spat*` objects, using a
 #' concise mini-language. See **Methods**.
+#' For a [`SpatRaster`][terra::rast], `select(r, rain = rainfall)` keeps the
+#' `rainfall` layer and names it `rain`. To mask cells based on their values,
+#' use [filter.Spat()] instead.
 #'
 #' @rdname select.Spat
 #' @name select.Spat
@@ -32,20 +35,32 @@
 #' Implementation of the **generic** [dplyr::select()] methods for `Spat*`
 #' objects.
 #'
-#' ## `SpatRaster`
+#' ## [`SpatRaster`][terra::rast]
 #'
-#' Selects and renames layers of a `SpatRaster`. The result is a `SpatRaster`
+#' Selects and renames layers of a [`SpatRaster`][terra::rast]. The result is a
+#'   `SpatRaster`
 #' with the same extent, resolution and CRS as `.data`. Only the number and
 #' possibly the names of layers are modified.
 #'
-#' ## `SpatVector`
+#' ## [`SpatVector`][terra::vect]
 #'
-#' The result is a `SpatVector` with the attributes selected and possibly
+#' The result is a [`SpatVector`][terra::vect] with the attributes selected and
+#'   possibly
 #' renamed as specified in the function call.
 #'
 #' @encoding UTF-8
 #' @export
 #' @examples
+#' library(tidyterra)
+#'
+#' weather <- terra::rast(
+#'   nrows = 2, ncols = 2, nlyrs = 2,
+#'   vals = c(20, 25, 30, 35, 10, 15, 20, 25)
+#' )
+#' names(weather) <- c("temperature", "rainfall")
+#' rain <- select(weather, rain = rainfall)
+#' terra::nlyr(rain)
+#' names(rain)
 #'
 #' library(terra)
 #'

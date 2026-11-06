@@ -26,6 +26,9 @@ A \verb{Spat*} object of the same class as \code{.data}. See \strong{Methods}.
 \description{
 Select (and optionally rename) attributes/layers in \verb{Spat*} objects, using a
 concise mini-language. See \strong{Methods}.
+For a \code{\link[terra:rast]{SpatRaster}}, \code{select(r, rain = rainfall)} keeps the
+\code{rainfall} layer and names it \code{rain}. To mask cells based on their values,
+use \code{\link[=filter.Spat]{filter.Spat()}} instead.
 }
 \section{\CRANpkg{terra} equivalent}{
 
@@ -38,21 +41,33 @@ concise mini-language. See \strong{Methods}.
 
 Implementation of the \strong{generic} \code{\link[dplyr:select]{dplyr::select()}} methods for \verb{Spat*}
 objects.
-\subsection{\code{SpatRaster}}{
+\subsection{\code{\link[terra:rast]{SpatRaster}}}{
 
-Selects and renames layers of a \code{SpatRaster}. The result is a \code{SpatRaster}
+Selects and renames layers of a \code{\link[terra:rast]{SpatRaster}}. The result is a
+\code{SpatRaster}
 with the same extent, resolution and CRS as \code{.data}. Only the number and
 possibly the names of layers are modified.
 }
 
-\subsection{\code{SpatVector}}{
+\subsection{\code{\link[terra:vect]{SpatVector}}}{
 
-The result is a \code{SpatVector} with the attributes selected and possibly
+The result is a \code{\link[terra:vect]{SpatVector}} with the attributes selected and
+possibly
 renamed as specified in the function call.
 }
 }
 
 \examples{
+library(tidyterra)
+
+weather <- terra::rast(
+  nrows = 2, ncols = 2, nlyrs = 2,
+  vals = c(20, 25, 30, 35, 10, 15, 20, 25)
+)
+names(weather) <- c("temperature", "rainfall")
+rain <- select(weather, rain = rainfall)
+terra::nlyr(rain)
+names(rain)
 
 library(terra)
 
